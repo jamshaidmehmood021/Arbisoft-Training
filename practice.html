@@ -74,6 +74,7 @@
 
     document.getElementById("demo4").innerHTML = fruits.toString(); 
 
+    fruits.copyWithin(2, 0, 2);
     const temp = [27, 28, 30, 40, 42, 35, 30];
     let high = temp.findLast(x => x > 40);
 
@@ -84,6 +85,9 @@ const myBoys = ["Emil", "Tobias", "Linus"];
 const nums = [1,2,3];
 const myChildren = myGirls.concat(myBoys);
 const diverseArray = myChildren.concat(nums);
+
+
+
 document.getElementById("demo6").innerHTML = myChildren + "  ---> "+diverseArray;
 </script>
 
