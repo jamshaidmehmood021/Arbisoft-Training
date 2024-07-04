@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+  function myFunction() {
+    document.getElementById("demo").innerHTML = "Paragraph changed.";
+  }
+  function myFunction1() {
+    document.getElementById("demo1").innerHTML = "Paragraph1 changed.";
+  }
+  function alertFunction()
+  {
+    window.alert(5 + 6);
+  }
+
+  function demo() {
+  // undeclared variables will automatially be declared when used first time
+  }
+
+</script>
+</head>
+
+<body>
+
+  <h2>Demo JavaScript in Head</h2>
+
+  <p id="demo">Paragraph.</p>
+  <p id="demo1">Paragraph1.</p>
+  <p id="demo2">Paragraph2.</p>
+
+  <button type="button" onclick="myFunction()">Try it</button>
+  <button type="button" onclick="myFunction1()">Try it for paragraph1</button>
+  <button type="button" onclick="alertFunction()">Click it for generating alert</button>
+  <!-- <button type="button" onclick="demo()">click it</button> -->
+
+  
+
+
+</body>
+ <script>
+  x = 5;
+  y = 6;
+  z = x + y;
+  document.getElementById("demo2").innerHTML =
+  "The value of z is: " + z;
+ </script>
+
+</html>
