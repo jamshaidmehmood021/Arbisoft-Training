@@ -72,37 +72,53 @@
     let size = fruits.length;
     document.getElementById("demo3").innerHTML = size;
 
-    document.getElementById("demo4").innerHTML = fruits.toString(); 
+    document.getElementById("demo4").innerHTML = fruits.toString();
 
     fruits.copyWithin(2, 0, 2);
     const temp = [27, 28, 30, 40, 42, 35, 30];
     let high = temp.findLast(x => x > 40);
 
-document.getElementById("demo5").innerHTML = "The last temperature over 40 was " + high + " <br><br>" + temp.join("#") + "<br><br>" + temp.pop() + "<br><br>" +temp.shift() ;
+    document.getElementById("demo5").innerHTML = "The last temperature over 40 was " + high + " <br><br>" + temp.join("#") + "<br><br>" + temp.pop() + "<br><br>" + temp.shift();
 
-const myGirls = ["Cecilie", "Lone"];
-const myBoys = ["Emil", "Tobias", "Linus"];
-const nums = [1,2,3];
-const myChildren = myGirls.concat(myBoys);
-const diverseArray = myChildren.concat(nums);
+    const myGirls = ["Cecilie", "Lone"];
+    const myBoys = ["Emil", "Tobias", "Linus"];
+    const nums = [1, 2, 3];
+    const myChildren = myGirls.concat(myBoys);
+    const diverseArray = myChildren.concat(nums);
 
 
 
-document.getElementById("demo6").innerHTML = myChildren + " <br><br>" +diverseArray;
+    document.getElementById("demo6").innerHTML = myChildren + " <br><br>" + diverseArray;
 
-//const fruits = ["Banana", "Orange", "Apple", "Mango"];
-fruits.splice(2, 0, "Lemon", "Kiwi");
+    //const fruits = ["Banana", "Orange", "Apple", "Mango"];
+    fruits.splice(2, 0, "Lemon", "Kiwi");
 
-const fruits1 = ["Banana", "Orange", "Apple", "Mango"]; 
+    const fruits1 = ["Banana", "Orange", "Apple", "Mango"];
 
-fruits1.splice(2, 2, "Lemon", "Kiwi");
+    fruits1.splice(2, 2, "Lemon", "Kiwi");
 
-const months = ["Jan", "Feb", "Mar", "Apr"];
-const spliced = months.toSpliced(0, 1);
+    const months = ["Jan", "Feb", "Mar", "Apr"];
+    const spliced = months.toSpliced(0, 1);
 
-const citrus = fruits.slice(1);
+    const citrus = fruits.slice(1);
 
-document.getElementById("demo").innerHTML =fruits1 + "<br><br>" +fruits+ "<br><br>"+ spliced + "<br><br>" + months + "<br><br>"+ citrus;
+    document.getElementById("demo").innerHTML = fruits1 + "<br><br>" + fruits + "<br><br>" + spliced + "<br><br>" + months + "<br><br>" + citrus;
+</script>
+
+<!-- sort method for arrays -->
+<script>
+    const points = [40, 100, 1, 5, 25, 10];
+    document.getElementById("demo7").innerHTML = points;
+
+    function myFunction1() {
+        points.sort();
+        document.getElementById("demo7").innerHTML = points;
+    }
+
+    function myFunction2() {
+        points.sort(function (a, b) { return a - b });
+        document.getElementById("demo7").innerHTML = points;
+    }
 </script>
 
 
