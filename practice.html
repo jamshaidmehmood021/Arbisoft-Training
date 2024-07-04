@@ -78,7 +78,7 @@
     const temp = [27, 28, 30, 40, 42, 35, 30];
     let high = temp.findLast(x => x > 40);
 
-document.getElementById("demo5").innerHTML = "The last temperature over 40 was " + high + " " + temp.join("#") + "     " + temp.pop() + "        " +temp.shift() ;
+document.getElementById("demo5").innerHTML = "The last temperature over 40 was " + high + " <br><br>" + temp.join("#") + "<br><br>" + temp.pop() + "<br><br>" +temp.shift() ;
 
 const myGirls = ["Cecilie", "Lone"];
 const myBoys = ["Emil", "Tobias", "Linus"];
@@ -88,7 +88,21 @@ const diverseArray = myChildren.concat(nums);
 
 
 
-document.getElementById("demo6").innerHTML = myChildren + "  ---> "+diverseArray;
+document.getElementById("demo6").innerHTML = myChildren + " <br><br>" +diverseArray;
+
+//const fruits = ["Banana", "Orange", "Apple", "Mango"];
+fruits.splice(2, 0, "Lemon", "Kiwi");
+
+const fruits1 = ["Banana", "Orange", "Apple", "Mango"]; 
+
+fruits1.splice(2, 2, "Lemon", "Kiwi");
+
+const months = ["Jan", "Feb", "Mar", "Apr"];
+const spliced = months.toSpliced(0, 1);
+
+const citrus = fruits.slice(1);
+
+document.getElementById("demo").innerHTML =fruits1 + "<br><br>" +fruits+ "<br><br>"+ spliced + "<br><br>" + months + "<br><br>"+ citrus;
 </script>
 
 
