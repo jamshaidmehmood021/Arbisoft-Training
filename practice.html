@@ -31,6 +31,7 @@
     <p id="demo6"></p>
     <p id="demo7"></p>
     <p id="demo8"></p>
+    <p id="demo9">paragraph 9</p>
 
     <button type="button" onclick="myFunction()">Try it</button>
     <button type="button" onclick="myFunction1()">Try it for paragraph1</button>
@@ -124,17 +125,27 @@
 <script>
     const numbers1 = [45, 4, 9, 16, 25];
     const numbers2 = numbers1.map(myFunction);
-    
+
     function myFunction(value) {
-      return value * 2;
+        return value * 2;
     }
-    
-    const myArr = [1, 2, 3, 4, 5,6];
+
+    const myArr = [1, 2, 3, 4, 5, 6];
     const newArr = myArr.flatMap((x) => x * 2);
-    document.getElementById("demo8").innerHTML = newArr + "<br>" + myArr + "<br>"+ numbers1 +"<br>"+ numbers2;
+    document.getElementById("demo8").innerHTML = newArr + "<br>" + myArr + "<br>" + numbers1 + "<br>" + numbers2;
+
+    // Create a Map
+    const fruitsMap = new Map([
+        ["apples", 500],
+        ["bananas", 300],
+        ["oranges", 200],
+        [1, "jamshaid"]
+    ]);
+
+    let numb = fruitsMap.get("apples");
+    document.getElementById("demo9").innerHTML = "There are " + numb + " apples." + "<br>" + fruitsMap.get(1);
 
 </script>
-
 
 
 </html>
