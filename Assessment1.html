@@ -84,7 +84,7 @@
 
         async function deleteProduct(productId) {
             //console.log("This is the product id", productId)
-            fetch(`https://dummyjson.com/products/${productId}`, {
+            await fetch(`https://dummyjson.com/products/${productId}`, {
                 method: 'DELETE'
             })
             .then(res => res.json())
@@ -94,12 +94,12 @@
         }
 
         
-        function filterProducts() {
-            //console.log("in the filter function")
+        async function filterProducts() {
+            console.log("in the filter function")
 
             const discount = document.getElementById('discount-filter').value;
-            //console.log(discount)
-            fetch(`https://dummyjson.com/products/search?discountPercentage=${discount}`)
+            console.log(discount)
+            await fetch(`https://dummyjson.com/products?discountPercentage=${discount}`)
                 .then(res => res.json())
                 .then(console.log);
             
