@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Product Management</title>
+    <script src="script.js"></script>
+</head>
+<body>
+    <div>
+        <h3>Add product</h3>
+        <label for="title">Title</label>
+        <br>
+        <input type="text" id="title" placeholder="Title">
+        <br>
+        <br>
+        <label for="description">Description</label>
+        <br>
+        <input type="text" id="description" placeholder="Description">
+        <br>
+        <br>
+        <label for="price">Price</label>   
+        <br>
+        <input type="number" id="price" placeholder="Price">
+        <br>
+        <br>
+        <label for="discount">Discount</label>
+        <br>
+        <input type="number" id="discount" placeholder="Discount">
+        <br>
+        <br>
+        <label for="image">Image URL</label>
+        <br>
+        <input type="text" id="image" placeholder="Image URL">
+        <br><br>
+        <button class="add-btn" onclick="addProduct()">Add Product</button>
+    </div>
+
+    <br><br>
+    <div>
+        <h3>Filter Products</h3>
+        <input type="number" id="discount-filter" placeholder="Enter minimum discount">
+        <br><br>
+        <button class="filter-btn" onclick="filterProducts()">Filter products</button>
+    </div>
+    <br><br>
+
+    <div id="products-container"></div>
+
+</body>
+</html>
