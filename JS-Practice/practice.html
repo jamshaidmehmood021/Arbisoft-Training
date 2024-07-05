@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+    function myFunction() {
+        document.getElementById("demo").innerHTML = "Paragraph changed.";
+    }
+    function myFunction1() {
+        document.getElementById("demo1").innerHTML = "Paragraph1 changed.";
+    }
+    function alertFunction() {
+        window.alert(5 + 6);
+    }
+
+    function demo() {
+        // undeclared variables will automatially be declared when used first time
+    }
+
+</script>
+</head>
+
+<body>
+
+    <h2>Demo JavaScript in Head</h2>
+
+    <p id="demo">Paragraph.</p>
+    <p id="demo1">Paragraph1.</p>
+    <p id="demo2">Paragraph2.</p>
+    <p id="demo3">Paragraph3.</p>
+    <p id="demo4">Paragraph4.</p>
+    <p id="demo5"></p>
+    <p id="demo6"></p>
+    <p id="demo7"></p>
+    <p id="demo8"></p>
+    <p id="demo9">paragraph 9</p>
+
+    <button type="button" onclick="myFunction()">Try it</button>
+    <button type="button" onclick="myFunction1()">Try it for paragraph1</button>
+    <button type="button" onclick="alertFunction()">Click it for generating alert</button>
+    <!-- <button type="button" onclick="demo()">click it</button> -->
+    <br><br>
+    <p id="date"></p>
+    <button type="button" onclick="document.getElementById('date').innerHTML=Date()">Cllick for date</button></button>
+
+</body>
+<script>
+    x = 5;
+    y = 6;
+    z = x + y;
+    document.getElementById("demo2").innerHTML =
+        "The value of z is: " + z;
+</script>
+<script>
+    // Constructor Function for Person objects
+    function Person(first, last, age, eye) {
+        this.firstName = first;
+        this.lastName = last;
+        this.age = age;
+        this.eyeColor = eye;
+        this.fullName = function () {
+            return this.firstName + " " + this.lastName
+        };
+    }
+
+    // Create a Person object
+    const myFather = new Person("Mehmood", "Ahmad", 50, "blue");
+
+    // Display full name
+    document.getElementById("demo").innerHTML =
+        "My father is " + myFather.fullName();
+
+</script>
+<script>
+    const fruits = ["Banana", "Orange", "Apple", "Mango"];
+    let size = fruits.length;
+    document.getElementById("demo3").innerHTML = size;
+
+    document.getElementById("demo4").innerHTML = fruits.toString();
+
+    fruits.copyWithin(2, 0, 2);
+    const temp = [27, 28, 30, 40, 42, 35, 30];
+    let high = temp.findLast(x => x > 40);
+
+    document.getElementById("demo5").innerHTML = "The last temperature over 40 was " + high + " <br><br>" + temp.join("#") + "<br><br>" + temp.pop() + "<br><br>" + temp.shift();
+
+    const myGirls = ["Cecilie", "Lone"];
+    const myBoys = ["Emil", "Tobias", "Linus"];
+    const nums = [1, 2, 3];
+    const myChildren = myGirls.concat(myBoys);
+    const diverseArray = myChildren.concat(nums);
+
+
+
+    document.getElementById("demo6").innerHTML = myChildren + " <br><br>" + diverseArray;
+
+    //const fruits = ["Banana", "Orange", "Apple", "Mango"];
+    fruits.splice(2, 0, "Lemon", "Kiwi");
+
+    const fruits1 = ["Banana", "Orange", "Apple", "Mango"];
+
+    fruits1.splice(2, 2, "Lemon", "Kiwi");
+
+    const months = ["Jan", "Feb", "Mar", "Apr"];
+    const spliced = months.toSpliced(0, 1);
+
+    const citrus = fruits.slice(1);
+
+    document.getElementById("demo").innerHTML = fruits1 + "<br><br>" + fruits + "<br><br>" + spliced + "<br><br>" + months + "<br><br>" + citrus;
+</script>
+
+<!-- sort method for arrays -->
+<script>
+    const points = [40, 100, 1, 5, 25, 10];
+    document.getElementById("demo7").innerHTML = points;
+
+    function myFunction1() {
+        points.sort();
+        document.getElementById("demo7").innerHTML = points;
+    }
+
+    function myFunction2() {
+        points.sort(function (a, b) { return a - b });
+        document.getElementById("demo7").innerHTML = points;
+    }
+</script>
+<script>
+    const numbers1 = [45, 4, 9, 16, 25];
+    const numbers2 = numbers1.map(myFunction);
+
+    function myFunction(value) {
+        return value * 2;
+    }
+
+    const myArr = [1, 2, 3, 4, 5, 6];
+    const newArr = myArr.flatMap((x) => x * 2);
+    document.getElementById("demo8").innerHTML = newArr + "<br>" + myArr + "<br>" + numbers1 + "<br>" + numbers2;
+
+    // Create a Map
+    const fruitsMap = new Map([
+        ["apples", 500],
+        ["bananas", 300],
+        ["oranges", 200],
+        [1, "jamshaid"]
+    ]);
+
+    let numb = fruitsMap.get("apples");
+    document.getElementById("demo9").innerHTML = "There are " + numb + " apples." + "<br>" + fruitsMap.get(1);
+
+</script>
+
+
+</html>
