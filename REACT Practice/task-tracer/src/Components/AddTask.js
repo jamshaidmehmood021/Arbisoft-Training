@@ -46,8 +46,7 @@ function AddTask({onAdd}) {
         <div className="form-control form-control-check">
             <label>Reminder</label>
             <input type="checkbox" 
-            //this line is because if this line is not added then 
-            //it will not clear the reminder check box to unchecked
+            //this line is because if this line is not added then it will not clear the reminder check box to unchc
             checked={reminder}
             value={reminder}
             onChange={(e) => setReminder(e.currentTarget.checked)}
