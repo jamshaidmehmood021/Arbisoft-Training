@@ -2,15 +2,15 @@ let productsArray = [];
 
         document.addEventListener('DOMContentLoaded', loadProducts);
 
-        async function loadProducts() {
+        const loadProducts = async () => {
             const response = await fetch('https://dummyjson.com/products');
             const data = await response.json();
             productsArray = data.products;
             console.log(productsArray);
             displayProducts(productsArray);
-        }
-
-        function displayProducts(products) {
+        };
+        
+        const displayProducts = (products) => {
             const container = document.getElementById('products-container');
             container.innerHTML = '';
             products.forEach(product => {
@@ -25,33 +25,30 @@ let productsArray = [];
                 `;
                 container.appendChild(productCard);
             });
-        }
-
-        async function deleteProduct(productId) {
-            // deleting products from global array
+        };
+        
+        const deleteProduct = async (productId) => {
             productsArray = productsArray.filter(product => product.id !== productId);
-            console.log("Updated array after deletion is :",productsArray);
+            console.log("Updated array after deletion is :", productsArray);
             displayProducts(productsArray);
-        }
-
-        function filterProducts() {
+        };
+        
+        const filterProducts = () => {
             const discount = document.getElementById('discount-filter').value;
             const filteredProducts = productsArray.filter(product => product.discountPercentage >= discount);
             displayProducts(filteredProducts);
-        }
-
-        async function addProduct() {
+        };
+        
+        const addProduct = async () => {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const price = document.getElementById('price').value;
             const discount = document.getElementById('discount').value;
             const image = document.getElementById('image').value;
-
-            // getting the last element id
-            const lastID = productsArray.pop().id
-            //console.log(lastID)
-            const newID= lastID+1
-
+        
+            const lastID = productsArray.pop().id;
+            const newID = lastID + 1;
+        
             const newProduct = {
                 id: newID,
                 title: title,
@@ -61,7 +58,10 @@ let productsArray = [];
                 thumbnail: image,
                 images: [image]
             };
-
+        
             productsArray.push(newProduct);
             displayProducts(productsArray);
-        }
+        };
+
+        
+        
