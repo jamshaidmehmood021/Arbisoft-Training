@@ -1,10 +1,11 @@
 let productsArray = [];
 
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        
 
         const loadProducts = async () => {
-            const response = await fetch('https://dummyjson.com/products');
-            const data = await response.json();
+            const response =  await fetch('https://dummyjson.com/products');
+            console.log(response)
+            const data =  await response.json();
             productsArray = data.products;
             console.log(productsArray);
             displayProducts(productsArray);
@@ -63,5 +64,4 @@ let productsArray = [];
             displayProducts(productsArray);
         };
 
-        
-        
+        document.addEventListener('DOMContentLoaded', loadProducts);
