@@ -42,24 +42,23 @@
         "The value of z is: " + z;
 </script>
 <script>
-    // Constructor Function for Person objects
-    function Person(first, last, age, eye) {
-        this.firstName = first;
-        this.lastName = last;
-        this.age = age;
-        this.eyeColor = eye;
-        this.fullName = function () {
-            return this.firstName + " " + this.lastName
-        };
+        class Person {
+        constructor(first, last, age, eye) {
+            this.firstName = first;
+            this.lastName = last;
+            this.age = age;
+            this.eyeColor = eye;
+        }
+
+        fullName() {
+            return this.firstName + " " + this.lastName;
+        }
     }
 
-    // Create a Person object
     const myFather = new Person("Mehmood", "Ahmad", 50, "blue");
 
-    // Display full name
     document.getElementById("demo").innerHTML =
         "My father is " + myFather.fullName();
-
 </script>
 <script>
     const fruits = ["Banana", "Orange", "Apple", "Mango"];
