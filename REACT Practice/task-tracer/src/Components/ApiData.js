@@ -1,8 +1,9 @@
 import React,{useEffect, useState} from 'react'
+import Header from './Header';
 
 const ApiData = () => {
 
-    const [apiData, setApiData] = useState([]);
+  const [apiData, setApiData] = useState([]);
 
   useEffect(() => {
     // Simulating fetching data from an API
@@ -17,7 +18,11 @@ const ApiData = () => {
   }, []);
 
   return (
-    <div>
+    <>
+      <div>
+      <Header title="Task Tracker"/>
+      </div>
+      <div>
         {apiData.length > 0 ? (
         <div>
           <h2>Data fetched from the API:</h2>
@@ -37,7 +42,8 @@ const ApiData = () => {
       ) : (
         <p>Loading API data...</p>
       )}
-    </div>
+      </div>
+    </>
   )
 }
 

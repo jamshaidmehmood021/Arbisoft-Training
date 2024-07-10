@@ -1,9 +1,13 @@
 import { useState } from "react"
+import Header from "./Header"
+import DatePicker from "react-datepicker"
+import 'react-datepicker/dist/react-datepicker.css'
 
 function AddTask({onAdd}) {
     const [title , setTitle]=useState("")
-    const [day , setDay]=useState("")
+    const [day , setDay]=useState(new Date().toLocaleString())
     const [reminder , setReminder]=useState(false)
+
 
     const onSubmitHandler = (e) => {
         e.preventDefault()
@@ -14,7 +18,7 @@ function AddTask({onAdd}) {
         }
         if(!day)
         {
-                alert("Please enter the value of Day")
+            alert("Please enter the value of Day")
         }
 
         onAdd({title, day, reminder})
@@ -26,6 +30,11 @@ function AddTask({onAdd}) {
     }
 
   return (
+    <>
+    <div>
+        <Header title="Task Tracker"/>
+    </div>
+    <div>
     <form className="add-form" onSubmit={onSubmitHandler}>
         <div className="form-control">
             <label>Task</label>
@@ -36,12 +45,10 @@ function AddTask({onAdd}) {
             />
         </div>
         <div className="form-control">
-            <label>Day & Time</label>
-            <input type="text" 
-            placeholder="Add Day &Time" 
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            />
+            <label>Date</label>
+            {/* the reason of using .toLocaleString() is that 
+            react doesn't now hownto display the date object hence causeing issue */}
+            <DatePicker selected={day} onChange={(date) => setDay(date.toLocaleString())} />
         </div>
         <div className="form-control form-control-check">
             <label>Reminder</label>
@@ -55,6 +62,8 @@ function AddTask({onAdd}) {
 
         <input type="submit"  className="btn btn-block" value="Add Task" />
     </form>
+    </div>
+    </>
   )
 }
 
