@@ -1,9 +1,9 @@
 // {{color , text }} ---> this is because as the props are objects so these can be destructured like this 
 import PropTypes from 'prop-types'
 
-function Button({color , text , onClick}) {
+function Button({ color, text, onClick }) {
   return (
-    <button style={{background:color}} className='btn' onClick={onClick}>{text}</button>
+    <button style={{ background: color }} className='btn' onClick={onClick}>{text}</button>
   )
 }
 
@@ -15,9 +15,9 @@ function Button({color , text , onClick}) {
 // }
 
 Button.protoType = {
-    text : PropTypes.string,
-    color : PropTypes.string, 
-    onClick : PropTypes.func
+  text: PropTypes.string,
+  color: PropTypes.string,
+  onClick: PropTypes.func
 }
 
 export default Button

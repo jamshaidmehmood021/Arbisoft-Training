@@ -1,4 +1,4 @@
-import React , {useContext} from 'react'
+import React, { useContext } from 'react'
 import Button from './Button'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { AppContext } from '../Context/AppContext'
@@ -6,7 +6,7 @@ import { AppContext } from '../Context/AppContext'
 // for props data type for the rubestness in the code
 //import PropTypes from 'prop-types';
 
-const Header = ({title }) => {
+const Header = ({ title }) => {
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,8 +26,8 @@ const Header = ({title }) => {
   const handleTaskClick = () => {
     if (location.pathname === '/tasks') {
       navigate('/');
-    } else {  
-      if(location.pathname === '/addTask')
+    } else {
+      if (location.pathname === '/addTask')
         setShowAddForm(!showAddForm);
       navigate('/tasks');
     }
@@ -37,7 +37,7 @@ const Header = ({title }) => {
     if (location.pathname === '/showData') {
       navigate('/');
     } else {
-      if(location.pathname === '/addTask')
+      if (location.pathname === '/addTask')
         setShowAddForm(!showAddForm);
       navigate('/showData');
     }
@@ -48,12 +48,12 @@ const Header = ({title }) => {
   return (
     <>
       <header className='header'>
-       <h1> {title} </h1>
-       <Button text = "Tasks" collor = "blue" onClick={handleTaskClick}/>
-       <Button text = {showAddForm ? 'Close' : 'Add'} color={showAddForm ? 'red': "green"} onClick={handleAddFormClick}/>
-       <Button text = "API Data" color="steelblue" onClick={handleShowApiDataClick} />
+        <h1> {title} </h1>
+        <Button text="Tasks" collor="blue" onClick={handleTaskClick} />
+        <Button text={showAddForm ? 'Close' : 'Add'} color={showAddForm ? 'red' : "green"} onClick={handleAddFormClick} />
+        <Button text="API Data" color="steelblue" onClick={handleShowApiDataClick} />
       </header>
-      <hr/>
+      <hr />
     </>
   )
 }
