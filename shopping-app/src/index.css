@@ -66,3 +66,17 @@ img {
 .cartPage{
   margin: 30px;
 }
+.emptyCart {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.emptyCart h2 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.emptyCart p {
+  font-size: 18px;
+  color: #777;
+}

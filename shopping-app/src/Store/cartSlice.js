@@ -8,7 +8,10 @@ const cartSlice = createSlice({
         add(state, action){
             // in redux we have to do something like that:
             // return [...state, action.payload] 
-            state.push(action.payload)
+            const existingProduct = state.find(product => product.id === action.payload.id);
+            if (!existingProduct) {
+                state.push(action.payload);
+            }
 
         },
         remove(state, action){
