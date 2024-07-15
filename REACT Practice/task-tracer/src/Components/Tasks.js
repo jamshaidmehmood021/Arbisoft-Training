@@ -2,10 +2,11 @@ import React from "react";
 
 import Task from "./Task"
 import Header from "./Header";
+import { useSelector } from "react-redux";
 
-const Tasks = ({ tasks, onDelete, onToggle, onEdit }) => {
+const Tasks = () => {
+  const tasks = useSelector((state) => state.task)
 
-  // sconsole.log(tasks)
   return (
     <>
       <div>
@@ -16,7 +17,7 @@ const Tasks = ({ tasks, onDelete, onToggle, onEdit }) => {
         <div>
           {
             tasks.length > 0 ? (tasks.map((task) => (
-              <Task key={task.id} task={task} onDelete={onDelete} onToggle={onToggle} />
+              <Task key={task.id} task={task}/>
             ))) :
               ("No Task to Show")
           }

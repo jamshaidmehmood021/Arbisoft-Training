@@ -1,21 +1,25 @@
-import React,{useEffect, useState} from 'react'
+import React,{useEffect } from 'react'
 import Header from './Header';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchComments} from '../Store/commentSlice';
+import { STATUS } from "../Store/commentSlice";
+import { Bars } from 'react-loading-icons'
 
 const ApiData = () => {
-
-  const [apiData, setApiData] = useState([]);
+  
+  const dispatch = useDispatch()
+  const {data: apiData, status} = useSelector((state) => state.comment)
 
   useEffect(() => {
-    // Simulating fetching data from an API
-    fetch('https://jsonplaceholder.typicode.com/comments')
-      .then(response => response.json())
-      .then((data) => {console.log(data)
-        setApiData(data)})
-        .catch((error) => {
-          console.error("Error fetching data:", error)
-        })
-
+    dispatch(fetchComments())
   }, []);
+
+  if(status === STATUS.LOADING){
+        return <Bars stroke="red" />
+  }
+    if(status === STATUS.ERROR){
+        return <p>Something went Wrong .....</p>
+  }
 
   return (
     <>
@@ -23,7 +27,7 @@ const ApiData = () => {
       <Header title="Task Tracker"/>
       </div>
       <div>
-        {apiData.length > 0 ? (
+        
         <div>
           <h2>Data fetched from the API:</h2>
           <ul>
@@ -39,9 +43,6 @@ const ApiData = () => {
             ))}
           </ul>
         </div>
-      ) : (
-        <p>Loading API data...</p>
-      )}
       </div>
     </>
   )

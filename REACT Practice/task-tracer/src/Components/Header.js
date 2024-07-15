@@ -1,7 +1,9 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Button from './Button'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AppContext } from '../Context/AppContext'
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { toggleAddForm, toggleApiData } from '../Store/appSlice'
 
 // for props data type for the rubestness in the code
 //import PropTypes from 'prop-types';
@@ -11,7 +13,8 @@ const Header = ({ title }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { showAddForm, setShowAddForm, showApiData, setShowApiData } = useContext(AppContext);
+  const dispatch = useDispatch()
+  const { showAddForm } = useSelector((state) => state.app);
 
 
   const handleAddFormClick = () => {
@@ -20,7 +23,7 @@ const Header = ({ title }) => {
     } else {
       navigate('/addTask');
     }
-    setShowAddForm(!showAddForm);
+    dispatch(toggleAddForm())
   };
 
   const handleTaskClick = () => {
@@ -28,7 +31,7 @@ const Header = ({ title }) => {
       navigate('/');
     } else {
       if (location.pathname === '/addTask')
-        setShowAddForm(!showAddForm);
+        dispatch(toggleAddForm())
       navigate('/tasks');
     }
   };
@@ -38,10 +41,10 @@ const Header = ({ title }) => {
       navigate('/');
     } else {
       if (location.pathname === '/addTask')
-        setShowAddForm(!showAddForm);
+        dispatch(toggleAddForm())
       navigate('/showData');
     }
-    setShowApiData(!showApiData);
+    dispatch(toggleApiData())
   };
 
 
@@ -57,14 +60,4 @@ const Header = ({ title }) => {
     </>
   )
 }
-
-// // default props
-// Header.defaultProps = {
-//   title : "Task Tracker"
-// }
-// // props type
-// Header.propTypes = {
-//     title : PropTypes.string,
-// }
-
 export default Header
