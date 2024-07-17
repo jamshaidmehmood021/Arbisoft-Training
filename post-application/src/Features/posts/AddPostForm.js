@@ -1,13 +1,16 @@
 import React from 'react'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addPost } from './postSlice'
+// import { addPost } from './postSlice'
+import {addNewPost} from '../posts/postSlice'
 import { selectAllUsers } from '../users/userSlice'
+import { STATUS } from './postSlice'
 
 const AddPostForm = () => {
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
     const [userId, setUserId] = useState('')
+    const [requestStatus, setRequestStatus]= useState(STATUS.IDLE)
 
     const users = useSelector(selectAllUsers)
 
@@ -15,23 +18,26 @@ const AddPostForm = () => {
 
     const onAuthorChanged = e => setUserId(e.target.value)
 
+    const canSave = Boolean(title) && Boolean(content) && Boolean(userId) && (requestStatus === STATUS.IDLE)
+
     const savePostClickHandler = () =>{
-        if(title && content)
-        {
-            dispatch(addPost(title,content,userId))
-            // this is still good if you havnt implemented prepare callback in the reducer at the slice 
-            // dispatch(addPost({
-            //     id:nanoid(),
-            //     title,
-            //     content
-            // }))
-        }
-        setTitle("")
-        setContent("")  
-        setUserId("")  
+        if (canSave) {
+            try {
+                setRequestStatus(STATUS.LOADING)
+                dispatch(addNewPost({ title, body: content, userId })).unwrap()
+
+                setTitle('')
+                setContent('')
+                setUserId('')
+            } catch (err) {
+                console.error('Failed to save the post', err)
+            } finally {
+                setRequestStatus(STATUS.IDLE)
+            }
+        } 
     }
 
-    const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
+
 
     const usersOptions = users.map(user => (
         <option key={user.id} value={user.id}>

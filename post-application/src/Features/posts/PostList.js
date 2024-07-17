@@ -1,33 +1,38 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import React from 'react'
-import { selectAllPosts } from './postSlice';
-import Author from './Author';
-import TimeAgo from './Timeago';
-import ReactionsButtons from './ReactionsButtons';
+import { selectAllPosts, getAllPostsStatusses, fetchPosts } from './postSlice';
+import PostExercpt from './PostExercpt';
+import { Bars } from 'react-loading-icons'
+
+import { useEffect } from 'react';
+import { STATUS } from './postSlice';
 
 const PostList = () => {
+    const dispatch = useDispatch();
 
     const posts = useSelector(selectAllPosts);
-    const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
+    const statuses = useSelector(getAllPostsStatusses);
 
-    const renderedPosts = orderedPosts.map( (post) => (
-        <article key={post.id}>
-            <h3>{post.title}</h3>
-            <p>{post.content.substring(0, 100)}</p>
-            <p className='postCredit'>
-                <Author userId={post.userId}/>
-                <TimeAgo timestamp={post.date}/>
-            </p>
-            <ReactionsButtons post={post}/>
-        </article>
-    ));
+    useEffect(() =>{
+        if(statuses === STATUS.IDLE ){
+            dispatch(fetchPosts())
+        }
+    }, [statuses, dispatch])
 
 
-
+    let content;
+    if (statuses === STATUS.LOADING) {
+        content = <Bars stroke="#98ff98" />
+    } else if (statuses === STATUS.SUCCESS) {
+        const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
+        content = orderedPosts.map(post => <PostExercpt key={post.id} post={post} />)
+    } else if (statuses === STATUS.ERROR) {
+        content = <p>Something went wrong</p>;
+    }
     return (
         <section>
             <h2>Posts</h2>
-            {renderedPosts}
+            {content}
         </section>
     )
 }
