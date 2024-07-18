@@ -112,12 +112,12 @@
     const points = [40, 100, 1, 5, 25, 10];
     document.getElementById("demo7").innerHTML = points;
 
-    function myFunction1() {
+    const myFunction1 = () => {
         points.sort();
         document.getElementById("demo7").innerHTML = points;
     }
 
-    function myFunction2() {
+    const myFunction2 = () =>{
         points.sort(function (a, b) { return a - b });
         document.getElementById("demo7").innerHTML = points;
     }
@@ -126,7 +126,7 @@
     const numbers1 = [45, 4, 9, 16, 25];
     const numbers2 = numbers1.map(myFunction);
 
-    function myFunction(value) {
+    const myFunction = (value) => {
         return value * 2;
     }
 
