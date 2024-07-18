@@ -112,21 +112,21 @@
     const points = [40, 100, 1, 5, 25, 10];
     document.getElementById("demo7").innerHTML = points;
 
-    const myFunction1 = () => {
+    const sortFunctionality= () => {
         points.sort();
         document.getElementById("demo7").innerHTML = points;
     }
 
-    const myFunction2 = () =>{
+    const sortFunctionOnIntegers = () =>{
         points.sort(function (a, b) { return a - b });
         document.getElementById("demo7").innerHTML = points;
     }
 </script>
 <script>
     const numbers1 = [45, 4, 9, 16, 25];
-    const numbers2 = numbers1.map(myFunction);
+    const numbers2 = numbers1.map(multiplyByTwo);
 
-    const myFunction = (value) => {
+    const multiplyByTwo = (value) => {
         return value * 2;
     }
 
