@@ -1,23 +1,24 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import React from 'react'
-import { selectAllPosts, getAllPostsStatusses, fetchPosts } from './postSlice';
+import { selectAllPosts, getAllPostsStatusses } from './postSlice';
 import PostExercpt from './PostExercpt';
 import { Bars } from 'react-loading-icons'
 
-import { useEffect } from 'react';
+// use effect is not needed if we are fetching the posts on the DOM load in the index.js
+//import { useEffect } from 'react';
 import { STATUS } from './postSlice';
 
 const PostList = () => {
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
 
     const posts = useSelector(selectAllPosts);
     const statuses = useSelector(getAllPostsStatusses);
 
-    useEffect(() =>{
-        if(statuses === STATUS.IDLE ){
-            dispatch(fetchPosts())
-        }
-    }, [statuses, dispatch])
+    // useEffect(() =>{
+    //     if(statuses === STATUS.IDLE ){
+    //         dispatch(fetchPosts())
+    //     }
+    // }, [statuses, dispatch])
 
 
     let content;
@@ -31,7 +32,6 @@ const PostList = () => {
     }
     return (
         <section>
-            <h2>Posts</h2>
             {content}
         </section>
     )

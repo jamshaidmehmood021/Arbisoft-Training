@@ -11,8 +11,11 @@ const Navbar = () => {
                 justifyContent: 'space-between',
                 marginTop: '50px'
             }}
+            className='navbar'
         >
-            <span className="logo">POST APP</span>
+            <h1><span className="logo"><Link className="navLink" to="/">
+                POST APP
+            </Link></span></h1>
             <div>
                 <Link className="navLink" to="/">
                     Home
