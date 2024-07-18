@@ -1,13 +1,9 @@
 let productsArray = [];
 
-        
-
         const loadProducts = async () => {
             const response =  await fetch('https://dummyjson.com/products');
-            console.log(response)
             const data =  await response.json();
             productsArray = data.products;
-            console.log(productsArray);
             displayProducts(productsArray);
         };
         
@@ -30,7 +26,6 @@ let productsArray = [];
         
         const deleteProduct = async (productId) => {
             productsArray = productsArray.filter(product => product.id !== productId);
-            console.log("Updated array after deletion is :", productsArray);
             displayProducts(productsArray);
         };
         
