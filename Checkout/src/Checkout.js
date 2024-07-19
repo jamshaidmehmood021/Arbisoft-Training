@@ -64,7 +64,7 @@ const Checkout = () => {
       setLoading(false);
     };
     fetchProducts();
-  });
+  }, []);
 
 
   const handleAdd = (id) => {
