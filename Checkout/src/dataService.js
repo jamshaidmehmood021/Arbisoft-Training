@@ -5,11 +5,11 @@ export function getProducts() {
 
 function getData(endpoint) {
     const delay = (0.5 + Math.random() * 2) * 1000;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         setTimeout(function () {
             fetch(endpoint)
                 .then(res => {
-                    resolve(res.json())
+                    resolve(res.json());
                 });
         }, delay);
     });
