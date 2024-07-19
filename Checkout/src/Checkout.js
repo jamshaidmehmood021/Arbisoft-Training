@@ -31,7 +31,7 @@ const Product = ({ id, name, availableCount, price, orderedQuantity, total, onAd
       <td>{availableCount}</td>
       <td>${price}</td>
       <td>{orderedQuantity}</td>
-      <td>${total}</td>
+      <td>${total.toFixed(2)}</td>
       <td>
         <button 
           className={styles.actionButton} 
