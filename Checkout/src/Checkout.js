@@ -1,7 +1,7 @@
 import styles from './Checkout.module.css';
 import { LoadingIcon } from './Icons';
 import { getProducts } from './dataService';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 
 // You are provided with an incomplete <Checkout /> component.
@@ -59,17 +59,13 @@ const Checkout = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const data = await getProducts();
-      // console.log(data)
-      
-      // appending ordered quantity key to the existing data received 
       const updatedDataWithQuantity= data.map(product => ({ ...product, orderedQuantity: 0 }))
-      // console.log(updatedDataWithQuantity)
       setProducts(updatedDataWithQuantity);
       setLoading(false);
     };
 
     fetchProducts();
-  }, []);
+  });
 
 
   const handleAdd = (id) => {
