@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFoods, deleteFoodEntry } from '../Features/Food/foodSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -15,6 +17,7 @@ const AdminDashboard = () => {
 
   const handleDeleteClick = (id) => {
     dispatch(deleteFoodEntry(id));
+    toast.error("Food Item Deleted!");
   };
 
   return (
@@ -49,6 +52,7 @@ const AdminDashboard = () => {
           </tbody>
         </table>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

@@ -12,15 +12,15 @@ export const signUp = createAsyncThunk('user/signUp', async (credentials, { reje
     try {
       
       const response = await axios.get(`http://localhost:5000/users?email=${credentials.email}`);
-      console.log(response.data);
+      console.log(response)
       
-      if (response) {
+      if (response.length > 0) {
         return rejectWithValue('User already exists');
       }
-      else{
-        const createResponse = await axios.post('http://localhost:5000/users', credentials);
-        return createResponse.data;
-      }
+
+      const createResponse = await axios.post('http://localhost:5000/users', credentials);
+      return createResponse.data;
+
       
     } catch (error) {
       return rejectWithValue(error.response ? error.response.data : error.message);
@@ -55,6 +55,7 @@ const userSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      localStorage.removeItem('user');
     },
   },
   extraReducers: (builder) => {
@@ -83,6 +84,6 @@ export const { logout } = userSlice.actions;
 export const selectIsAuthenticated = (state) => state.users.isAuthenticated;
 export const selectAuthError = (state) => state.users.authError;
 export const selectIsAdmin = (state) => state.users.isAdmin;
-export const selectIsSignedUp = (state) => state.users.signedUp
+export const selectIsSignedUp = (state) => state.users.signedUp;
 
 export default userSlice.reducer;

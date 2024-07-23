@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { updateFoodEntry, selectFoodById, STATUS } from '../Features/Food/foodSlice';
 import { useParams, useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 const EditFoodEntry = () => {
   const { foodId } = useParams();
@@ -82,10 +84,13 @@ const EditFoodEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if ([foodName, calories, dateTime].every(Boolean) && requestStatus === STATUS.IDLE) {
+    if (foodName && calories && dateTime && requestStatus === STATUS.IDLE) {
       try {
         setRequestStatus(STATUS.PENDING);
         await dispatch(updateFoodEntry({ id: foodId, foodName, calories, dateTime })).unwrap();
+        
+        toast.success("Food Item Edited!");
+
         navigate('/home');
       } catch (err) {
         console.error('Failed to save the food entry', err);
@@ -150,6 +155,7 @@ const EditFoodEntry = () => {
           Save Changes
         </button>
       </form>
+      <ToastContainer/>
     </div>
   );
 };

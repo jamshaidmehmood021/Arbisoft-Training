@@ -95,5 +95,6 @@ const foodSlice = createSlice({
 });
 
 export const selectFoodById = (state , foodId) => state.foods.foods.find((food) => food.id === foodId)
+export const selectDood = (state) => state.foods.foods;
 
 export default foodSlice.reducer;

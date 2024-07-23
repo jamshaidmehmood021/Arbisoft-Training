@@ -11,10 +11,12 @@ import { useSelector } from 'react-redux';
 import AdminDashboard from './Pages/AdminDashboard';
 import AdminReport from './Pages/AdminReport';
 import EditFoodEntry from './Pages/EditFoodEntry';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
-  const isAuthenticated = useSelector((state) => state.users.isAuthenticated);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = JSON.parse(localStorage.getItem('user'));
   const isAdmin = user && user.email === 'admin@gmail.com';
 
@@ -73,6 +75,7 @@ function App() {
         )}
         </Routes>
       </BrowserRouter>
+      <ToastContainer/>
     </div>
   );
 }

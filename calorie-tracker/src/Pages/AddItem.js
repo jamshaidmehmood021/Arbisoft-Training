@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { addFoodEntry } from '../Features/Food/foodSlice';
 import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
+
+const DAILY_CALORIE_LIMIT = 2.100;
 
 const AddItem = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [foodName, setFoodName] = useState('');
   const [calories, setCalories] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [selectedFood, setSelectedFood] = useState('')
+  const [selectedFood, setSelectedFood] = useState('');
   
-  const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('user'));
+  const username = user ? user.email : '';
+  const foods = useSelector((state) => state.foods.foods);
+  
 
   const fetchSuggestions = async (query) => {
     try {
@@ -35,7 +42,7 @@ const AddItem = () => {
   useEffect(() => {
     if (foodName.length > 1) {
       fetchSuggestions(foodName);
-      setSuggestions([])
+      setSuggestions([]);
     }
   }, [foodName]);
 
@@ -43,9 +50,7 @@ const AddItem = () => {
     try {
       const response = await axios.post(
         'https://trackapi.nutritionix.com/v2/natural/nutrients',
-        {
-          query: query 
-        },
+        { query },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -60,7 +65,6 @@ const AddItem = () => {
       console.error('Error fetching nutrients:', error.response ? error.response.data : error.message);
     }
   };
-  
 
   const handleSuggestionSelect = async (e) => {
     const selected = e.target.value;
@@ -74,17 +78,32 @@ const AddItem = () => {
     setSuggestions([]);
   };
 
-  
-  const handleSubmit = (e) => {
+  const checkDailyCalorieLimit = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const dailyTotal = foods
+      .filter(food => food.username === username && food.dateTime.startsWith(today))
+      .reduce((total, food) => total + food.calories, 0);
+
+    return dailyTotal + parseFloat(calories) > DAILY_CALORIE_LIMIT;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (checkDailyCalorieLimit()) {
+      alert(`You are about to exceed your daily limit of ${DAILY_CALORIE_LIMIT} calories for ${new Date(dateTime).toLocaleDateString()}`);
+    }
+
     const newEntry = {
       foodName,
       calories,
       dateTime,
-      username: JSON.parse(localStorage.getItem('user')).email
+      username
     };
-    dispatch(addFoodEntry(newEntry));
-    navigate('/home')
+
+    await dispatch(addFoodEntry(newEntry));
+    toast.success('Food entry added successfully!');
+    navigate('/home');
   };
 
   return (
@@ -123,15 +142,14 @@ const AddItem = () => {
                 </option>
               ))}
             </select>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          </>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            </>
           )}
-          
         </div>
         <div className="mb-5">
           <label
@@ -157,6 +175,7 @@ const AddItem = () => {
           Submit
         </button>
       </form>
+      <ToastContainer />
     </div>
   );
 };

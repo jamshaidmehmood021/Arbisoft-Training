@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, selectAuthError, selectIsAuthenticated } from '../Features/users/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-//import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 const LogIn = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const LogIn = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      toast.success("User Logged In!");
       navigate('/home');
     }
   }, [isAuthenticated]);
@@ -67,9 +69,9 @@ const LogIn = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </section>
   );
 };
 
 export default LogIn;
-
