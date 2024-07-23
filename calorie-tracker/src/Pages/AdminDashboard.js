@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchFoods, deleteFoodEntry } from '../Features/Food/foodSlice';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -52,7 +52,6 @@ const AdminDashboard = () => {
           </tbody>
         </table>
       </div>
-      <ToastContainer/>
     </div>
   );
 };

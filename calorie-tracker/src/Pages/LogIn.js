@@ -4,7 +4,7 @@ import { login, selectAuthError, selectIsAuthenticated } from '../Features/users
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const LogIn = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const LogIn = () => {
   const authError = useSelector(selectAuthError);
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(login({ email, password }));
   };
@@ -23,8 +23,10 @@ const LogIn = () => {
     if (isAuthenticated) {
       toast.success("User Logged In!");
       navigate('/home');
+    } else if (authError) {
+      toast.error(authError);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, authError, navigate]);
 
   return (
     <section>
@@ -38,7 +40,7 @@ const LogIn = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Log In
             </h1>
-            {authError && <p className="text-red-600">{authError}</p>}
+            {/* {authError && <p className="text-red-600">{authError}</p>} */}
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
@@ -69,7 +71,6 @@ const LogIn = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </section>
   );
 };

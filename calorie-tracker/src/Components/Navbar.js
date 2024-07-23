@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectIsAuthenticated, logout } from '../Features/users/userSlice';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const isAdmin = user && user.email === 'admin@gmail.com';
+    const isAdmin = user && user === 'admin@gmail.com';
 
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const dispatch = useDispatch();
@@ -14,6 +15,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         dispatch(logout());
+        toast.success("Log Out")
     };
 
     return (

@@ -21,7 +21,7 @@ export const addFoodEntry = createAsyncThunk('foods/addFoodEntry', async (newEnt
 });
 
 export const fetchFoods = createAsyncThunk('foods/fetchFoods', async () => {
-  const currUser = JSON.parse(localStorage.getItem('user')).email;
+  const currUser = JSON.parse(localStorage.getItem('user'));
   let response;
   if (currUser === 'admin@gmail.com') {
     response = await axios.get('http://localhost:5000/foods');
@@ -96,5 +96,6 @@ const foodSlice = createSlice({
 
 export const selectFoodById = (state , foodId) => state.foods.foods.find((food) => food.id === foodId)
 export const selectDood = (state) => state.foods.foods;
+export const selectError = (state)=> state.foods.error;
 
 export default foodSlice.reducer;

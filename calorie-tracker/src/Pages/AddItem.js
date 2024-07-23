@@ -4,7 +4,8 @@ import axios from 'axios';
 import { addFoodEntry } from '../Features/Food/foodSlice';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import { STATUS, selectError } from '../Features/Food/foodSlice';
 
 
 const DAILY_CALORIE_LIMIT = 2.100;
@@ -17,9 +18,12 @@ const AddItem = () => {
   const [dateTime, setDateTime] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedFood, setSelectedFood] = useState('');
+
+  const reqStatus = useSelector((state)=> state.foods.status);
+  const error = useSelector(selectError);
   
-  const user = JSON.parse(localStorage.getItem('user'));
-  const username = user ? user.email : '';
+  const username = JSON.parse(localStorage.getItem('user'));
+  //const username = user ? user.email : '';
   const foods = useSelector((state) => state.foods.foods);
   
 
@@ -91,7 +95,7 @@ const AddItem = () => {
     e.preventDefault();
 
     if (checkDailyCalorieLimit()) {
-      alert(`You are about to exceed your daily limit of ${DAILY_CALORIE_LIMIT} calories for ${new Date(dateTime).toLocaleDateString()}`);
+      toast.warning(`You are about to exceed your daily limit of ${DAILY_CALORIE_LIMIT} calories for ${new Date(dateTime).toLocaleDateString()}`);
     }
 
     const newEntry = {
@@ -101,9 +105,16 @@ const AddItem = () => {
       username
     };
 
-    await dispatch(addFoodEntry(newEntry));
-    toast.success('Food entry added successfully!');
-    navigate('/home');
+    dispatch(addFoodEntry(newEntry));
+    if(reqStatus === STATUS.SUCCESS){
+      toast.success('Food entry added successfully!');
+      navigate('/home');
+    }
+    else{
+      toast.error(error);
+    }
+    
+    
   };
 
   return (
@@ -175,7 +186,6 @@ const AddItem = () => {
           Submit
         </button>
       </form>
-      <ToastContainer />
     </div>
   );
 };

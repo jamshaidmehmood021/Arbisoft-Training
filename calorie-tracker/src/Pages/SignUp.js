@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { signUp, selectAuthError, selectIsSignedUp} from '../Features/users/userSlice';
+import { signUp, selectAuthError, selectIsSignedUp } from '../Features/users/userSlice';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
 
     const navigate = useNavigate();
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
@@ -18,18 +17,18 @@ const SignUp = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(signUp({ email, password }));
-      };
-    
+    };
 
     useEffect(() => {
         if (isSignedUp) {
-          toast.success("User Signed Up!");
-          navigate('/home');
+            toast.success("User Created Successfully!");
+            navigate('/home');
+        } else if (authError) {
+            toast.error(authError);
         }
-      }, [isSignedUp]);
+    }, [isSignedUp, authError, navigate]);
 
     return (
-
         <section>
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -41,7 +40,6 @@ const SignUp = () => {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Sign Up
                         </h1>
-                        {authError && <p className="text-red-600">{authError}</p>}
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
@@ -63,11 +61,10 @@ const SignUp = () => {
                                 <a href="#" className="text-sm font-medium text-primary-600 hover:underline dark:text-gray-300">Forgot password?</a>
                             </div>
                             <center><button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Sign Up</button> </center>
-                            </form>
+                        </form>
                     </div>
                 </div>
             </div>
-            <ToastContainer />
         </section>
     )
 }

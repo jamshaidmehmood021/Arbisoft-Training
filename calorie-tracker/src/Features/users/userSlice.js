@@ -12,9 +12,8 @@ export const signUp = createAsyncThunk('user/signUp', async (credentials, { reje
     try {
       
       const response = await axios.get(`http://localhost:5000/users?email=${credentials.email}`);
-      console.log(response)
-      
-      if (response.length > 0) {
+    
+      if (response.data > 0) {
         return rejectWithValue('User already exists');
       }
 
@@ -28,23 +27,26 @@ export const signUp = createAsyncThunk('user/signUp', async (credentials, { reje
   });
   
 
-export const login = createAsyncThunk('user/login', async (credentials, { rejectWithValue }) => {
+  export const login = createAsyncThunk('user/login', async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:5000/users');
-      const users = response.data;
-      const user = users.find(user => user.email === credentials.email && user.password === credentials.password);
-      if (!user) {
-        return rejectWithValue('User not found');
-      }
-  
-      if (user.password !== credentials.password) {
-        return rejectWithValue('Incorrect password');
-      }
-      return user;
+        const response = await axios.get(`http://localhost:5000/users?email=${credentials.email}`);
+        const users = response.data;
+        
+        if (users.length === 0) {
+            return rejectWithValue('User not found');
+        }
+
+        const user = users[0];
+
+        if (user.password !== credentials.password) {
+            return rejectWithValue('Incorrect password');
+        }
+
+        return user;
     } catch (error) {
-      return rejectWithValue(error.message);
+        return rejectWithValue(error.message);
     }
-  });
+});
 
   
 
@@ -63,7 +65,7 @@ const userSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
       state.authError = null;
-      localStorage.setItem('user', JSON.stringify(action.payload));
+      localStorage.setItem('user', JSON.stringify(action.payload.email));
     });
     builder.addCase(login.rejected, (state, action) => {
       state.authError = action.payload;
