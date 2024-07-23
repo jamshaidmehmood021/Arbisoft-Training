@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { signUp, selectAuthError, selectIsAuthenticated } from '../Features/users/userSlice';
+import { signUp, selectAuthError, selectIsSignedUp } from '../Features/users/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
@@ -11,15 +11,14 @@ const SignUp = () => {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
     const authError = useSelector(selectAuthError);
-    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const isSignedUp = useSelector(selectIsSignedUp);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(signUp({ email, password }));
-        if (isAuthenticated) {
-            navigate('/home')
+        if(isSignedUp){
+            navigate('/')
         }
-
     };
 
     return (

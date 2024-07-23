@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { addFoodEntry } from '../Features/Food/foodSlice';
-import { useNavigate } from 'react-router-dom';
+import { updateFoodEntry, selectFoodById, STATUS } from '../Features/Food/foodSlice';
+import { useParams, useNavigate } from 'react-router-dom';
 
-
-const AddItem = () => {
+const EditFoodEntry = () => {
+  const { foodId } = useParams();
   const navigate = useNavigate();
-
-  const [foodName, setFoodName] = useState('');
-  const [calories, setCalories] = useState('');
-  const [dateTime, setDateTime] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedFood, setSelectedFood] = useState('')
-  
   const dispatch = useDispatch();
+  const food = useSelector((state) => selectFoodById(state, Number(foodId)));
+  const [foodName, setFoodName] = useState(food?.foodName || '');
+  const [calories, setCalories] = useState(food?.calories || '');
+  const [dateTime, setDateTime] = useState(food?.dateTime || '');
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedFood, setSelectedFood] = useState('');
+  const [requestStatus, setRequestStatus] = useState(STATUS.IDLE);
+
+  useEffect(() => {
+    if (food) {
+      setFoodName(food.foodName);
+      setCalories(food.calories);
+      setDateTime(food.dateTime);
+    }
+  }, [food]);
 
   const fetchSuggestions = async (query) => {
     try {
@@ -23,7 +31,7 @@ const AddItem = () => {
         headers: {
           'Content-Type': 'application/json',
           'x-app-id': 'bc28a3d1', 
-          'x-app-key': '86d3b74b081e66cb15e650e2713594d0' 
+          'x-app-key': '86d3b74b081e66cb15e650e2713594d0'
         }
       });
       setSuggestions(response.data.common);
@@ -35,7 +43,7 @@ const AddItem = () => {
   useEffect(() => {
     if (foodName.length > 1) {
       fetchSuggestions(foodName);
-      setSuggestions([])
+      setSuggestions([]);
     }
   }, [foodName]);
 
@@ -55,12 +63,10 @@ const AddItem = () => {
         }
       );
       return response.data.foods[0].nf_calories; 
-  
     } catch (error) {
       console.error('Error fetching nutrients:', error.response ? error.response.data : error.message);
     }
   };
-  
 
   const handleSuggestionSelect = async (e) => {
     const selected = e.target.value;
@@ -74,31 +80,27 @@ const AddItem = () => {
     setSuggestions([]);
   };
 
-  
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newEntry = {
-      foodName,
-      calories,
-      dateTime,
-      username: JSON.parse(localStorage.getItem('user')).email
-    };
-    dispatch(addFoodEntry(newEntry));
-    navigate('/home')
+    if ([foodName, calories, dateTime].every(Boolean) && requestStatus === STATUS.IDLE) {
+      try {
+        setRequestStatus(STATUS.PENDING);
+        await dispatch(updateFoodEntry({ id: foodId, foodName, calories, dateTime })).unwrap();
+        navigate('/home');
+      } catch (err) {
+        console.error('Failed to save the food entry', err);
+      } finally {
+        setRequestStatus(STATUS.IDLE);
+      }
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <form onSubmit={handleSubmit} className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Add Food Entry</h2>
-
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Edit Food Entry</h2>
         <div className="mb-5 relative">
-          <label
-            htmlFor="food-name"
-            className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Food/Product Name
-          </label>
+          <label htmlFor="food-name" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Food/Product Name</label>
           <input
             type="text"
             id="food-name"
@@ -118,28 +120,20 @@ const AddItem = () => {
             >
               <option value="" disabled>Select a suggestion</option>
               {suggestions.map((food, index) => (
-                <option key={index} value={food.food_name}>
-                  {food.food_name}
-                </option>
+                <option key={index} value={food.food_name}>{food.food_name}</option>
               ))}
             </select>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          </>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            </>
           )}
-          
         </div>
         <div className="mb-5">
-          <label
-            htmlFor="date-time"
-            className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Date/Time
-          </label>
+          <label htmlFor="date-time" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Date/Time</label>
           <input
             type="datetime-local"
             id="date-time"
@@ -149,16 +143,15 @@ const AddItem = () => {
             required
           />
         </div>
-
         <button
           type="submit"
           className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          Submit
+          Save Changes
         </button>
       </form>
     </div>
   );
 };
 
-export default AddItem;
+export default EditFoodEntry;

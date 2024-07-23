@@ -11,9 +11,101 @@
       "id": 2
     },
     {
-      "email": "jamshaid12@gmail.com",
-      "password": "shshshshshshs",
+      "email": "admin@gmail.com",
+      "password": "admin",
       "id": 3
+    }
+  ],
+  "foods": [
+    {
+      "id": 7,
+      "foodName": "broiled fish collar",
+      "calories": 233.72,
+      "dateTime": "2024-07-26T06:12"
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 8
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 9
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 10
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 11
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 12
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 13
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 14
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 15
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 16
+    },
+    {
+      "foodName": "hamachi kama",
+      "calories": 233.72,
+      "dateTime": "2024-07-07T18:12",
+      "username": "jamshaid@gmail.com",
+      "id": 17
+    },
+    {
+      "foodName": "chicken broth",
+      "calories": 14.94,
+      "dateTime": "2024-07-31T12:54",
+      "username": "jamshaid1@gmail.com",
+      "id": 18
+    },
+    {
+      "foodName": "1% milk",
+      "calories": 102.48,
+      "dateTime": "2024-07-09T14:31",
+      "username": "jamshaid@gmail.com",
+      "id": 19
     }
   ]
 }
