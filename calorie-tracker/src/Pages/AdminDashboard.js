@@ -4,6 +4,8 @@ import { fetchFoods, deleteFoodEntry } from '../Features/Food/foodSlice';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+import { MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -12,8 +14,6 @@ const AdminDashboard = () => {
   useEffect(() => {
     dispatch(fetchFoods());
   }, [dispatch]);
-
- 
 
   const handleDeleteClick = (id) => {
     dispatch(deleteFoodEntry(id));
@@ -43,9 +43,18 @@ const AdminDashboard = () => {
                 <td className="px-6 py-4">{food.calories}</td>
                 <td className="px-6 py-4">{food.dateTime}</td>
                 <td className="px-6 py-4">{food.username}</td>
-                <td className="px-6 py-4">
-                  <button className="px-4 py-2 text-white bg-yellow-500 rounded-md"><Link to={`/food/edit/${food.id}`}>Edit</Link></button>
-                  <button onClick={() => handleDeleteClick(food.id)} className="px-4 py-2 ml-2 text-white bg-red-600 rounded-md">Delete</button>
+                <td className="px-6 py-4 flex items-center space-x-2">
+                  <Link to={`/food/edit/${food.id}`}>
+                    <FaEdit
+                      className="cursor-pointer text-yellow-500 hover:text-yellow-700"
+                      size={24}
+                    />
+                  </Link>
+                  <MdDelete
+                    className="cursor-pointer text-red-500 hover:text-red-700"
+                    size={24}
+                    onClick={() => handleDeleteClick(food.id)}
+                  />
                 </td>
               </tr>
             ))}
