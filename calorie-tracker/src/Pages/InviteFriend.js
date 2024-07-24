@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
 
 const InviteFriend = () => {
   const form = useRef();
 
-  const handleInvite = (e) => {
+  const handleInvite = useCallback(((e) => {
     e.preventDefault();
     emailjs
       .sendForm('service_egvm5ap', 'template_zx4cp3b', form.current, 'xjSvbJdjEwRctXcN-')
@@ -17,7 +17,7 @@ const InviteFriend = () => {
           toast.error('Failed to send invite', error.text);
         },
       );
-  };
+  }),[]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">

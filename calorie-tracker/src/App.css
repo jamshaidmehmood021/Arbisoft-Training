@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+pre {
+  white-space: pre-wrap; 
+  overflow-x: auto; 
+}
+

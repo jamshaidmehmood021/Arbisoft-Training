@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFoods } from '../Features/Food/foodSlice';
 import Card from '../Components/Card';
@@ -15,20 +15,24 @@ const Home = () => {
     dispatch(fetchFoods());
   }, [dispatch]);
 
-  const groupFoodsByDate = (foods) => {
-    const grouped = foods.reduce((acc, food) => {
-      const date = new Date(food.dateTime).toLocaleDateString();
-      if (!acc[date]) {
-        acc[date] = { totalCalories: 0, foods: [] };
-      }
-      acc[date].totalCalories += food.calories;
-      acc[date].foods.push(food);
-      return acc;
-    }, {});
-    return grouped;
-  };
-  const groupedFoods = groupFoodsByDate(foods);
+  const groupedFoods = useMemo(() => {
+    const groupFoodsByDate = (foods) => {
+      const grouped = foods.reduce((acc, food) => {
+        const date = new Date(food.dateTime).toLocaleDateString();
+        if (!acc[date]) {
+          acc[date] = { totalCalories: 0, foods: [] };
+        }
+        acc[date].totalCalories += food.calories;
+        acc[date].foods.push(food);
+        return acc;
+      }, {});
+      return grouped;
+    };
 
+    return groupFoodsByDate(foods);
+  }, [foods]);
+
+  
   if (status === 'loading') {
     return (
       <div className="flex justify-center items-center min-h-screen">

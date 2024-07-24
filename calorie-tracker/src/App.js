@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import './App.css';
-import SignUp from './Pages/SignUp';
-import LogIn from './Pages/LogIn';
 import Navbar from './Components/Navbar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './Pages/Home';
-import AddItem from './Pages/AddItem';
 import ErrorBoundary from './ErrorBoundary';
 import { selectIsAuthenticated } from './Features/users/userSlice';
 import { useSelector } from 'react-redux';
-import AdminDashboard from './Pages/AdminDashboard';
-import AdminReport from './Pages/AdminReport';
-import EditFoodEntry from './Pages/EditFoodEntry';
-import InviteFriend from './Pages/InviteFriend';
+import { Bars } from 'react-loading-icons';
+
+
+const Home = lazy(() => import('./Pages/Home'));
+const SignUp = lazy(() => import('./Pages/SignUp'));
+const LogIn = lazy(() => import('./Pages/LogIn'));
+const AddItem = lazy(() => import('./Pages/AddItem'));
+const AdminDashboard = lazy(() => import('./Pages/AdminDashboard'));
+const AdminReport = lazy(() => import('./Pages/AdminReport'));
+const EditFoodEntry = lazy(() => import('./Pages/EditFoodEntry'));
+const InviteFriend = lazy(() => import('./Pages/InviteFriend'));
 
 function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -20,71 +23,28 @@ function App() {
   const isAdmin = user && user === 'admin@gmail.com';
 
   return (
-    <div className="app">
+    <ErrorBoundary>
       <BrowserRouter>
         <Navbar />
-        <Routes>
-          <Route path="/home" element={ isAuthenticated ?
-            <ErrorBoundary>
-              <Home />
-            </ErrorBoundary> : 
-            <ErrorBoundary>
-            <LogIn />
-          </ErrorBoundary> 
-          } />
-          <Route path="/" element={
-            <ErrorBoundary>
-              <LogIn />
-            </ErrorBoundary>
-          } />
-          <Route path="/signUp" element={
-            <ErrorBoundary>
-              <SignUp />
-            </ErrorBoundary>
-          } />
-          <Route path="/addFood" element={  isAuthenticated ?
-            <ErrorBoundary>
-              <AddItem />
-            </ErrorBoundary> :
-            <ErrorBoundary>
-              <LogIn />
-            </ErrorBoundary> 
-          } />
-          <Route path="/invite" element={  isAuthenticated ?
-            <ErrorBoundary>
-              <InviteFriend/>
-            </ErrorBoundary> :
-            <ErrorBoundary>
-              <LogIn />
-            </ErrorBoundary> 
-          } />
+        <Suspense fallback={<div> <Bars /></div>}>
+          <Routes>
+            <Route path="/home" element={isAuthenticated ? <Home /> : <LogIn />} />
+            <Route path="/" element={<LogIn />} />
+            <Route path="/signUp" element={<SignUp />} />
+            <Route path="/addFood" element={isAuthenticated ? <AddItem /> : <LogIn />} />
+            <Route path="/invite" element={isAuthenticated ? <InviteFriend /> : <LogIn />} />
 
-
-        {isAdmin && (
-          <>
-            <Route path="/adminDashboard" element={
-              <ErrorBoundary>
-                <AdminDashboard />
-              </ErrorBoundary>} 
-              />
-            <Route path="/report" element={
-              <ErrorBoundary>
-                <AdminReport />
-                </ErrorBoundary>
-              } 
-              />
-            <Route path = "/food/edit/:foodId" element={
-              <ErrorBoundary>
-                <EditFoodEntry/>
-                </ErrorBoundary>
-                }
-              />
-          </>
-        )}
-        </Routes>
+            {isAdmin && (
+              <>
+                <Route path="/adminDashboard" element={<AdminDashboard />} />
+                <Route path="/report" element={<AdminReport />} />
+                <Route path="/food/edit/:foodId" element={<EditFoodEntry />} />
+              </>
+            )}
+          </Routes>
+        </Suspense>
       </BrowserRouter>
-   
-    </div>
+    </ErrorBoundary>
   );
 }
 

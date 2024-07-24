@@ -1,7 +1,7 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-const Card = ({ food }) => {
+const Card = React.memo(({ food }) => {
   food = JSON.parse(food);
   const date = new Date(food.dateTime);
   const formattedDate = date.toLocaleDateString();
@@ -31,9 +31,11 @@ const Card = ({ food }) => {
       </div>
     </div>
   );
-};
+});
 
-// for removing eslint error
+// for eslint correction
+Card.displayName = 'Card';
+
 Card.propTypes = {
   food: PropTypes.string.isRequired
 };
