@@ -1,3 +1,4 @@
+import React from 'react';
 import './App.css';
 import SignUp from './Pages/SignUp';
 import LogIn from './Pages/LogIn';
@@ -11,6 +12,7 @@ import { useSelector } from 'react-redux';
 import AdminDashboard from './Pages/AdminDashboard';
 import AdminReport from './Pages/AdminReport';
 import EditFoodEntry from './Pages/EditFoodEntry';
+import InviteFriend from './Pages/InviteFriend';
 
 function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -48,6 +50,15 @@ function App() {
               <LogIn />
             </ErrorBoundary> 
           } />
+          <Route path="/invite" element={  isAuthenticated ?
+            <ErrorBoundary>
+              <InviteFriend/>
+            </ErrorBoundary> :
+            <ErrorBoundary>
+              <LogIn />
+            </ErrorBoundary> 
+          } />
+
 
         {isAdmin && (
           <>

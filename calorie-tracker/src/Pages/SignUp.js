@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signUp, selectAuthError, selectIsSignedUp } from '../Features/users/userSlice';
 import { useNavigate } from 'react-router-dom';
@@ -66,7 +66,7 @@ const SignUp = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default SignUp
+export default SignUp;

@@ -1,16 +1,14 @@
 import React from 'react';
+import PropTypes from "prop-types";
 
 const Card = ({ food }) => {
-
-  food = JSON.parse(food)
-
+  food = JSON.parse(food);
   const date = new Date(food.dateTime);
-
   const formattedDate = date.toLocaleDateString();
   const formattedTime = date.toLocaleTimeString();
 
   return (
-    <div className='place-content-center min-w-full'>
+    <div className="place-content-center min-w-full">
       <div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <h1 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           {food.foodName}
@@ -33,6 +31,11 @@ const Card = ({ food }) => {
       </div>
     </div>
   );
+};
+
+// for removing eslint error
+Card.propTypes = {
+  food: PropTypes.string.isRequired
 };
 
 export default Card;

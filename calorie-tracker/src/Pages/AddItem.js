@@ -23,7 +23,6 @@ const AddItem = () => {
   const error = useSelector(selectError);
   
   const username = JSON.parse(localStorage.getItem('user'));
-  //const username = user ? user.email : '';
   const foods = useSelector((state) => state.foods.foods);
   
 
