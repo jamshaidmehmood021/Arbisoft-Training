@@ -28,17 +28,17 @@ function App() {
         <Navbar />
         <Suspense fallback={<div> <Bars /></div>}>
           <Routes>
-            <Route path="/home" element={isAuthenticated ? <Home /> : <LogIn />} />
-            <Route path="/" element={<LogIn />} />
-            <Route path="/signUp" element={<SignUp />} />
-            <Route path="/addFood" element={isAuthenticated ? <AddItem /> : <LogIn />} />
-            <Route path="/invite" element={isAuthenticated ? <InviteFriend /> : <LogIn />} />
+            <Route path="/home" element={isAuthenticated ? <Suspense fallback={<div> <Bars /></div>}> <Home /> </Suspense>:  <Suspense fallback={<div> <Bars /></div>}><LogIn /> </Suspense>} />
+            <Route path="/" element={<Suspense fallback={<div> <Bars /></div>}><LogIn /> </Suspense>} />
+            <Route path="/signUp" element={<Suspense fallback={<div> <Bars /></div>}><SignUp /> </Suspense>} />
+            <Route path="/addFood" element={isAuthenticated ? <Suspense fallback={<div> <Bars /></div>}> <AddItem /> </Suspense> : <Suspense fallback={<div> <Bars /></div>}> <LogIn /> </Suspense>} />
+            <Route path="/invite" element={isAuthenticated ? <Suspense fallback={<div> <Bars /></div>}><InviteFriend /> </Suspense>: <Suspense fallback={<div> <Bars /></div>}> <LogIn /> </Suspense>} />
 
             {isAdmin && (
               <>
-                <Route path="/adminDashboard" element={<AdminDashboard />} />
-                <Route path="/report" element={<AdminReport />} />
-                <Route path="/food/edit/:foodId" element={<EditFoodEntry />} />
+                <Route path="/adminDashboard" element={<Suspense fallback={<div> <Bars /></div>}><AdminDashboard /> </Suspense>} />
+                <Route path="/report" element={<Suspense fallback={<div> <Bars /></div>}><AdminReport /> </Suspense>} />
+                <Route path="/food/edit/:foodId" element={<Suspense fallback={<div> <Bars /></div>}> <EditFoodEntry /> </Suspense>} />
               </>
             )}
           </Routes>
