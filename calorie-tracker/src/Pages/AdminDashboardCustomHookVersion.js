@@ -10,6 +10,8 @@ import useFetchData from '../Hooks/useFetchData';
 import { Bars } from 'react-loading-icons';
 
 const AdminDashboardCustomHookVersion = () => {
+  const url = process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : 'https://calorie-tracker-jamshaid.netlify.app/'; 
+
   const dispatch = useDispatch();
   const [foods, setFoods] = useState([]);
 
@@ -19,7 +21,7 @@ const AdminDashboardCustomHookVersion = () => {
       'Content-Type': 'application/json',
     },
   };
-  const { data, loading, error } = useFetchData(`${process.env.REACT_APP_HOST_URL}/foods`, options);
+  const { data, loading, error } = useFetchData(`${url}/foods`, options);
 
   useEffect(() => {
     if (data) {

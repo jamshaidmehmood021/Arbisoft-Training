@@ -15,8 +15,10 @@ const initialState = {
   error: null,
 };
 
+const url = process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : 'https://calorie-tracker-jamshaid.netlify.app/'; 
+
 export const addFoodEntry = createAsyncThunk('foods/addFoodEntry', async (newEntry) => {
-  const response = await axios.post(`${process.env.REACT_APP_HOST_URL}/foods`, newEntry);
+  const response = await axios.post(`${url}/foods`, newEntry);
   return response.data;
 });
 
@@ -24,20 +26,20 @@ export const fetchFoods = createAsyncThunk('foods/fetchFoods', async () => {
   const currUser = JSON.parse(localStorage.getItem('user'));
   let response;
   if (currUser === 'admin@gmail.com') {
-    response = await axios.get(`${process.env.REACT_APP_REACT_APP_HOST_URL}/foods`);
+    response = await axios.get(`${url}/foods`);
   } else {
-    response = await axios.get(`${process.env.REACT_APP_HOST_URL}/foods?username=${currUser}`);
+    response = await axios.get(`${url}/foods?username=${currUser}`);
   }
   return response.data;
 });
 
 export const updateFoodEntry = createAsyncThunk('foods/updateFoodEntry', async (updatedEntry) => {
-  const response = await axios.put(`${process.env.REACT_APP_HOST_URL}/foods/${updatedEntry.id}`, updatedEntry);
+  const response = await axios.put(`${url}/foods/${updatedEntry.id}`, updatedEntry);
   return response.data;
 });
 
 export const deleteFoodEntry = createAsyncThunk('foods/deleteFoodEntry', async (id) => {
-  await axios.delete(`${process.env.REACT_APP_HOST_URL}/foods/${id}`);
+  await axios.delete(`${url}/foods/${id}`);
   return id;
 });
 

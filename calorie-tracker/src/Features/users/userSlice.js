@@ -8,16 +8,18 @@ const initialState = {
   signedUp: false
 };
 
+const url = process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : 'https://calorie-tracker-jamshaid.netlify.app/'; 
+
 export const signUp = createAsyncThunk('user/signUp', async (credentials, { rejectWithValue }) => {
     try {
       
-      const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/users?email=${credentials.email}`);
+      const response = await axios.get(`${url}/users?email=${credentials.email}`);
     
       if (response.data > 0) {
         return rejectWithValue('User already exists');
       }
 
-      const createResponse = await axios.post(`${process.env.REACT_APP_HOST_URL}/users`, credentials);
+      const createResponse = await axios.post(`${url}/users`, credentials);
       return createResponse.data;
 
       
@@ -29,7 +31,7 @@ export const signUp = createAsyncThunk('user/signUp', async (credentials, { reje
 
   export const login = createAsyncThunk('user/login', async (credentials, { rejectWithValue }) => {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_HOST_URL}/users?email=${credentials.email}`);
+        const response = await axios.get(`${url}/users?email=${credentials.email}`);
         const users = response.data;
         
         if (users.length === 0) {
