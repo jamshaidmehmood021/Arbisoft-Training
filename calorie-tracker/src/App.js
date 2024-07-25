@@ -6,6 +6,7 @@ import ErrorBoundary from './ErrorBoundary';
 import { selectIsAuthenticated } from './Features/users/userSlice';
 import { useSelector } from 'react-redux';
 import { Bars } from 'react-loading-icons';
+import { UserProvider } from './Context/UserContext';
 
 
 const Home = lazy(() => import('./Pages/Home'));
@@ -26,7 +27,7 @@ function App() {
   const isAdmin = user && user === 'admin@gmail.com';
 
   return (
-    
+    <UserProvider>
     <ErrorBoundary>
       <BrowserRouter>
         <Navbar />
@@ -49,6 +50,7 @@ function App() {
         </Suspense>
       </BrowserRouter>
     </ErrorBoundary>
+    </UserProvider>
   );
 }
 

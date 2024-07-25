@@ -22,7 +22,6 @@ class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
-      // Extracting component stack from errorInfo
       const componentStack = this.state.errorInfo?.componentStack || 'No additional information available.';
 
       return (

@@ -28,24 +28,11 @@
   ],
   "foods": [
     {
-      "id": 23,
-      "foodName": "rye grain",
-      "calories": 571.22,
-      "dateTime": "2024-08-02T18:08"
-    },
-    {
-      "foodName": "ham salad",
-      "calories": 32.4,
-      "dateTime": "2024-07-08T18:24",
-      "username": "jamshaid@gmail.com",
-      "id": 24
-    },
-    {
-      "foodName": "hamburger",
-      "calories": 540.14,
+      "id": 25,
+      "foodName": "brioche hamburger bun",
+      "calories": 292.2,
       "dateTime": "2024-07-10T18:56",
-      "username": "jamshaid@gmail.com",
-      "id": 25
+      "username": "jamshaid@gmail.com"
     },
     {
       "foodName": "mixed nuts",
@@ -65,7 +52,8 @@
       "id": 31,
       "foodName": "hamburger buns",
       "calories": 127.88,
-      "dateTime": "2024-08-03T23:30"
+      "dateTime": "2024-08-03T23:30",
+      "username": "jamshaid@gmail.com"
     },
     {
       "foodName": "hamburger bun",
@@ -115,6 +103,20 @@
       "dateTime": "2024-08-03T12:26",
       "username": "jamshaid@gmail.com",
       "id": 38
+    },
+    {
+      "foodName": "lime, juiced",
+      "calories": 7.56,
+      "dateTime": "2024-07-26T16:03",
+      "username": "jamshaid@gmail.com",
+      "id": 39
+    },
+    {
+      "foodName": "white zinfandel wine",
+      "calories": 125.74,
+      "dateTime": "2024-07-25T16:27",
+      "username": "jamshaid@gmail.com",
+      "id": 40
     }
   ]
 }

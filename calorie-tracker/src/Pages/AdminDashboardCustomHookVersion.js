@@ -29,7 +29,7 @@ const AdminDashboardCustomHookVersion = () => {
 
   const handleDeleteClick = async (id) => {
     const updatedFoods = foods.filter(food => food.id !== id);
-    setFoods(updatedFoods); // Optimistically update the state
+    setFoods(updatedFoods);
 
     try {
       await dispatch(deleteFoodEntry(id)).unwrap();

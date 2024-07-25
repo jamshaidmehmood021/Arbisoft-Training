@@ -87,7 +87,7 @@ const EditFoodEntry = () => {
     if (foodName && calories && dateTime && requestStatus === STATUS.IDLE) {
       try {
         setRequestStatus(STATUS.PENDING);
-        await dispatch(updateFoodEntry({ id: foodId, foodName, calories, dateTime })).unwrap();
+        await dispatch(updateFoodEntry({ id: foodId, foodName, calories, dateTime, username: food.usernam })).unwrap();
         
         toast.success("Food Item Edited!");
 
