@@ -1,84 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import { addFoodEntry } from '../Features/Food/foodSlice';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { STATUS, selectError } from '../Features/Food/foodSlice';
-
+import useFetchNutrientCalorie from '../Hooks/useFetchNutrientCalorie';
+import useFetchSuggestions from '../Hooks/useFetchSugession';
 
 const DAILY_CALORIE_LIMIT = 2.100;
 
-const AddItem = () => {
+const AddItemCustomHookVersion = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [foodName, setFoodName] = useState('');
-  const [calories, setCalories] = useState('');
   const [dateTime, setDateTime] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
   const [selectedFood, setSelectedFood] = useState('');
-
-  const reqStatus = useSelector((state)=> state.foods.status);
-  const error = useSelector(selectError);
   
+  const { suggestions } = useFetchSuggestions(foodName);
+  const { calories, fetchNutrientCalorie } = useFetchNutrientCalorie();
+
+  const reqStatus = useSelector((state) => state.foods.status);
+  const error = useSelector(selectError);
   const username = JSON.parse(localStorage.getItem('user'));
   const foods = useSelector((state) => state.foods.foods);
-  
-
-  const fetchSuggestions = async (query) => {
-    try {
-      const response = await axios.get(`https://trackapi.nutritionix.com/v2/search/instant`, {
-        params: { query },
-        headers: {
-          'Content-Type': 'application/json',
-          'x-app-id': 'bc28a3d1', 
-          'x-app-key': '86d3b74b081e66cb15e650e2713594d0' 
-        }
-      });
-      setSuggestions(response.data.common);
-    } catch (error) {
-      console.error('Error fetching suggestions:', error);
-    }
-  };
 
   useEffect(() => {
-    if (foodName.length > 1) {
-      fetchSuggestions(foodName);
-      setSuggestions([]);
+    if (selectedFood) {
+      fetchNutrientCalorie(selectedFood);
     }
-  }, [foodName]);
+  }, [selectedFood, fetchNutrientCalorie]);
 
-  const fetchNutrientCalorie = async (query) => {
-    try {
-      const response = await axios.post(
-        'https://trackapi.nutritionix.com/v2/natural/nutrients',
-        { query },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-app-id': 'bc28a3d1',
-            'x-app-key': '86d3b74b081e66cb15e650e2713594d0'
-          }
-        }
-      );
-      return response.data.foods[0].nf_calories; 
-  
-    } catch (error) {
-      console.error('Error fetching nutrients:', error.response ? error.response.data : error.message);
-    }
-  };
-
-  const handleSuggestionSelect = async (e) => {
+  const handleSuggestionSelect = (e) => {
     const selected = e.target.value;
     setSelectedFood(selected);
-    const food = suggestions.find(suggestion => suggestion.food_name === selected);
-    if (food) {
-      setFoodName(food.food_name);
-      const calorie = await fetchNutrientCalorie(food.food_name);
-      setCalories(calorie);
-    }
-    setSuggestions([]);
+    setFoodName(selected);
   };
 
   const checkDailyCalorieLimit = () => {
@@ -123,6 +79,7 @@ const AddItem = () => {
       toast.error(error);
     }
   };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -197,4 +154,4 @@ const AddItem = () => {
   );
 };
 
-export default AddItem;
+export default AddItemCustomHookVersion;

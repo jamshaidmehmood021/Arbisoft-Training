@@ -15,20 +15,20 @@ const Home = () => {
     dispatch(fetchFoods());
   }, [dispatch]);
 
-  const groupedFoods = useMemo(() => {
-    const groupFoodsByDate = (foods) => {
-      const grouped = foods.reduce((acc, food) => {
-        const date = new Date(food.dateTime).toLocaleDateString();
-        if (!acc[date]) {
-          acc[date] = { totalCalories: 0, foods: [] };
-        }
-        acc[date].totalCalories += food.calories;
-        acc[date].foods.push(food);
-        return acc;
-      }, {});
-      return grouped;
-    };
+  const groupFoodsByDate = (foods) => {
+    const grouped = foods.reduce((acc, food) => {
+      const date = new Date(food.dateTime).toLocaleDateString();
+      if (!acc[date]) {
+        acc[date] = { totalCalories: 0, foods: [] };
+      }
+      acc[date].totalCalories += food.calories;
+      acc[date].foods.push(food);
+      return acc;
+    }, {});
+    return grouped;
+  };
 
+  const groupedFoods = useMemo(() => {
     return groupFoodsByDate(foods);
   }, [foods]);
 

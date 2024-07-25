@@ -28,18 +28,10 @@
   ],
   "foods": [
     {
-      "id": 21,
-      "foodName": "white wine",
-      "calories": 120.54,
-      "dateTime": "2024-07-26T17:09", 
-      "username": "jamshaid@gmail.com"
-    },
-    {
-      "foodName": "greens",
-      "calories": 62.7,
-      "dateTime": "2024-08-02T18:08",
-      "username": "jamshaid@gmail.com",
-      "id": 23
+      "id": 23,
+      "foodName": "rye grain",
+      "calories": 571.22,
+      "dateTime": "2024-08-02T18:08"
     },
     {
       "foodName": "ham salad",
@@ -63,13 +55,6 @@
       "id": 26
     },
     {
-      "foodName": "chips",
-      "calories": 148.96,
-      "dateTime": "2024-07-20T22:30",
-      "username": "jamshaid@gmail.com",
-      "id": 27
-    },
-    {
       "foodName": "shake",
       "calories": 540.74,
       "dateTime": "2024-07-27T22:35",
@@ -77,25 +62,10 @@
       "id": 28
     },
     {
-      "foodName": "shake",
-      "calories": 540.74,
-      "dateTime": "2024-07-27T22:35",
-      "username": "jamshaid1@gmail.com",
-      "id": 29
-    },
-    {
-      "foodName": "shake",
-      "calories": 540.74,
-      "dateTime": "2024-07-27T22:35",
-      "username": "jamshaid1@gmail.com",
-      "id": 30
-    },
-    {
-      "foodName": "hamburger bun",
+      "id": 31,
+      "foodName": "hamburger buns",
       "calories": 127.88,
-      "dateTime": "2024-08-03T23:30",
-      "username": "jamshaid@gmail.com",
-      "id": 31
+      "dateTime": "2024-08-03T23:30"
     },
     {
       "foodName": "hamburger bun",
@@ -103,6 +73,48 @@
       "dateTime": "2024-08-03T23:30",
       "username": "jamshaid@gmail.com",
       "id": 32
+    },
+    {
+      "foodName": "vinegar",
+      "calories": 2.68,
+      "dateTime": "2024-07-11T12:14",
+      "username": "jamshaid@gmail.com",
+      "id": 33
+    },
+    {
+      "foodName": "mixed veg",
+      "calories": 45.3,
+      "dateTime": "2024-07-25T12:18",
+      "username": "jamshaid@gmail.com",
+      "id": 34
+    },
+    {
+      "foodName": "grated carrots",
+      "calories": 22.55,
+      "dateTime": "2024-08-03T12:20",
+      "username": "jamshaid@gmail.com",
+      "id": 35
+    },
+    {
+      "foodName": "grapes",
+      "calories": 33.81,
+      "dateTime": "2024-07-27T12:21",
+      "username": "jamshaid@gmail.com",
+      "id": 36
+    },
+    {
+      "foodName": "almond milk latte",
+      "calories": 89.32,
+      "dateTime": "2024-07-26T12:22",
+      "username": "jamshaid@gmail.com",
+      "id": 37
+    },
+    {
+      "foodName": "banana shake",
+      "calories": 452.11,
+      "dateTime": "2024-08-03T12:26",
+      "username": "jamshaid@gmail.com",
+      "id": 38
     }
   ]
 }

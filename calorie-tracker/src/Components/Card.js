@@ -33,7 +33,8 @@ const Card = React.memo(({ food }) => {
   );
 });
 
-// for eslint correction
+
+// for eslint correction as it was causing error here after using eslint
 Card.displayName = 'Card';
 
 Card.propTypes = {

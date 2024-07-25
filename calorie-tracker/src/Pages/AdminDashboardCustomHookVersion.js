@@ -1,24 +1,47 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchFoods, deleteFoodEntry } from '../Features/Food/foodSlice';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { deleteFoodEntry } from '../Features/Food/foodSlice';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import useFetchData from '../Hooks/useFetchData';
+import { Bars } from 'react-loading-icons';
 
-const AdminDashboard = () => {
+const AdminDashboardCustomHookVersion = () => {
   const dispatch = useDispatch();
-  const foods = useSelector((state) => state.foods.foods);
+  const [foods, setFoods] = useState([]);
+
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  const { data, loading, error } = useFetchData('http://localhost:5000/foods', options);
 
   useEffect(() => {
-    dispatch(fetchFoods());
-  }, [dispatch]);
+    if (data) {
+      setFoods(data);
+    }
+  }, [data]);
 
-  const handleDeleteClick = (id) => {
-    dispatch(deleteFoodEntry(id));
-    toast.error("Food Item Deleted!");
+  const handleDeleteClick = async (id) => {
+    const updatedFoods = foods.filter(food => food.id !== id);
+    setFoods(updatedFoods); // Optimistically update the state
+
+    try {
+      await dispatch(deleteFoodEntry(id)).unwrap();
+      toast.error("Food Item Deleted!");
+    } catch (error) {
+      setFoods(data);
+      toast.error(error);
+    }
   };
+
+  if (loading) return <div><Bars/></div>;
+  if (error) return <div className='text-white'>Error while loading data</div>;
 
   return (
     <div className="p-4">
@@ -65,4 +88,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default AdminDashboardCustomHookVersion;
