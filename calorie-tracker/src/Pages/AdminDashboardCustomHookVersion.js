@@ -19,7 +19,7 @@ const AdminDashboardCustomHookVersion = () => {
       'Content-Type': 'application/json',
     },
   };
-  const { data, loading, error } = useFetchData('http://localhost:5000/foods', options);
+  const { data, loading, error } = useFetchData(`${process.env.DISCOVERY_HOST_URL}/foods`, options);
 
   useEffect(() => {
     if (data) {
