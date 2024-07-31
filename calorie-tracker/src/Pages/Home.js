@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Bars } from 'react-loading-icons';
+
 import { fetchFoods } from '../Features/Food/foodSlice';
 import Card from '../Components/Card';
-import { Bars } from 'react-loading-icons';
 
 const Home = () => {
   const dispatch = useDispatch();

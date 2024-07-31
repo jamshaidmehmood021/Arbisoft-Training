@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addFoodEntry } from '../Features/Food/foodSlice';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+
 import { STATUS, selectError } from '../Features/Food/foodSlice';
 import useFetchNutrientCalorie from '../Hooks/useFetchNutrientCalorie';
 import useFetchSuggestions from '../Hooks/useFetchSugession';
+import { addFoodEntry } from '../Features/Food/foodSlice';
 
 const DAILY_CALORIE_LIMIT = 2.100;
 
@@ -16,13 +17,14 @@ const AddItemCustomHookVersion = () => {
   const [foodName, setFoodName] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [selectedFood, setSelectedFood] = useState('');
-  
+
   const { suggestions } = useFetchSuggestions(foodName);
   const { calories, fetchNutrientCalorie } = useFetchNutrientCalorie();
 
   const reqStatus = useSelector((state) => state.foods.status);
   const error = useSelector(selectError);
-  const username = JSON.parse(localStorage.getItem('user'));
+  
+  const username = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
   const foods = useSelector((state) => state.foods.foods);
 
   useEffect(() => {
@@ -52,34 +54,27 @@ const AddItemCustomHookVersion = () => {
   
     return totalCalories > DAILY_CALORIE_LIMIT;
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-
     const newEntry = {
       foodName,
       calories,
       dateTime,
       username
     };
-
     dispatch(addFoodEntry(newEntry));
     if (checkDailyCalorieLimit() && reqStatus === STATUS.SUCCESS) {
       toast.warning(`You have exceed your daily limit of ${DAILY_CALORIE_LIMIT} calories for ${new Date(dateTime).toLocaleDateString()}`);
       toast.success(`But still Item added successfully`);
       navigate('/home');
-    }
-    else if (reqStatus === STATUS.SUCCESS)
-    {
-      toast.success(`You have done preety good daily limit is still left`);
+    } else if (reqStatus === STATUS.SUCCESS) {
+      toast.success(`You have done pretty good; daily limit is still left`);
       toast.success(`Item added successfully`);
-    }
-    else{
+    } else {
       toast.error(error);
     }
   };
-
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -103,12 +98,12 @@ const AddItemCustomHookVersion = () => {
             required
           />
           {suggestions.length > 0 && (
-            <>
             <select
-              className="absolute z-10 w-full bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 mt-2"
+              className="mb-32 absolute  w-full bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 mt-2"
               size={suggestions.length > 5 ? 5 : suggestions.length}
               onChange={handleSuggestionSelect}
               value={selectedFood}
+              
             >
               <option value="" disabled>Select a suggestion</option>
               {suggestions.map((food, index) => (
@@ -117,13 +112,6 @@ const AddItemCustomHookVersion = () => {
                 </option>
               ))}
             </select>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            </>
           )}
         </div>
         <div className="mb-5">

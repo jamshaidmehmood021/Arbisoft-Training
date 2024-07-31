@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFoods, deleteFoodEntry } from '../Features/Food/foodSlice';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+
+import { fetchFoods, deleteFoodEntry } from '../Features/Food/foodSlice';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();

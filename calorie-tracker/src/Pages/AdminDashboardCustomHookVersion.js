@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteFoodEntry } from '../Features/Food/foodSlice';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import useFetchData from '../Hooks/useFetchData';
 import { Bars } from 'react-loading-icons';
+
+import { deleteFoodEntry } from '../Features/Food/foodSlice';
+import useFetchData from '../Hooks/useFetchData';
 
 const AdminDashboardCustomHookVersion = () => {
   // eslint-disable-next-line no-undef
-  const url = process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : 'https://calorie-tracker-jamshaid.netlify.app/'; 
-
+  const url = process.env.REACT_APP_SERVER_URL;
   const dispatch = useDispatch();
   const [foods, setFoods] = useState([]);
 

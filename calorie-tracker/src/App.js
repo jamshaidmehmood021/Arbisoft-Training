@@ -1,57 +1,52 @@
-import React, { Suspense, lazy } from 'react';
-import './App.css';
-import Navbar from './Components/Navbar';
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ErrorBoundary from './ErrorBoundary';
-import { selectIsAuthenticated } from './Features/users/userSlice';
 import { useSelector } from 'react-redux';
-import { Bars } from 'react-loading-icons';
+
+
+import { selectIsAuthenticated } from './Features/users/userSlice';
 import { UserProvider } from './Context/UserContext';
+import Navbar from './Components/Navbar';
+import ErrorBoundary from './ErrorBoundary';
+import {
+  LazyHome,
+  LazySignUp,
+  LazyLogIn,
+  LazyAddItemCustomHookVersion,
+  LazyAdminDashboardCustomHookVersion,
+  LazyAdminReport,
+  LazyEditItemCustomHookVersion,
+  LazyInviteFriend
+} from './LazyLoading';
 
 
-const Home = lazy(() => import('./Pages/Home'));
-const SignUp = lazy(() => import('./Pages/SignUp'));
-const LogIn = lazy(() => import('./Pages/LogIn'));
-//const AddItem = lazy(() => import('./Pages/AddItem'));
-const AddItemCustomHookVersion = lazy(() => import('./Pages/AddItemCustomHookVersion'));
-// const AdminDashboard = lazy(() => import('./Pages/AdminDashboard'));
-const AdminDashboardCustomHookVersion = lazy(() => import('./Pages/AdminDashboardCustomHookVersion'));
-const AdminReport = lazy(() => import('./Pages/AdminReport'));
-//const EditFoodEntry = lazy(() => import('./Pages/EditFoodEntry'));
-const EditItemCustomHookVersion = lazy(() => import('./Pages/EditItemCustomHookVersion'));
-const InviteFriend = lazy(() => import('./Pages/InviteFriend'));
-
-function App() {
+const App = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = JSON.parse(localStorage.getItem('user'));
   const isAdmin = user && user === 'admin@gmail.com';
-
   return (
     <UserProvider>
-    <ErrorBoundary>
-      <BrowserRouter>
-        <Navbar />
-        <Suspense fallback={<div> <Bars /></div>}>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <Navbar />
           <Routes>
-            <Route path="/home" element={isAuthenticated ? <Suspense fallback={<div> <Bars /></div>}> <Home /> </Suspense>:  <Suspense fallback={<div> <Bars /></div>}><LogIn /> </Suspense>} />
-            <Route path="/" element={<Suspense fallback={<div> <Bars /></div>}><LogIn /> </Suspense>} />
-            <Route path="/signUp" element={<Suspense fallback={<div> <Bars /></div>}><SignUp /> </Suspense>} />
-            <Route path="/addFood" element={isAuthenticated ? <Suspense fallback={<div> <Bars /></div>}> <AddItemCustomHookVersion /> </Suspense> : <Suspense fallback={<div> <Bars /></div>}> <LogIn /> </Suspense>} />
-            <Route path="/invite" element={isAuthenticated ? <Suspense fallback={<div> <Bars /></div>}><InviteFriend /> </Suspense>: <Suspense fallback={<div> <Bars /></div>}> <LogIn /> </Suspense>} />
+            <Route path="/home" element={isAuthenticated ? <LazyHome /> : <LazyLogIn />} />
+            <Route path="/" element={<LazyLogIn />} />
+            <Route path="/signUp" element={<LazySignUp />} />
+            <Route path="/addFood" element={isAuthenticated ? <LazyAddItemCustomHookVersion /> : <LazyLogIn />} />
+            <Route path="/invite" element={isAuthenticated ? <LazyInviteFriend /> : <LazyLogIn />} />
 
             {isAdmin && (
               <>
-                <Route path="/adminDashboard" element={<Suspense fallback={<div> <Bars /></div>}><AdminDashboardCustomHookVersion /> </Suspense>} />
-                <Route path="/report" element={<Suspense fallback={<div> <Bars /></div>}><AdminReport /> </Suspense>} />
-                <Route path="/food/edit/:foodId" element={<Suspense fallback={<div> <Bars /></div>}> <EditItemCustomHookVersion /> </Suspense>} />
+                <Route path="/adminDashboard" element={<LazyAdminDashboardCustomHookVersion />} />
+                <Route path="/report" element={<LazyAdminReport />} />
+                <Route path="/food/edit/:foodId" element={<LazyEditItemCustomHookVersion />} />
               </>
             )}
           </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </ErrorBoundary>
+        </BrowserRouter>
+      </ErrorBoundary>
     </UserProvider>
   );
-}
+};
 
 export default App;

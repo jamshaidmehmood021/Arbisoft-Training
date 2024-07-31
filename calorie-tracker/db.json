@@ -28,13 +28,6 @@
   ],
   "foods": [
     {
-      "id": 25,
-      "foodName": "brioche hamburger bun",
-      "calories": 292.2,
-      "dateTime": "2024-07-10T18:56",
-      "username": "jamshaid@gmail.com"
-    },
-    {
       "foodName": "mixed nuts",
       "calories": 168.4,
       "dateTime": "2024-07-11T18:57",
@@ -117,6 +110,13 @@
       "dateTime": "2024-07-25T16:27",
       "username": "jamshaid@gmail.com",
       "id": 40
+    },
+    {
+      "foodName": "oma",
+      "calories": 149.41,
+      "dateTime": "2024-07-11T17:19",
+      "username": "admin@gmail.com",
+      "id": 41
     }
   ]
 }

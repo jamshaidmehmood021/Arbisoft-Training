@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFoods } from '../Features/Food/foodSlice';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { fetchFoods } from '../Features/Food/foodSlice';
 
 const AdminReport = () => {
   const dispatch = useDispatch();
@@ -11,28 +11,32 @@ const AdminReport = () => {
     dispatch(fetchFoods());
   }, [dispatch]);
 
-  const currentDate = new Date();
-  const last7Days = new Date(currentDate);
-  last7Days.setDate(last7Days.getDate() - 7);
+  const { currentWeekCount, previousWeekCount, currentWeekCalories, previousWeekCalories, avgCaloriesPerUser, data } = useMemo(() => {
+    const currentDate = new Date();
+    const last7Days = new Date(currentDate);
+    last7Days.setDate(last7Days.getDate() - 7);
 
-  const previous7DaysStart = new Date(last7Days);
-  previous7DaysStart.setDate(previous7DaysStart.getDate() - 7);
+    const previous7DaysStart = new Date(last7Days);
+    previous7DaysStart.setDate(previous7DaysStart.getDate() - 7);
 
-  const currentWeekEntries = foods.filter(food => new Date(food.dateTime) >= last7Days);
-  const previousWeekEntries = foods.filter(food => new Date(food.dateTime) < last7Days && new Date(food.dateTime) >= previous7DaysStart);
+    const currentWeekEntries = foods.filter(food => new Date(food.dateTime) >= last7Days);
+    const previousWeekEntries = foods.filter(food => new Date(food.dateTime) < last7Days && new Date(food.dateTime) >= previous7DaysStart);
 
-  const currentWeekCount = currentWeekEntries.length;
-  const previousWeekCount = previousWeekEntries.length;
+    const currentWeekCount = currentWeekEntries.length;
+    const previousWeekCount = previousWeekEntries.length;
 
-  const currentWeekCalories = currentWeekEntries.reduce((total, food) => total + (food.calories || 0), 0);
-  const previousWeekCalories = previousWeekEntries.reduce((total, food) => total + (food.calories || 0), 0);
+    const currentWeekCalories = currentWeekEntries.reduce((total, food) => total + (food.calories || 0), 0);
+    const previousWeekCalories = previousWeekEntries.reduce((total, food) => total + (food.calories || 0), 0);
 
-  const avgCaloriesPerUser = currentWeekEntries.length ? (currentWeekCalories / currentWeekEntries.length) : 0;
+    const avgCaloriesPerUser = currentWeekEntries.length ? (currentWeekCalories / currentWeekEntries.length) : 0;
 
-  const data = [
-    { name: 'Last 7 Days', Entries: currentWeekCount, Calories: currentWeekCalories },
-    { name: 'Previous 7 Days', Entries: previousWeekCount, Calories: previousWeekCalories }
-  ];
+    const data = [
+      { name: 'Last 7 Days', Entries: currentWeekCount, Calories: currentWeekCalories },
+      { name: 'Previous 7 Days', Entries: previousWeekCount, Calories: previousWeekCalories }
+    ];
+
+    return { currentWeekCount, previousWeekCount, currentWeekCalories, previousWeekCalories, avgCaloriesPerUser, data };
+  }, [foods]);
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">

@@ -9,7 +9,7 @@ const initialState = {
 };
 
 // eslint-disable-next-line no-undef
-const url = process.env.REACT_APP_HOST_URL ? process.env.REACT_APP_HOST_URL : 'https://calorie-tracker-jamshaid.netlify.app/'; 
+const url = process.env.REACT_APP_SERVER_URL;
 
 export const signUp = createAsyncThunk('user/signUp', async (credentials, { rejectWithValue }) => {
     try {

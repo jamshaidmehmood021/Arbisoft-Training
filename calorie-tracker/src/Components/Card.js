@@ -1,8 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const Card = React.memo(({ food }) => {
-  food = JSON.parse(food);
+
+const Card = React.memo((props) => {
+  const food = JSON.parse(props.food);
   const date = new Date(food.dateTime);
   const formattedDate = date.toLocaleDateString();
   const formattedTime = date.toLocaleTimeString();
@@ -32,13 +32,5 @@ const Card = React.memo(({ food }) => {
     </div>
   );
 });
-
-
-// for eslint correction as it was causing error here after using eslint
-Card.displayName = 'Card';
-
-Card.propTypes = {
-  food: PropTypes.string.isRequired
-};
 
 export default Card;

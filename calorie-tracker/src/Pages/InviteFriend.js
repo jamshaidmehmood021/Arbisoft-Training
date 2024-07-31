@@ -2,13 +2,17 @@ import React, { useRef, useCallback } from 'react';
 import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
 
+const REACT_APP_EMAIL_JS_SERVER_ID = 'service_egvm5ap';
+const REACT_APP_EMAIL_JS_TEMPLATE_ID = 'template_zx4cp3b';
+const REACT_APP_EMAIL_JS_PUBLIC_KEY = 'xjSvbJdjEwRctXcN-';
+ 
 const InviteFriend = () => {
   const form = useRef();
 
   const handleInvite = useCallback(((e) => {
     e.preventDefault();
     emailjs
-      .sendForm('service_egvm5ap', 'template_zx4cp3b', form.current, 'xjSvbJdjEwRctXcN-')
+      .sendForm(REACT_APP_EMAIL_JS_SERVER_ID, REACT_APP_EMAIL_JS_TEMPLATE_ID, form.current, REACT_APP_EMAIL_JS_PUBLIC_KEY)
       .then(
         () => {
           toast.success('Invite sent successfully');

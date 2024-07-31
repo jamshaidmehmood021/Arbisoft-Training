@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { signUp, selectAuthError, selectIsSignedUp } from '../Features/users/userSlice';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+
+
+import { signUp, selectAuthError, selectIsSignedUp } from '../Features/users/userSlice';
 
 const SignUp = () => {
 

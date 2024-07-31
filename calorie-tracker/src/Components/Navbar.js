@@ -1,9 +1,10 @@
 import React  from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserContext } from '../Context/UserContext';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectIsAuthenticated, logout } from '../Features/users/userSlice';
 import { toast } from 'react-toastify';
+
+import { useUserContext } from '../Context/UserContext';
+import { selectIsAuthenticated, logout } from '../Features/users/userSlice';
 
 const Navbar = () => {
   const navigate = useNavigate();
