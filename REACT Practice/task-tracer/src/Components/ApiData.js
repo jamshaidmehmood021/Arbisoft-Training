@@ -1,9 +1,11 @@
 import React,{useEffect } from 'react'
-import Header from './Header';
 import { useDispatch, useSelector } from 'react-redux';
+import { Bars } from 'react-loading-icons'
+
+import Header from './Header';
+
 import { fetchComments} from '../Store/commentSlice';
 import { STATUS } from "../Store/commentSlice";
-import { Bars } from 'react-loading-icons'
 
 const ApiData = () => {
   
@@ -27,7 +29,6 @@ const ApiData = () => {
       <Header title="Task Tracker"/>
       </div>
       <div>
-        
         <div>
           <h2>Data fetched from the API:</h2>
           <ul>
@@ -48,4 +49,4 @@ const ApiData = () => {
   )
 }
 
-export default ApiData
+export default ApiData;

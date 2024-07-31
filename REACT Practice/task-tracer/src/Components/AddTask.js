@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import Header from "./Header";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from "react-redux";
+
+
+import Header from "./Header";
+
 import { add } from "../Store/taskSlice";
 import {toogleEditTask} from "../Store/appSlice"
 
-function AddTask() {
+const AddTask = () => {
     const dispatch = useDispatch();
     const { editTask, editedData } = useSelector((state) => state.app);
 

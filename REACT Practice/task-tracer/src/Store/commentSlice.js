@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 export const STATUS = Object.freeze({
     IDLE: "idle",
     ERROR: 'error',
     LOADING: "LOADING"
 })
-
 const commentSlice = createSlice({
     name: 'comment',
     initialState:{
@@ -14,7 +14,6 @@ const commentSlice = createSlice({
 
     reducers: {
     },
-    // this is the code added for redux toolkit thunks
     extraReducers : (builder) => {
         builder
         .addCase(fetchComments.pending, (state, action) =>{
@@ -38,4 +37,4 @@ export const fetchComments = createAsyncThunk('product/fetchThunk', async () => 
             const res = await fetch('https://jsonplaceholder.typicode.com/comments');
             const data = await res.json();
             return data;
-})
+});
