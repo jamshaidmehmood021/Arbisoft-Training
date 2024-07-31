@@ -3,9 +3,8 @@ import React from "react";
 import Task from "./Task"
 import Header from "./Header";
 
-const Tasks = ({ tasks, onDelete, onToggle, onEdit }) => {
+const Tasks = ({ tasks, onDelete, onToggle }) => {
 
-  // sconsole.log(tasks)
   return (
     <>
       <div>
@@ -24,7 +23,6 @@ const Tasks = ({ tasks, onDelete, onToggle, onEdit }) => {
       </div>
     </>
   )
-
 }
 
-export default Tasks
+export default Tasks;

@@ -1,15 +1,14 @@
 import React,{useEffect, useState} from 'react'
+
 import Header from './Header';
 
 const ApiData = () => {
-
   const [apiData, setApiData] = useState([]);
-
   useEffect(() => {
     // Simulating fetching data from an API
     fetch('https://jsonplaceholder.typicode.com/comments')
       .then(response => response.json())
-      .then((data) => {console.log(data)
+      .then((data) => {
         setApiData(data)})
         .catch((error) => {
           console.error("Error fetching data:", error)
@@ -47,4 +46,4 @@ const ApiData = () => {
   )
 }
 
-export default ApiData
+export default ApiData;

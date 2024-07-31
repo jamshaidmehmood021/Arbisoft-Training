@@ -1,17 +1,15 @@
 import { useState, useContext } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import './App.css';
 import Header from './Components/Header';
 import Tasks from './Components/Tasks';
 import AddTask from './Components/AddTask';
 import ApiData from './Components/ApiData';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppContext } from './Context/AppContext';
 
-function App() {
-
+const App = () => {
   const { showAddForm, showApiData, setShowAddForm, setShowApiData, editTask, setEditTask } = useContext(AppContext);
-
-
   const [tasks, setTask] = useState([
     { id: 1, title: "Meeting at arbisoft", day: "Mon July 8, 10:30 AM", reminder: true },
     { id: 2, title: "REACT Crash Course Completions", day: "Mon July 8, 7:00 PM", reminder: true },
@@ -30,23 +28,17 @@ function App() {
     }
 
   };
-
   // for deleting the items in the array
   const deleteTask = (id) => {
     setTask(tasks.filter((task) => task.id !== id))
 
   }
-
   // for toggling the list 
   const toggle = (id) => {
     setTask(tasks.map((task) => task.id === id ?
       { ...task, reminder: !task.reminder }
       : task))
   }
-
-
-
-
   return (
     <div className="container">
       <BrowserRouter>
@@ -69,12 +61,9 @@ function App() {
 
           <Route path="/showData"
             element={showApiData && <ApiData />} />
-
-
         </Routes>
       </BrowserRouter>
     </div>
   );
 }
-
 export default App;

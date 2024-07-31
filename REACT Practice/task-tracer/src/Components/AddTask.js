@@ -1,18 +1,16 @@
 import { useContext, useState } from "react"
-import Header from "./Header"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css'
+
+import Header from "./Header"
 import { AppContext } from "../Context/AppContext"
 
 function AddTask({ onAdd }) {
-    const [day, setDay] = useState(new Date().toLocaleString())
-    const { editTask } = useContext(AppContext)
-    const { editedData } = useContext(AppContext)
-    const [title, setTitle] = useState(editedData.title)
-    const [reminder, setReminder] = useState(editedData.reminder)
-
-
-
+    const [day, setDay] = useState(new Date().toLocaleString());
+    const { editTask } = useContext(AppContext);
+    const { editedData } = useContext(AppContext);
+    const [title, setTitle] = useState(editedData.title);
+    const [reminder, setReminder] = useState(editedData.reminder);
     const onSubmitHandler = (e) => {
         e.preventDefault()
         if (!title) {
@@ -68,4 +66,4 @@ function AddTask({ onAdd }) {
     )
 }
 
-export default AddTask
+export default AddTask;

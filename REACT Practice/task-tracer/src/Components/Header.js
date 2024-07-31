@@ -1,10 +1,9 @@
 import React, { useContext } from 'react'
-import Button from './Button'
 import { useNavigate, useLocation } from 'react-router-dom'
+
+import Button from './Button'
 import { AppContext } from '../Context/AppContext'
 
-// for props data type for the rubestness in the code
-//import PropTypes from 'prop-types';
 
 const Header = ({ title }) => {
 
@@ -43,8 +42,6 @@ const Header = ({ title }) => {
     }
     setShowApiData(!showApiData);
   };
-
-
   return (
     <>
       <header className='header'>
@@ -57,14 +54,4 @@ const Header = ({ title }) => {
     </>
   )
 }
-
-// // default props
-// Header.defaultProps = {
-//   title : "Task Tracker"
-// }
-// // props type
-// Header.propTypes = {
-//     title : PropTypes.string,
-// }
-
-export default Header
+export default Header;
