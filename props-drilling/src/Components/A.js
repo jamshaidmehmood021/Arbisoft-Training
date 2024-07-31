@@ -1,20 +1,18 @@
 import React from 'react';
+import { useStateA } from '../Contaxt/ContaxtA'
 import B from './B';
 
-const A = React.memo(({ stateA, setStateA, stateB, setStateB, stateC, setStateC, stateD, setStateD }) => {
+const A = React.memo(() => {
+  const { stateA, setStateA } = useStateA();
   console.log("Component A Rendered");
+
   return (
     <div>
       <h1>Component A: {stateA}</h1>
       <button onClick={() => setStateA("Updated State A")}>Update A</button>
-      <B
-        stateB={stateB} setStateB={setStateB}
-        stateC={stateC} setStateC={setStateC}
-        stateD={stateD} setStateD={setStateD}
-      />
+      <B />
     </div>
   );
 });
 
 export default A;
-
