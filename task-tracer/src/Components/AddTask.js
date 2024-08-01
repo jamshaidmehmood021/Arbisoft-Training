@@ -5,11 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import Header from "./Header"
 import { AppContext } from "../Context/AppContext"
 
-<<<<<<< HEAD
-const AddTask = ({ onAdd })=> {
-=======
 const AddTask = ({ onAdd }) => {
->>>>>>> 2704e70be5a4eed71d16ab3896d15016aaef78ae
     const [day, setDay] = useState(new Date().toLocaleString());
     const { editTask } = useContext(AppContext);
     const { editedData } = useContext(AppContext);
