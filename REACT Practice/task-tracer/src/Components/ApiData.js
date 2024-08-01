@@ -14,8 +14,8 @@ const ApiData = () => {
 
   useEffect(() => {
     dispatch(fetchComments())
-  }, []);
-
+  }, [dispatch]);
+  
   if(status === STATUS.LOADING){
         return <Bars stroke="red" />
   }
