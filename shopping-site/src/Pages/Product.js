@@ -78,7 +78,7 @@ const TestimonialsSection = () => {
     };
 
     return (
-        <div className="ml-36 lg:w-[80%] py-12 bg-white">
+        <div className="lg:ml-36 lg:w-[80%] py-12 bg-white">
             <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">Testimonials</h2>
             <div className="flex flex-col lg:flex-row justify-around items-center space-y-8 lg:space-y-0 lg:space-x-4 px-4 lg:px-12">
                 <div className="p-10 relative flex-none rounded-lg shadow-lg w-full lg:w-[60%] ring ring-gray-300">
@@ -127,7 +127,7 @@ const TestimonialsSection = () => {
 
 const SubscriptionSection = () => {
     return (
-        <div className="ml-36 lg:w-[80%] my-8 py-10 rounded-lg bg-[#F6E2E3] px-4">
+        <div className="lg:ml-36 lg:w-[80%] my-8 py-10 rounded-lg bg-[#F6E2E3] px-4">
             <div className="container mx-auto flex flex-col lg:flex-row justify-between items-center space-y-2 lg:space-y-0 lg:space-x-2.5">
                 <div className="flex flex-col items-center lg:items-end lg:w-[50%]">
                     <h3 className="text-3xl font-bold mb-2.5 text-center lg:text-left">Subscribe For Daily<br/>Updates & Amazing Offers</h3>
