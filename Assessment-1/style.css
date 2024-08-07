@@ -1,0 +1,19 @@
+.product-card {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin: 16px;
+    text-align: center;
+}
+.product-card img {
+    max-width: 100px;
+    height: auto;
+}
+.add-btn
+{
+    background-color: greenyellow;
+    border-radius: 5px;
+}
+.filter-btn{
+    background-color: aqua;
+    border-radius: 5px;
+}
