@@ -29,9 +29,7 @@ const productSlice = createSlice({
         .addCase(fetchProducts.rejected, (state,action)=>{
             state.status=STATUS.ERROR
         })
-
     }
-
 })
 
 export const {setProducts, setStatus} = productSlice.actions; 
