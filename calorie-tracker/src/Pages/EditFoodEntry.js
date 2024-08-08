@@ -118,29 +118,29 @@ const EditFoodEntry = () => {
             required
           />
           {suggestions.length > 0 && (
-            <>
             <select
-              className="absolute z-10 w-full bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 mt-2"
+              className="absolute w-full bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 mt-2 mb-64"
               size={suggestions.length > 5 ? 5 : suggestions.length}
               onChange={handleSuggestionSelect}
               value={selectedFood}
+              style={{ marginBottom: '3rem' }} // Add margin below the select dropdown
             >
               <option value="" disabled>Select a suggestion</option>
               {suggestions.map((food, index) => (
-                <option key={index} value={food.food_name}>{food.food_name}</option>
+                <option key={index} value={food.food_name}>
+                  {food.food_name}
+                </option>
               ))}
             </select>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            </>
           )}
         </div>
-        <div className="mb-5">
-          <label htmlFor="date-time" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Date/Time</label>
+        <div className="mb-5" style={{ marginTop: suggestions.length > 0 ? '4rem' : '0' }}>
+          <label
+            htmlFor="date-time"
+            className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Date/Time
+          </label>
           <input
             type="datetime-local"
             id="date-time"

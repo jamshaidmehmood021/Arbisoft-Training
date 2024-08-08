@@ -12,7 +12,7 @@ import useFetchData from '../Hooks/useFetchData';
 
 const AdminDashboardCustomHookVersion = () => {
   // eslint-disable-next-line no-undef
-  const url = process.env.REACT_APP_SERVER_URL;
+  const url = 'https://66b467039f9169621ea2be8d.mockapi.io/foods';
   const dispatch = useDispatch();
   const [foods, setFoods] = useState([]);
 
@@ -22,7 +22,7 @@ const AdminDashboardCustomHookVersion = () => {
       'Content-Type': 'application/json',
     },
   };
-  const { data, loading, error } = useFetchData(`${url}/foods`, options);
+  const { data, loading, error } = useFetchData(`${url}`, options);
 
   useEffect(() => {
     if (data) {

@@ -16,10 +16,10 @@ const initialState = {
 };
 
 // eslint-disable-next-line no-undef
-const url = process.env.REACT_APP_SERVER_URL; 
+const url = 'https://66b467039f9169621ea2be8d.mockapi.io/foods'; 
 
 export const addFoodEntry = createAsyncThunk('foods/addFoodEntry', async (newEntry) => {
-  const response = await axios.post(`${url}/foods`, newEntry);
+  const response = await axios.post(`${url}`, newEntry);
   return response.data;
 });
 
@@ -27,20 +27,20 @@ export const fetchFoods = createAsyncThunk('foods/fetchFoods', async () => {
   const currUser = JSON.parse(localStorage.getItem('user'));
   let response;
   if (currUser === 'admin@gmail.com') {
-    response = await axios.get(`${url}/foods`);
+    response = await axios.get(`${url}`);
   } else {
-    response = await axios.get(`${url}/foods?username=${currUser}`);
+    response = await axios.get(`${url}?email=${currUser}`);
   }
   return response.data;
 });
 
 export const updateFoodEntry = createAsyncThunk('foods/updateFoodEntry', async (updatedEntry) => {
-  const response = await axios.put(`${url}/foods/${updatedEntry.id}`, updatedEntry);
+  const response = await axios.put(`${url}/${updatedEntry.id}`, updatedEntry);
   return response.data;
 });
 
 export const deleteFoodEntry = createAsyncThunk('foods/deleteFoodEntry', async (id) => {
-  await axios.delete(`${url}/foods/${id}`);
+  await axios.delete(`${url}/${id}`);
   return id;
 });
 

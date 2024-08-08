@@ -9,49 +9,47 @@ const initialState = {
 };
 
 // eslint-disable-next-line no-undef
-const url = process.env.REACT_APP_SERVER_URL;
+const url = 'https://66b467039f9169621ea2be8d.mockapi.io/users';
 
 export const signUp = createAsyncThunk('user/signUp', async (credentials, { rejectWithValue }) => {
-    try {
-      
-      const response = await axios.get(`${url}/users?email=${credentials.email}`);
-    
-      if (response.data > 0) {
-        return rejectWithValue('User already exists');
-      }
+  try {
+    // Fetch all users
+    const response = await axios.get(url);
+    const users = response.data;
+    const userExists = users.some(user => user.email === credentials.email);
 
-      const createResponse = await axios.post(`${url}/users`, credentials);
-      return createResponse.data;
-
-      
-    } catch (error) {
-      return rejectWithValue(error.response ? error.response.data : error.message);
+    if (userExists) {
+      return rejectWithValue('User already exists');
     }
-  });
-  
 
-  export const login = createAsyncThunk('user/login', async (credentials, { rejectWithValue }) => {
-    try {
-        const response = await axios.get(`${url}/users?email=${credentials.email}`);
-        const users = response.data;
-        
-        if (users.length === 0) {
-            return rejectWithValue('User not found');
-        }
+    const createResponse = await axios.post(url, credentials);
+    return createResponse.data;
 
-        const user = users[0];
-
-        if (user.password !== credentials.password) {
-            return rejectWithValue('Incorrect password');
-        }
-
-        return user;
-    } catch (error) {
-        return rejectWithValue(error.message);
-    }
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : error.message);
+  }
 });
 
-  
+export const login = createAsyncThunk('user/login', async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(`${url}?email=${credentials.email}`);
+    const users = response.data;
+    
+    if (users.length === 0) {
+        return rejectWithValue('User not found');
+    }
+
+    const user = users[0];
+
+    if (user.password !== credentials.password) {
+        return rejectWithValue('Incorrect password');
+    }
+
+    return user;
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
 
 const userSlice = createSlice({
   name: 'users',
