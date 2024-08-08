@@ -1,17 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
+//import { useSelector } from 'react-redux';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { fetchFoods } from '../Features/Food/foodSlice';
+import { useFetchFoodsQuery } from '../Features/Services/foodSliceApi';
 
 const AdminReport = () => {
-  const dispatch = useDispatch();
-  const foods = useSelector((state) => state.foods.foods);
+  const { data: foods = [] } = useFetchFoodsQuery();
 
-  useEffect(() => {
-    dispatch(fetchFoods());
-  }, [dispatch]);
-
-  const { currentWeekCount, previousWeekCount, currentWeekCalories, previousWeekCalories, avgCaloriesPerUser, data } = useMemo(() => {
+  const { currentWeekCount, previousWeekCount, avgCaloriesPerUser, data } = useMemo(() => {
     const currentDate = new Date();
     const last7Days = new Date(currentDate);
     last7Days.setDate(last7Days.getDate() - 7);
@@ -31,12 +26,13 @@ const AdminReport = () => {
     const avgCaloriesPerUser = currentWeekEntries.length ? (currentWeekCalories / currentWeekEntries.length) : 0;
 
     const data = [
-      { name: 'Last 7 Days', Entries: currentWeekCount, Calories: currentWeekCalories },
-      { name: 'Previous 7 Days', Entries: previousWeekCount, Calories: previousWeekCalories }
+      { name: 'Current Week', Entries: currentWeekCount, Calories: currentWeekCalories },
+      { name: 'Previous Week', Entries: previousWeekCount, Calories: previousWeekCalories }
     ];
 
-    return { currentWeekCount, previousWeekCount, currentWeekCalories, previousWeekCalories, avgCaloriesPerUser, data };
+    return { currentWeekCount, previousWeekCount, avgCaloriesPerUser, data };
   }, [foods]);
+
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg shadow-lg">

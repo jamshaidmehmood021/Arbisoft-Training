@@ -15,7 +15,6 @@ const initialState = {
   error: null,
 };
 
-// eslint-disable-next-line no-undef
 const url = 'https://66b467039f9169621ea2be8d.mockapi.io/foods'; 
 
 export const addFoodEntry = createAsyncThunk('foods/addFoodEntry', async (newEntry) => {

@@ -1,20 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
+import { useFetchFoodsQuery } from '../Features/Services/foodSliceApi';
 import { Bars } from 'react-loading-icons';
-
-import { fetchFoods } from '../Features/Food/foodSlice';
 import Card from '../Components/Card';
 
 const Home = () => {
-  const dispatch = useDispatch();
-  const foods = useSelector((state) => state.foods.foods);
-
-  const status = useSelector((state) => state.foods.status);
-  const error = useSelector((state) => state.foods.error);
-
-  useEffect(() => {
-    dispatch(fetchFoods());
-  }, [dispatch]);
+  const { data: foods = [], error, isLoading } = useFetchFoodsQuery();
 
   const groupFoodsByDate = (foods) => {
     const grouped = foods.reduce((acc, food) => {
@@ -33,8 +23,7 @@ const Home = () => {
     return groupFoodsByDate(foods);
   }, [foods]);
 
-  
-  if (status === 'loading') {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Bars />
@@ -42,10 +31,10 @@ const Home = () => {
     );
   }
 
-  if (status === 'failed') {
+  if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-red-600 dark:text-red-400">Error in fetching foods: {error}</p>
+        <p className="text-red-600 dark:text-red-400">Error in fetching foods: {error.message}</p>
       </div>
     );
   }
@@ -60,7 +49,9 @@ const Home = () => {
             </h2>
             <p className="mb-4 font-normal text-white">
               Total Calories: {groupedFoods[date].totalCalories.toFixed(2)}
-              <b className={groupedFoods[date].totalCalories > 2.100 ? 'text-red-600': 'text-white'}>{groupedFoods[date].totalCalories > 2.100 ? ' (Exceeds daily limit)' : `Behind your daily limit by ${groupedFoods[date].totalCalories - 2.100} calories`}</b>
+              <b className={groupedFoods[date].totalCalories > 2.100 ? 'text-red-600' : 'text-white'}>
+                {groupedFoods[date].totalCalories > 2.100 ? ' (Exceeds daily limit)' : ` Behind your daily limit by ${2100 - groupedFoods[date].totalCalories} calories`}
+              </b>
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {groupedFoods[date].foods.map((food) => (

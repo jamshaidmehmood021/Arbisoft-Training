@@ -7,8 +7,6 @@ const initialState = {
   authError: null,
   signedUp: false
 };
-
-// eslint-disable-next-line no-undef
 const url = 'https://66b467039f9169621ea2be8d.mockapi.io/users';
 
 export const signUp = createAsyncThunk('user/signUp', async (credentials, { rejectWithValue }) => {

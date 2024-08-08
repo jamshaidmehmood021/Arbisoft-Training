@@ -1,13 +1,14 @@
-import { configureStore } from "@reduxjs/toolkit";
-
-
-import userSlice from "../Features/users/userSlice";
-import foodSlice from "../Features/Food/foodSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import userSlice from '../Features/users/userSlice';
+import { foodApi } from '../Features/Services/foodSliceApi';  
 
 const store = configureStore({
-    reducer:{
-        users: userSlice,
-        foods: foodSlice
-    },
+  reducer: {
+    users: userSlice,
+    [foodApi.reducerPath]: foodApi.reducer, 
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(foodApi.middleware), 
 });
+
 export default store;
