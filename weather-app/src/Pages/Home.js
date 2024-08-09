@@ -1,21 +1,27 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useForm } from 'react-hook-form';
 import { setCity } from '../Slice/citySlice';
 import { useGetWeatherByCityQuery } from '../Features/Services/weatherApi';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import WeatherChart from '../Components/WeatherChart';
 import Results from '../Components/Results';
+import { z } from 'zod';
+
+const citySchema = z.object({
+  city: z.string().min(1, { message: "Please enter a city name." }),
+});
 
 function Home() {
   const dispatch = useDispatch();
   const city = useSelector((state) => state.city);
 
-  
-  const { register,  handleSubmit,  formState: { errors },  watch,  } = useForm();
-
-  const watchedCity = watch('city', city);
+  const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm({
+    resolver: zodResolver(citySchema),
+    mode: "onSubmit", // Validation will be triggered on submit only
+  });
 
   const { data: weatherData, error: fetchError, isLoading } = useGetWeatherByCityQuery(city, {
     skip: city === '',
@@ -48,8 +54,8 @@ function Home() {
     );
   };
 
-  const onSubmit = (data) => {
-    dispatch(setCity(data.city));
+  const onSubmit = (formData) => {
+    dispatch(setCity(formData.city));
   };
 
   return (
@@ -62,20 +68,15 @@ function Home() {
           <div className="flex flex-col md:flex-row md:items-center">
             <input
               type="text"
-              id="city"
-              {...register('city', { required: 'Please enter a city name.' })}
-              className={`mt-1 px-4 py-2 block w-full md:w-64 h-12 rounded-md border ${
-                errors.city ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:border-blue-500 placeholder-gray-500`}
+              {...register('city')}
+              className="mt-1 px-4 py-2 block w-full md:w-64 h-12 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 placeholder-gray-500"
               placeholder="Enter city name"
             />
             <button type="submit" className="mt-2 md:ml-1 bg-blue-500 text-white py-2 px-4 h-12 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">
               Get Weather
             </button>
           </div>
-         
-
-          {errors.city && watchedCity === '' && (
+          {isSubmitted && errors.city && (
             <div className="text-red-500 text-center">{errors.city.message}</div>
           )}
         </form>
