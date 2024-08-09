@@ -1,53 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCity } from '../Slice/citySlice';
+import { useGetWeatherByCityQuery } from '../Features/Services/weatherApi';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-import WeatherChart from './WeatherChart';
+import WeatherChart from '../Components/WeatherChart';
 import Results from '../Components/Results';
 
 function Home() {
-  const [city, setCity] = useState('');
-  const [weatherData, setWeatherData] = useState(null);
-  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const city = useSelector((state) => state.city); // Access city from Redux
+  const [error, setError] = React.useState('');
 
-  const fetchWeather = async (event) => {
-    event.preventDefault();
-    setError('');
-    if (city === '') {
-      setError('Please enter a city name.');
-      return;
-    }
-
-    const apiKey = '1e9574a5e19cc974a9d6b17775a7657e'; 
-    const apiUrl = 
-      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
-
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      if (response.ok) {
-        setWeatherData(data);
-      } else {
-        setError(data.message);
-      }
-    } catch (error) {
-      setError('Failed to fetch weather data.');
-    }
-  };
+  const { data: weatherData, error: fetchError, isLoading } = useGetWeatherByCityQuery(city, {
+    skip: city === '',
+  });
 
   const processWeatherData = () => {
     if (!weatherData) return [];
-    
     return weatherData.list.map(entry => {
       const date = new Date(entry.dt_txt);
       return {
-        date: date.toDateString(), 
+        date: date.toDateString(),
         temp: entry.main.temp,
         feelsLike: entry.main.feels_like,
         minimum_temp: entry.main.temp_min,
-        maximum_temp: entry.main.temp_max
+        maximum_temp: entry.main.temp_max,
       };
     });
-  };  
+  };
 
   const data = processWeatherData();
 
@@ -62,20 +43,29 @@ function Home() {
     );
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (city === '') {
+      setError('Please enter a city name.');
+    } else {
+      setError('');
+    }
+  };
+
   return (
     <div className="bg-gradient-to-br from-blue-400 to-purple-600 min-h-screen flex flex-col justify-center items-center p-4">
       <div className="bg-white p-8 rounded-md shadow-lg max-w-lg w-full">
         <h1 className="text-3xl font-semibold mb-6 text-green-500 text-center">
           Weather Forecast
         </h1>
-        <form onSubmit={fetchWeather} className="mb-6 relative">
+        <form onSubmit={handleSubmit} className="mb-6 relative">
           <div className="flex flex-col md:flex-row md:items-center">
             <input
               type="text"
               id="city"
               name="city"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => dispatch(setCity(e.target.value))}
               className="mt-1 px-4 py-2 block w-full md:w-64 h-12 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 placeholder-gray-500"
               placeholder="Enter city name"
             />
@@ -86,15 +76,29 @@ function Home() {
         </form>
 
         {error && <div className="text-red-500 text-center">{error}</div>}
-        {displayWeather()}
+        {fetchError && (
+          <div className="text-red-500 text-center">
+            {fetchError.status === 404
+              ? 'City not found. Please check the city name and try again.'
+              : fetchError.message}
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="flex justify-center items-center">
+            <i className="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
+          </div>
+        )}
+
+        {!isLoading && weatherData && displayWeather()}
       </div>
       <div className="mt-8">
         {data.length > 0 && (
-            <>
-           <h2 className="text-2xl font-semibold mb-4 text-gray-800">5 Days Forecast</h2>
-          <div className="mx-auto max-w-full md:max-w-3xl lg:max-w-4xl">
-            <WeatherChart data={data}/>
-          </div>
+          <>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">5 Days Forecast</h2>
+            <div className="mx-auto max-w-full md:max-w-3xl lg:max-w-4xl">
+              <WeatherChart data={data} />
+            </div>
           </>
         )}
       </div>

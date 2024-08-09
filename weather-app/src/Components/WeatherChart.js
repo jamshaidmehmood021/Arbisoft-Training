@@ -27,10 +27,10 @@ const WeatherChart = ({ data }) => {
       return (
         <div className="bg-white p-2 border rounded">
           <p className="font-bold">{date}</p>
-          <p>Temperature: {temp}°C</p>
-          <p>Feels Like: {feelsLike}°C</p>
-          <p>Min Temp: {minimum_temp}°C</p>
-          <p>Max Temp: {maximum_temp}°C</p>
+          <p><i className="fas fa-thermometer-half text-red-500"></i>Temperature: {temp}°C</p>
+          <p><i className="fas fa-thermometer-three-quarters text-red-500"></i>Feels Like: {feelsLike}°C</p>
+          <p><i class="fa-solid fa-temperature-low"></i>Min Temp: {minimum_temp}°C</p>
+          <p><i class="fa-solid fa-temperature-high"></i>Max Temp: {maximum_temp}°C</p>
         </div>
       );
     }
