@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
-
-
-import { updateFoodEntry, selectFoodById, STATUS } from '../Features/Food/foodSlice';
+import { useFetchFoodByIdQuery, useUpdateFoodEntryMutation } from '../Features/Services/foodSliceApi';
 import useFetchSuggestions from '../Hooks/useFetchSugession';
 import useFetchNutrientCalorie from '../Hooks/useFetchNutrientCalorie';
 
 const EditItemCustomHookVersion = () => {
   const { foodId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
+  const { data: food, isLoading, error } = useFetchFoodByIdQuery(foodId);
 
-  const food = useSelector((state) => selectFoodById(state, foodId));
-
-  const [foodName, setFoodName] = useState(food?.foodName || '');
-  const [dateTime, setDateTime] = useState(food?.dateTime || '');
+  const [foodName, setFoodName] = useState('');
+  const [dateTime, setDateTime] = useState('');
   const [selectedFood, setSelectedFood] = useState('');
-  const [requestStatus, setRequestStatus] = useState(STATUS.IDLE);
+  const [requestStatus, setRequestStatus] = useState('idle');
   const { suggestions } = useFetchSuggestions(foodName);
   const { calories, fetchNutrientCalorie } = useFetchNutrientCalorie();
+
+  const [updateFoodEntry] = useUpdateFoodEntryMutation();
 
   useEffect(() => {
     if (food) {
@@ -43,19 +40,23 @@ const EditItemCustomHookVersion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (foodName && calories && dateTime && requestStatus === STATUS.IDLE) {
+    if (foodName && calories && dateTime && requestStatus === 'idle') {
       try {
-        setRequestStatus(STATUS.PENDING);
-        await dispatch(updateFoodEntry({ id: foodId, foodName, calories, dateTime, username: food.username })).unwrap();
+        setRequestStatus('pending');
+        await updateFoodEntry({ id: foodId, foodName, calories, dateTime, username: food.username }).unwrap();
         toast.success("Food Item Edited!");
         navigate('/home');
       } catch (err) {
         console.error('Failed to save the food entry', err);
+        toast.error("Failed to save the food entry.");
       } finally {
-        setRequestStatus(STATUS.IDLE);
+        setRequestStatus('idle');
       }
     }
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">

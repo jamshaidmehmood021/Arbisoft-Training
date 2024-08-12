@@ -1,31 +1,26 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 
-import { STATUS, selectError } from '../Features/Food/foodSlice';
 import useFetchNutrientCalorie from '../Hooks/useFetchNutrientCalorie';
 import useFetchSuggestions from '../Hooks/useFetchSugession';
-import { addFoodEntry } from '../Features/Food/foodSlice';
+import { useAddFoodEntryMutation, useFetchFoodsQuery } from '../Features/Services/foodSliceApi';
 
 const DAILY_CALORIE_LIMIT = 2.100;
 
 const AddItemCustomHookVersion = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [foodName, setFoodName] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [selectedFood, setSelectedFood] = useState('');
 
   const { suggestions } = useFetchSuggestions(foodName);
   const { calories, fetchNutrientCalorie } = useFetchNutrientCalorie();
+  const [addFoodEntry, error] = useAddFoodEntryMutation();
+  const { data: foods = [] } = useFetchFoodsQuery();
 
-  const reqStatus = useSelector((state) => state.foods.status);
-  const error = useSelector(selectError);
-  
   const username = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
-  const foods = useSelector((state) => state.foods.foods);
 
   useEffect(() => {
     if (selectedFood) {
@@ -41,17 +36,13 @@ const AddItemCustomHookVersion = () => {
 
   const checkDailyCalorieLimit = () => {
     const today = new Date().toISOString().split('T')[0];
-    
     const userFoodsForToday = foods.filter(food => 
       food.username === username && food.dateTime.startsWith(today)
     );
-  
     const dailyTotal = userFoodsForToday.reduce((total, food) => 
       total + food.calories, 0
     );
-  
     const totalCalories = dailyTotal + (parseFloat(calories) || 0);
-  
     return totalCalories > DAILY_CALORIE_LIMIT;
   };
 
@@ -63,16 +54,17 @@ const AddItemCustomHookVersion = () => {
       dateTime,
       username
     };
-    dispatch(addFoodEntry(newEntry));
-    if (checkDailyCalorieLimit() && reqStatus === STATUS.SUCCESS) {
-      toast.warning(`You have exceed your daily limit of ${DAILY_CALORIE_LIMIT} calories for ${new Date(dateTime).toLocaleDateString()}`);
-      toast.success(`But still Item added successfully`);
+    try {
+      await addFoodEntry(newEntry).unwrap();
+      if (checkDailyCalorieLimit()) {
+        toast.warning(`You have exceeded your daily limit of ${DAILY_CALORIE_LIMIT} calories for ${new Date(dateTime).toLocaleDateString()}`);
+        toast.success('But still, item added successfully');
+      } else {
+        toast.success('Item added successfully');
+      }
       navigate('/home');
-    } else if (reqStatus === STATUS.SUCCESS) {
-      toast.success(`You have done pretty good; daily limit is still left`);
-      toast.success(`Item added successfully`);
-    } else {
-      toast.error(error);
+    } catch {
+      toast.error(error || 'Error adding item');
     }
   };
 

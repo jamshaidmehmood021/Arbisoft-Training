@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
@@ -7,43 +6,30 @@ import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { Bars } from 'react-loading-icons';
 
-import { deleteFoodEntry } from '../Features/Food/foodSlice';
-import useFetchData from '../Hooks/useFetchData';
+import { useDeleteFoodEntryMutation, useFetchFoodsQuery } from '../Features/Services/foodSliceApi';
 
 const AdminDashboardCustomHookVersion = () => {
-  // eslint-disable-next-line no-undef
-  const url = 'https://66b467039f9169621ea2be8d.mockapi.io/foods';
-  const dispatch = useDispatch();
-  const [foods, setFoods] = useState([]);
-
-  const options = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-  const { data, loading, error } = useFetchData(`${url}`, options);
+  const { data: foods = [], error, isLoading } = useFetchFoodsQuery();
+  const [deleteFoodEntry] = useDeleteFoodEntryMutation();
+  const [localFoods, setLocalFoods] = useState(foods);
 
   useEffect(() => {
-    if (data) {
-      setFoods(data);
-    }
-  }, [data]);
+    setLocalFoods(foods);
+  }, [foods]);
 
   const handleDeleteClick = async (id) => {
-    const updatedFoods = foods.filter(food => food.id !== id);
-    setFoods(updatedFoods);
-
+    const updatedFoods = localFoods.filter(food => food.id !== id);
+    setLocalFoods(updatedFoods);
     try {
-      await dispatch(deleteFoodEntry(id)).unwrap();
+      await deleteFoodEntry(id).unwrap();
       toast.error("Food Item Deleted!");
     } catch (error) {
-      setFoods(data);
+      setLocalFoods(foods);
       toast.error(error);
     }
   };
 
-  if (loading) return <div><Bars/></div>;
+  if (isLoading) return <div><Bars/></div>;
   if (error) return <div className='text-white'>Error while loading data</div>;
 
   return (
