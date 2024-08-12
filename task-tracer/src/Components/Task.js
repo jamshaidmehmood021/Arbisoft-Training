@@ -10,7 +10,6 @@ import {toogleEditTask, setEditedData, toggleAddForm} from "../Store/appSlice"
 const Task = ({ task}) => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
-
   const handeleOnEditClick = (currData) => {
     dispatch(toogleEditTask())
     dispatch(setEditedData(currData))
