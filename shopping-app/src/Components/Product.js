@@ -1,47 +1,39 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { Bars } from 'react-loading-icons'
-
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { Bars } from 'react-loading-icons';
+import { useGetProductsQuery } from '../Services/productApi';
 import { add } from '../Store/cartSlice';
-import {fetchProducts} from "../Store/productSlice"
-import { STATUS } from '../Store/productSlice';
-
 
 const Product = () => {
-    const dispatch = useDispatch()
-    const {data: products, status} = useSelector((state) => state.product)
-    useEffect(() =>{
-        
-        dispatch(fetchProducts());
-    },[dispatch])
+  const dispatch = useDispatch();
+  const { data: products, error, isLoading } = useGetProductsQuery();
 
-    const handleAddToCart = ( product) =>{
-        dispatch(add(product))
+  const handleAddToCart = (product) => {
+    dispatch(add(product));
+  };
 
-    }
-    if(status === STATUS.LOADING)
-    {
-        return <Bars stroke="#98ff98" />
-    }
-    if(status === STATUS.ERROR)
-    {
-        return <p>Something went Wrong .....</p>
-    }
+  if (isLoading) {
+    return <Bars stroke="#98ff98" />;
+  }
+
+  if (error) {
+    return <p>Something went wrong...</p>;
+  }
 
   return (
     <div className="productsWrapper">
-            {products.map((product) => (
-                <div className="card" key={product.id}>
-                    <img src={product.image} alt="" />
-                    <h4>{product.title}</h4>
-                    <h5>{product.price}</h5>
-                    <button onClick={() => handleAddToCart(product)} className="btn">
-                        Add to cart
-                    </button>
-                </div>
-            ))}
+      {products?.map((product) => (
+        <div className="card" key={product.id}>
+          <img src={product.image} alt="" />
+          <h4>{product.title}</h4>
+          <h5>{product.price}</h5>
+          <button onClick={() => handleAddToCart(product)} className="btn">
+            Add to cart
+          </button>
         </div>
-  )
-}
+      ))}
+    </div>
+  );
+};
 
 export default Product;
