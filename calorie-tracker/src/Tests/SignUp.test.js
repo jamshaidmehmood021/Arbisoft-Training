@@ -6,7 +6,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import userReducer from '../Features/users/userSlice';
-import LogIn from '../Pages/LogIn';
+import SignUp from '../Pages/SignUp';
 
 const store = configureStore({
   reducer: {
@@ -14,29 +14,31 @@ const store = configureStore({
   },
 });
 
-test('renders LogIn component and validates form fields', () => {
+test('renders SignUp component and validates form fields', () => {
     render(
       <Provider store={store}>
         <Router>
-          <LogIn />
+          <SignUp />
         </Router>
       </Provider>
     );
-
-    const logInHeading = screen.getByText(/Log In/i);
+  
+    const signUpHeading = screen.getByRole('heading', { name: /Sign Up/i });
     const emailInput = screen.getByLabelText(/Your email/i);
     const passwordInput = screen.getByLabelText(/Password/i);
-    const signInButton = screen.getByRole('button', { name: /Sign In/i });
-
-    expect(logInHeading).toBeInTheDocument();
+    const signUpButton = screen.getByRole('button', { name: /Sign Up/i });
+  
+    expect(signUpHeading).toBeInTheDocument();
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
-    expect(signInButton).toBeInTheDocument();
-
+    expect(signUpButton).toBeInTheDocument();
+  
     fireEvent.change(emailInput, {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(passwordInput, {
       target: { value: 'password123' },
     });
+  
+    fireEvent.click(signUpButton);
 });

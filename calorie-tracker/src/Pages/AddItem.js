@@ -191,4 +191,4 @@ const AddItem = () => {
   );
 };
 
-export default AddItemCustomHookVersion;
+export default AddItem;
