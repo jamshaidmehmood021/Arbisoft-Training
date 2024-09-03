@@ -55,6 +55,8 @@ const AdminDashboard = () => {
                     className="cursor-pointer text-red-500 hover:text-red-700"
                     size={24}
                     onClick={() => handleDeleteClick(food.id)}
+                    role="button"
+                    aria-label="delete"
                   />
                 </td>
               </tr>

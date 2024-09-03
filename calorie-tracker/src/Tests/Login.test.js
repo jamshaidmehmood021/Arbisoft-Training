@@ -14,7 +14,7 @@ const store = configureStore({
   },
 });
 
-test('renders LogIn component and validates form fields', () => {
+test('Renders LogIn component and validates form fields and check submit action', () => {
     render(
       <Provider store={store}>
         <Router>
@@ -39,4 +39,5 @@ test('renders LogIn component and validates form fields', () => {
     fireEvent.change(passwordInput, {
       target: { value: 'password123' },
     });
+    fireEvent.click(signInButton);
 });

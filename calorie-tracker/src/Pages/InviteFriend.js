@@ -31,10 +31,11 @@ const InviteFriend = () => {
         </h2>
         <form ref={form} onSubmit={handleInvite} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+            <label htmlFor="user-name" className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
               Name
             </label>
             <input
+              id='user-name'
               type="text"
               name="user-name"
               className="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:border-gray-600"
@@ -43,10 +44,11 @@ const InviteFriend = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+            <label htmlFor="user-email" className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
               Email
             </label>
             <input
+              id='user-email'
               type="email"
               name="user-email"
               className="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:border-gray-600"

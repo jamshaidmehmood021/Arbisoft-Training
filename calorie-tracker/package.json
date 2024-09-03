@@ -24,7 +24,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest",
+    "test": "jest --watchAll --detectOpenHandles",
     "eject": "react-scripts eject",
     "server": "json-server --watch db.json --port 5000",
     "lint": "eslint --max-warnings 0 ."
@@ -88,6 +88,9 @@
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "<rootDir>/src/setupTests.js"
-    ]
+    ],
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["json", "html", "text"]
   }
 }

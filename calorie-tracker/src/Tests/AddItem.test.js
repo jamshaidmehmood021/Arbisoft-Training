@@ -2,9 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import { BrowserRouter as Router } from 'react-router-dom';
+
 import foodReducer from '../Features/Food/foodSlice';
 import AddItem from '../Pages/AddItem';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 const store = configureStore({
   reducer: {
@@ -12,8 +13,8 @@ const store = configureStore({
   },
 });
 
-describe('AddItem Component', () => {
-  test('validates required fields and adds food', () => {
+describe('AddItem Component Rendering', () => {
+  test('Validating the required fields and adds food', () => {
     render(
       <Provider store={store}>
         <Router>

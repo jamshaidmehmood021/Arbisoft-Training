@@ -14,7 +14,7 @@ const store = configureStore({
   },
 });
 
-test('renders SignUp component and validates form fields', () => {
+test('Renders SignUp component and validates form fields', () => {
     render(
       <Provider store={store}>
         <Router>
