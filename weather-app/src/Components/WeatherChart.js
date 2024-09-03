@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
-const WeatherChart = ({ data }) => {
+const WeatherChart = (props) => {
+  const { data } = props;
   const [chartWidth, setChartWidth] = useState(window.innerWidth > 1024 ? 600 : window.innerWidth - 20);
 
   useEffect(() => {

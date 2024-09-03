@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Results = ({ today,city }) => {
-
+const Results = (props) => {
+    const { today,city } = props;
     return (
         <div id="weather-info" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <div className="border rounded-md p-4 bg-yellow-200 hover:bg-yellow-300 transition-colors duration-300 ease-in-out">

@@ -20,7 +20,7 @@ function Home() {
 
   const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm({
     resolver: zodResolver(citySchema),
-    mode: "onSubmit", // Validation will be triggered on submit only
+    mode: "onSubmit",
   });
 
   const { data: weatherData, error: fetchError, isLoading } = useGetWeatherByCityQuery(city, {
