@@ -33,7 +33,6 @@ const Card = React.memo((props) => {
   );
 });
 
-Card.displayName = 'Card';
 Card.propTypes = {
   food: PropTypes.string.isRequired,
 };
