@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 
 const Card = React.memo((props) => {
   const food = JSON.parse(props.food);
@@ -33,4 +33,7 @@ const Card = React.memo((props) => {
   );
 });
 
+Card.propTypes = {
+  food: PropTypes.string.isRequired,
+};
 export default Card;

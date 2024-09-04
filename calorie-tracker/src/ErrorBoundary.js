@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 
-Modal.setAppElement('#root');
+if (process.env.NODE_ENV !== 'test') {
+  Modal.setAppElement('#root');
+}
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -18,7 +20,6 @@ class ErrorBoundary extends Component {
     console.error("Error caught by ErrorBoundary:", error, errorInfo);
     this.setState({ error, errorInfo });
   }
-
 
   render() {
     if (this.state.hasError) {
