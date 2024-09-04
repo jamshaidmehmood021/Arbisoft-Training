@@ -1,33 +1,32 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import Button from './Button'
-import { AppContext } from '../Context/AppContext'
 
+import { toggleAddForm, toggleApiData } from '../Store/appSlice'
 
 const Header = ({ title }) => {
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { showAddForm, setShowAddForm, showApiData, setShowApiData } = useContext(AppContext);
-
-
+  const dispatch = useDispatch()
+  const { showAddForm } = useSelector((state) => state.app);
   const handleAddFormClick = () => {
     if (location.pathname === '/addTask') {
       navigate('/');
     } else {
       navigate('/addTask');
     }
-    setShowAddForm(!showAddForm);
+    dispatch(toggleAddForm())
   };
-
   const handleTaskClick = () => {
     if (location.pathname === '/tasks') {
       navigate('/');
     } else {
       if (location.pathname === '/addTask')
-        setShowAddForm(!showAddForm);
+        dispatch(toggleAddForm())
       navigate('/tasks');
     }
   };
@@ -37,10 +36,10 @@ const Header = ({ title }) => {
       navigate('/');
     } else {
       if (location.pathname === '/addTask')
-        setShowAddForm(!showAddForm);
+        dispatch(toggleAddForm())
       navigate('/showData');
     }
-    setShowApiData(!showApiData);
+    dispatch(toggleApiData())
   };
   return (
     <>
