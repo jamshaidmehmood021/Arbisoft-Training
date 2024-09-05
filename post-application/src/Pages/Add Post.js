@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-export default function AddPost() {
+export const  AddPost = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -187,3 +187,5 @@ export default function AddPost() {
     </LocalizationProvider>
   );
 }
+
+export default AddPost;

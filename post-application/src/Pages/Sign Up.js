@@ -1,15 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
+import { Button,Checkbox,FormControlLabel,Divider,FormLabel,FormControl,TextField,Typography,Stack, Card } from '@mui/material';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -62,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp() {
+const SignUp = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -82,10 +73,9 @@ export default function SignUp() {
       navigate('/signIn');
     }
   };
-
   return (
     <Stack className={classes.signUpContainer}>
-      <MuiCard className={classes.card} variant="outlined">
+      <Card className={classes.card} variant="outlined">
         <Typography
           component="h1"
           variant="h4"
@@ -163,9 +153,7 @@ export default function SignUp() {
             </Link>
           </Typography>
         </Box>
-        <Divider sx={{ my: 2 }}>
-          <Typography className={classes.dividerText}>or</Typography>
-        </Divider>
+        <Divider className={classes.divider}>or</Divider>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Button
             fullWidth
@@ -186,7 +174,9 @@ export default function SignUp() {
             Sign up with Facebook
           </Button>
         </Box>
-      </MuiCard>
+      </Card>
     </Stack>
   );
 }
+
+export default SignUp;
