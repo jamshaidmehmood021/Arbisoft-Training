@@ -1,21 +1,25 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, {useContext} from 'react';
+import {  Routes, Route } from 'react-router-dom';
+import { AuthContext } from 'Context/authContext';
 
-import SignUp from 'Components/Sign Up';
-import SignIn from 'Components/Sign In';
+import SignUp from 'Pages/Sign Up';
+import SignIn from 'Pages/Sign In';
+import AddPost from 'Pages/Add Post';
 import DrawerComponent from 'Components/Drawer';
 
-
-
 const App = () => {
+  const { user } = useContext(AuthContext); 
+  
+  console.log(user);
   return (
-    <BrowserRouter>
-      <DrawerComponent/>
-      <Routes>
-      <Route path="/" element ={ <SignUp/>}/> 
-      <Route path="/signIn" element ={ <SignIn/>}/>      
-      </Routes>
-    </BrowserRouter>
+    <>
+        <DrawerComponent />
+        <Routes>
+          <Route path="/" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/addPost" element={<AddPost />} />
+        </Routes>
+    </>
   );
 };
 

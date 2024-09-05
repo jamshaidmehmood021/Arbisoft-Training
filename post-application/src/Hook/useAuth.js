@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { toast } from 'react-toastify';
-
 import axiosInstance from 'lib/axios';
+import { AuthContext } from 'Context/authContext';  // Import AuthContext
 
 const useAuth = (authType) => {
+  const { login } = useContext(AuthContext); 
 
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
@@ -54,21 +55,22 @@ const useAuth = (authType) => {
 
       if (response.status === 200) {
         const successMessage = authType === 'signup' 
-          ? 'Sign up successfuly !' 
-          : 'Login successfuly !';
+          ? 'Sign up successful!' 
+          : 'Login successful!';
         toast.success(successMessage);
 
         if (response.data.token) {
-            localStorage.setItem('Token', response.data.token);
-          }
+          login(response.data.token); 
+        }
+
         return response.data;
       } else {
         toast.error('Authentication failed');
         console.error('Authentication failed');
       }
     } catch (error) {
-      toast.error('API error:', error);
-      console.error('API error:', error);
+      toast.error('API error:', error.message);
+      console.error('API error:', error.message);
     }
   };
 
