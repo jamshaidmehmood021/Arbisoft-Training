@@ -1,8 +1,7 @@
 import * as React from 'react';
 import SvgIcon from '@mui/material/SvgIcon';
 
-export function FacebookIcon() {
-  return (
+export const FacebookIcon = () => (
     <SvgIcon>
       <svg
         width="16"
@@ -34,11 +33,9 @@ export function FacebookIcon() {
         </defs>
       </svg>
     </SvgIcon>
-  );
-}
+);
 
-export function GoogleIcon() {
-  return (
+export const GoogleIcon = () => (
     <SvgIcon>
       <svg
         width="16"
@@ -65,5 +62,4 @@ export function GoogleIcon() {
         />
       </svg>
     </SvgIcon>
-  );
-}
+);

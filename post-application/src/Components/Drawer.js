@@ -1,7 +1,5 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core'
-import { Drawer } from '@material-ui/core'
-import {Typography} from '@material-ui/core'
+import { makeStyles,Drawer, Typography } from '@material-ui/core'
 
 const drawerWidth = 240;
 const useStyles = makeStyles({

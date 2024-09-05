@@ -1,17 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Divider from '@mui/material/Divider';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import Card from '@mui/material/Card';
+import { Button, Checkbox, FormControlLabel, Divider, FormLabel, FormControl, TextField, Typography, Stack, Card } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+
 import { GoogleIcon, FacebookIcon } from 'MUICustomIcons/CustomIcons';
 import useAuth from 'Hook/useAuth';
 
@@ -62,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+const SignIn = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -78,7 +70,7 @@ export default function SignIn() {
     const response = await handleSubmit(formData);
 
     if (response && response.token) {
-      navigate('/home'); 
+      navigate('/home');
     }
   };
 
@@ -177,5 +169,7 @@ export default function SignIn() {
         </Box>
       </Card>
     </Stack>
-  );
+  )
 }
+
+export default SignIn;
