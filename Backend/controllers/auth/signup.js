@@ -1,7 +1,7 @@
 const { Request, Response } = require('express');
 const bcrypt = require('bcrypt');
 
-const { User } = require('../../models/User');
+const User = require('../../models/User');
 
 const signup = async (req, res) => {
     const userData = req.body;
@@ -27,7 +27,6 @@ const signup = async (req, res) => {
 
         const hash = await bcrypt.genSalt(key);
         const encryptedPassword = await bcrypt.hash(userData.password, hash);
-        console.log("before")
         const user = await User.create({
             name: userData.name,
             email: userData.email,
