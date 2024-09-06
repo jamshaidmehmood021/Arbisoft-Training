@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@mui/material/Box';
-import { Button, Checkbox, FormControlLabel, Divider, FormLabel, FormControl, TextField, Typography, Stack, Card } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Checkbox, FormControlLabel, Divider, Typography, Stack, Card } from '@mui/material';
 
-import { GoogleIcon, FacebookIcon } from 'MUICustomIcons/CustomIcons';
-import useAuth from 'Hook/useAuth';
+import useAuth from 'hook/useAuth';
+import { AuthContext } from 'context/authContext';
+
+import Button from 'components/button';
+import TextField from 'components/textField';
+import { FacebookIcon, GoogleIcon } from 'muiCustomIcons/CustomIcons';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -56,21 +62,52 @@ const useStyles = makeStyles((theme) => ({
 
 const SignIn = () => {
   const classes = useStyles();
-  const navigate = useNavigate();
 
-  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, handleSubmit } = useAuth('login');
+  const { setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { apiCall } = useAuth();
+
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const onSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const formData = {
-      email: data.get('email'),
-      password: data.get('password'),
-    };
-    const response = await handleSubmit(formData);
+    const email = data.get('email');
+    const password = data.get('password');
 
-    if (response && response.token) {
-      navigate('/home');
+    setEmailError('');
+    setPasswordError('');
+
+    if (!email) {
+      setEmailError('Email is required.');
+      return;
+    }
+
+    if (!password) {
+      setPasswordError('Password is required.');
+      return;
+    }
+
+    const formData = {
+      email,
+      password,
+    };
+
+    try {
+      const response = await apiCall('/login', formData);
+
+      if (response && response.token) {
+        localStorage.setItem('Token', response.token);
+        setUser(jwtDecode(response.token).email);
+        toast.success('Login successful!');
+        navigate('/home');
+      } else {
+        toast.error(response.message || 'Login failed.');
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again.');
+      console.error(error);
     }
   };
 
@@ -80,70 +117,36 @@ const SignIn = () => {
         <Typography component="h1" variant="h4" className={classes.signInTitle}>
           Sign in
         </Typography>
-        <Box
-          component="form"
-          onSubmit={onSubmit}
-          noValidate
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            gap: 2,
-          }}
-        >
-          <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
-            <TextField
-              error={emailError}
-              helperText={emailErrorMessage}
-              id="email"
-              type="email"
-              name="email"
-              placeholder="your@email.com"
-              autoComplete="email"
-              autoFocus
-              required
-              fullWidth
-              variant="outlined"
-              color={emailError ? 'error' : 'primary'}
-              className={classes.textField}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <TextField
-              error={passwordError}
-              helperText={passwordErrorMessage}
-              name="password"
-              placeholder="••••••"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              required
-              fullWidth
-              variant="outlined"
-              color={passwordError ? 'error' : 'primary'}
-              className={classes.textField}
-            />
-          </FormControl>
+        <Box component="form" onSubmit={onSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
+          <TextField
+            id="email"
+            name="email"
+            label="Email"
+            type="email"
+            placeholder="your@email.com"
+            autoFocus
+            error={!!emailError}
+            helperText={emailError}
+          />
+          <TextField
+            id="password"
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="••••••"
+            error={!!passwordError}
+            helperText={passwordError}
+          />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
             sx={{ marginBottom: 2 }}
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            className={classes.signInButton}
-          >
+          <Button type="submit" fullWidth variant="contained">
             Sign in
           </Button>
           <Typography sx={{ textAlign: 'center', marginTop: 2 }}>
-            Don&apos;t have an account?{' '}
-            <Link to="/" className={classes.link}>
-              Sign up
-            </Link>
+            Don&apos;t have an account? <Link to="/signup" className={classes.link}>Sign up</Link>
           </Typography>
         </Box>
         <Divider className={classes.divider}>or</Divider>
@@ -153,7 +156,6 @@ const SignIn = () => {
             variant="outlined"
             onClick={() => alert('Sign in with Google')}
             startIcon={<GoogleIcon />}
-            className={classes.socialButton}
           >
             Sign in with Google
           </Button>
@@ -162,14 +164,13 @@ const SignIn = () => {
             variant="outlined"
             onClick={() => alert('Sign in with Facebook')}
             startIcon={<FacebookIcon />}
-            className={classes.socialButton}
           >
             Sign in with Facebook
           </Button>
         </Box>
       </Card>
     </Stack>
-  )
-}
+  );
+};
 
 export default SignIn;

@@ -4,19 +4,23 @@ import reportWebVitals from './reportWebVitals';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 import './index.css';
 import App from './App';
-import { AuthProvider } from 'Context/authContext';
+import { AuthProvider } from 'context/authContext';
+import store from 'Store/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <ToastContainer />
-      </AuthProvider>
+      <Provider store={store}>
+        <AuthProvider>
+          <App />
+          <ToastContainer />
+        </AuthProvider>
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>
 

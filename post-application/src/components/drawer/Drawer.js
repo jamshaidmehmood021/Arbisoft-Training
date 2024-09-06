@@ -10,7 +10,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-import { AuthContext } from 'Context/authContext';
+import { AuthContext } from 'context/authContext';
 
 const drawerWidth = 200;
 const useStyles = makeStyles({
@@ -56,8 +56,6 @@ const DrawerComponent = ({ children }) => {
     const location = useLocation();
     const { user, logout } = useContext(AuthContext);
 
-    console.log(user);
-    
     const menuItems = [
         {
             text: 'Home',

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // fix import
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
@@ -30,12 +30,6 @@ const AuthProvider = ({ children }) => {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
-    const login = (token) => {
-        localStorage.setItem('Token', token);
-        setUser(jwtDecode(token).email); 
-        navigate('/home'); 
-    };
-
     const logout = () => {
         localStorage.removeItem('Token');
         setUser(null);
@@ -43,7 +37,7 @@ const AuthProvider = ({ children }) => {
     };
 
     const contextValue = {
-        user, login, logout,
+        user, setUser, logout,
     };
 
     return (

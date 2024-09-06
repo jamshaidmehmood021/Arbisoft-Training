@@ -1,88 +1,27 @@
-import { useState, useContext } from 'react';
-import { toast } from 'react-toastify';
-import axiosInstance from 'lib/axios';
-import { AuthContext } from 'Context/authContext';  // Import AuthContext
+import { useState } from 'react';
 
-const useAuth = (authType) => {
-  const { login } = useContext(AuthContext); 
+import axiosInstance from 'utils/axios/axios';
 
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
-  const [nameError, setNameError] = useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = useState('');
+const useAuth = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const validateInputs = (data) => {
-    let isValid = true;
-
-    if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!data.password || data.password.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    if (authType === 'signup' && (!data.name || data.name.length < 1)) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage('');
-    }
-
-    return isValid;
-  };
-
-  const handleSubmit = async (data) => {
-    if (!validateInputs(data)) return;
+  const apiCall = async (endpoint, data) => {
+    setLoading(true);
+    setError(null);
 
     try {
-      const url = authType === 'signup' ? '/signup' : '/login';
-      const response = await axiosInstance.post(url, data);
-
-      if (response.status === 200) {
-        const successMessage = authType === 'signup' 
-          ? 'Sign up successful!' 
-          : 'Login successful!';
-        toast.success(successMessage);
-
-        if (response.data.token) {
-          login(response.data.token); 
-        }
-
-        return response.data;
-      } else {
-        toast.error('Authentication failed');
-        console.error('Authentication failed');
-      }
-    } catch (error) {
-      toast.error('API error:', error.message);
-      console.error('API error:', error.message);
+      const response = await axiosInstance.post(endpoint, data);
+      setLoading(false);
+      return response.data;
+    } catch (err) {
+      setLoading(false);
+      setError(err.response.data.message);
+      return null;
     }
   };
 
-  return {
-    emailError,
-    emailErrorMessage,
-    passwordError,
-    passwordErrorMessage,
-    nameError,
-    nameErrorMessage,
-    handleSubmit,
-  };
+  return { apiCall, loading, error };
 };
 
 export default useAuth;
