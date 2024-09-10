@@ -231,7 +231,7 @@ const Post = ({ post }) => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {likesInfo.likedByMe && (
             <Typography variant="body2" sx={{ marginRight: 1 }}>
-              You
+              You &
             </Typography>
           )}
           {likesInfo.likes.length > 0 && (
@@ -239,7 +239,7 @@ const Post = ({ post }) => {
               {likesInfo.likes
                 .filter((like) => like.email !== user)
                 .map((like, index) => (
-                  index < likesInfo.likes.length - 2 ? <span key={like.id}>&nbsp;{like.name}, </span> : <span key={like.id}>&nbsp;{like.name}</span>
+                  index < likesInfo.likes.length - 2 ? <span key={like.id}>{like.name}, </span> : <span key={like.id}>{like.name}</span>
                 ))}
               &nbsp;Liked the Post <u><b>show all</b></u>
             </Typography>
