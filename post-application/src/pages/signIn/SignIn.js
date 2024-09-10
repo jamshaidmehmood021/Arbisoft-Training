@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 const SignIn = () => {
   const classes = useStyles();
 
-  const { setUser } = useContext(AuthContext);
+  const { setUser,setName, setUserID } = useContext(AuthContext);
   const navigate = useNavigate();
   const { apiCall } = useAuth();
 
@@ -100,6 +100,8 @@ const SignIn = () => {
       if (response && response.token) {
         localStorage.setItem('Token', response.token);
         setUser(jwtDecode(response.token).email);
+        setName(jwtDecode(response.token).name);
+        setUserID(jwtDecode(response.token).id);
         toast.success('Login successful!');
         navigate('/home');
       } else {

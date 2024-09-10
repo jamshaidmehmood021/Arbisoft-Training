@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FileBase64 from 'react-file-base64';
 import { useDispatch, useSelector } from 'react-redux';
-import { createPost } from 'Slice/PostSlice';
+import { createPost } from 'slice/PostSlice';
 import Button from 'components/button';
 import TextField from 'components/textField';
 

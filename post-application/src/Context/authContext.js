@@ -10,6 +10,14 @@ const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('Token');
         return token ? jwtDecode(token).email : null;
     });
+    const [name, setName] = useState(() => {
+        const token = localStorage.getItem('Token');
+        return token ? jwtDecode(token).name : null;
+    });
+    const [userID, setUserID] = useState(() => {
+        const token = localStorage.getItem('Token');
+        return token ? jwtDecode(token).id : null;
+    });
 
     useEffect(() => {
         const handleStorageChange = () => {
@@ -17,6 +25,7 @@ const AuthProvider = ({ children }) => {
             if (token) {
                 try {
                     setUser(jwtDecode(token).email);
+                    setName(jwtDecode(token).name);
                 } catch (e) {
                     console.error('Failed to decode token:', e);
                 }
@@ -37,7 +46,7 @@ const AuthProvider = ({ children }) => {
     };
 
     const contextValue = {
-        user, setUser, logout,
+        user, setUser,name,setName,userID,setUserID, logout,
     };
 
     return (

@@ -1,22 +1,24 @@
 import React from 'react';
 import {  Routes, Route } from 'react-router-dom';
 
-import SignUp from 'pages/signUp';
-import SignIn from 'pages/signIn';
-import AddPost from 'pages/addPost';
-import DrawerComponent from 'components/drawer';
+import { LazySignIn, LazySignUp, LazyAddPost, LazyHome, LazyProfile, LazyDrawer } from 'lazyLoading/LazyLoading';
+import ProtectedRoute from 'components/protectedRoute';
+
+import ErrorBoundary from 'errorBoundary';
 
 const App = () => {
 
   return (
-    <>
-        <DrawerComponent />
+    <ErrorBoundary>
+        <LazyDrawer />
         <Routes>
-          <Route path="/" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/addPost" element={<AddPost />} />
+          <Route path="/" element={<LazySignIn />} />
+          <Route path="/signup" element={<LazySignUp />} />
+          <Route path="/addPost" element={<ProtectedRoute element={LazyAddPost} />} />
+          <Route path="/home" element={<ProtectedRoute element={LazyHome} />} />
+          <Route path="/profile/:email" element={<ProtectedRoute element={LazyProfile} />} />
         </Routes>
-    </>
+    </ErrorBoundary>
   );
 };
 

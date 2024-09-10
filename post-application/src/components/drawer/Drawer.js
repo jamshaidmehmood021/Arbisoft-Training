@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
-import { Drawer, Typography } from '@material-ui/core';
+import { Drawer, Typography, Divider } from '@material-ui/core';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import { List, ListItem, ListItemIcon,ListItemText} from '@material-ui/core';
 import LoginIcon from '@mui/icons-material/Login';
@@ -9,23 +10,36 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import MenuIcon from '@mui/icons-material/Menu';
+import IconButton from '@mui/material/IconButton';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import { AuthContext } from 'context/authContext';
 
 const drawerWidth = 200;
-const useStyles = makeStyles({
-    page: {
-        background: '#f9f9f9',
-        width: '100%',
-    },
+const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
     },
     drawer: {
         width: drawerWidth,
+        flexShrink: 0,
     },
     drawerPaper: {
         width: drawerWidth,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between', 
+    },
+    drawerHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        justifyContent: 'flex-end',
+    },
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(3),
     },
     icon: {
         marginRight: '10px',
@@ -48,13 +62,21 @@ const useStyles = makeStyles({
     listItem: {
         marginBottom: '20px',
     },
-});
+}));
 
 const DrawerComponent = ({ children }) => {
     const customClasses = useStyles();
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useContext(AuthContext);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const [open, setOpen] = useState(false);
+
+    const handleDrawerToggle = () => {
+        setOpen(!open);
+    };
+
 
     const menuItems = [
         {
@@ -92,34 +114,66 @@ const DrawerComponent = ({ children }) => {
 
     return (
         <div className={customClasses.root}>
+            {isMobile && (
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    onClick={handleDrawerToggle}
+                    style={{ margin: 16 }}
+                >
+                    <MenuIcon />
+                </IconButton>
+            )}
             <Drawer
-                className={customClasses.drawer}
-                variant="permanent"
-                classes={{ paper: customClasses.drawerPaper }}
-                anchor="left"
+               className={customClasses.drawer}
+               classes={{ paper: customClasses.drawerPaper }}
+               variant={isMobile ? 'temporary' : 'permanent'}
+               anchor="left"
+               open={isMobile ? open : true}
+               onClose={() => isMobile && setOpen(false)}
             >
-                <div className={customClasses.titleContainer}>
-                    <InstagramIcon fontSize="large" className={customClasses.icon} />
-                    <Typography variant="h5" className={customClasses.title}>
-                        Instagram
-                    </Typography>
-                </div>
+                <div>
+                    <div className={customClasses.titleContainer}>
+                        <InstagramIcon fontSize="large" className={customClasses.icon} />
+                        <Typography variant="h5" className={customClasses.title}>
+                            Instagram
+                        </Typography>
+                    </div>
 
-                <List className={customClasses.list}>
-                    {menuItems
-                        .filter(item => (item.showWhenLoggedOut && !user) || (item.showWhenLoggedIn && user)) 
-                        .map(item => (
+                    <List className={customClasses.list}>
+                        {menuItems
+                            .filter(item => (item.showWhenLoggedOut && !user) || (item.showWhenLoggedIn && user))
+                            .map(item => (
+                                <ListItem
+                                    button
+                                    key={item.text}
+                                    onClick={() => item.onClick ? item.onClick() : navigate(item.path)}
+                                    className={`${location.pathname === item.path ? customClasses.active : ''} ${customClasses.listItem}`}
+                                >
+                                    <ListItemIcon>{item.icon}</ListItemIcon>
+                                    <ListItemText primary={item.text} />
+                                </ListItem>
+                            ))}
+                    </List>
+                </div>
+                {user && (
+                    <>
+                        <Divider />
+                        <List>
                             <ListItem
                                 button
-                                key={item.text}
-                                onClick={() => item.onClick ? item.onClick() : navigate(item.path)}
-                                className={`${location.pathname === item.path ? customClasses.active : ''} ${customClasses.listItem}`}
+                                onClick={() => navigate(`/profile/${user}`)}
+                                className={customClasses.profileMenu}
                             >
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} />
+                                <ListItemIcon>
+                                    <AccountCircleIcon sx={{ color: '#000000' }} />
+                                </ListItemIcon>
+                                <ListItemText primary="Profile" />
                             </ListItem>
-                        ))}
-                </List>
+                        </List>
+                    </>
+                )}
             </Drawer>
 
             <div className={customClasses.page}>
