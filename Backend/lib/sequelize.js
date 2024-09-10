@@ -1,5 +1,9 @@
  const { Sequelize } = require('sequelize');
 
+ const dotenv = require('dotenv');
+ const pg = require('pg');
+ dotenv.config()
+
 // const db_name = process.env.DB_NAME;
 // const username = process.env.DB_USER;
 // const host = process.env.DB_HOST || 'localhost';
@@ -16,6 +20,9 @@
 //     dialect: 'postgres',
 // });
 
-const sequelize = new Sequelize(process.env.SUPABASE_URL);
+const sequelize = new Sequelize(process.env.SUPABASE_URL,
+    {    dialectModule: pg,
+    }
+);
 
 module.exports = { sequelize };
