@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { Checkbox, FormControlLabel, Divider, Typography, Stack, Card } from '@mui/material';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useNavigate } from 'react-router-dom';
-import CircularProgress from '@mui/material/CircularProgress'; // For loading spinner
+import CircularProgress from '@mui/material/CircularProgress'; 
 
 import { GoogleIcon, FacebookIcon } from 'muiCustomIcons/CustomIcons';
 import useAuth from 'hook/useAuth';
