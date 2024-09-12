@@ -1,4 +1,8 @@
 import './App.css'
+import {  Routes, Route } from 'react-router-dom';
+
+import SignUp from './Pages/signUp' 
+import SignIn from './Pages/signIn'
 
 const  App = () => {
   
@@ -6,7 +10,10 @@ const  App = () => {
   return (
     
       <div>
-         <h1>Arbisoft</h1>
+        <Routes>
+        <Route path="/" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+         </Routes>
       </div>
     
   )
