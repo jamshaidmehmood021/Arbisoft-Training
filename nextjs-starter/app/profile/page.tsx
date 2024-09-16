@@ -1,6 +1,6 @@
 'use client';
-import React, { useEffect, useState, useContext } from 'react';
-import { Typography, Container, Avatar, Button, Tabs, Tab, Paper, Divider } from '@mui/material';
+import React, {  useState, useContext } from 'react';
+import { Typography, Container, Button, Tabs, Tab, Paper, Divider } from '@mui/material';
 import { makeStyles } from '@material-ui/core/styles';
 import { Flag, Edit } from '@mui/icons-material';
 import { Image } from 'antd';
@@ -90,7 +90,7 @@ const Profile = () => {
                     className={classes.avatar}
                     style={{ width: 150, height: 150, fontSize: '4rem', backgroundColor: '#ff5722', color: '#ffffff',borderRadius: '50%' }}
                     alt='Profile Avatar'
-                    src={profilePicture || ''}
+                    src={profilePicture as string}
                 />
                 <div className={classes.profileInfo}>
                     <Typography variant="h4">{name}<Flag style={{ marginLeft: 8 }} /> </Typography>

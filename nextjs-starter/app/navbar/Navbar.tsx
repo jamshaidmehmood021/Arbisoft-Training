@@ -18,7 +18,7 @@ import { AuthContext } from '@/app/context/authContext';
 import useAuth from  '@/app/hook/useAuth';
 
 const pages = ['Sign In', 'Sign Up'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Dashboard', 'Logout'];
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
@@ -66,8 +66,6 @@ const Navbar = () => {
       router.push('/signIn');
     }else if (page === 'Profile') {
       router.push('/profile');
-    }else if (page === 'Account') {
-      router.push('/account');
     }else if (page === 'Dashboard') {
       router.push('/dashboard');
     }else if (page === 'Logout') {
@@ -177,7 +175,7 @@ const Navbar = () => {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar 
                   alt="Missing Avtar" 
-                  src={profilePicture || ''}
+                  src={profilePicture as string}
                 /> 
               </IconButton>
             </Tooltip>

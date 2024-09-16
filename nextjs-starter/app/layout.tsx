@@ -1,8 +1,10 @@
 import "./globals.css";
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from './toastContainer';
-import { AuthProvider } from './context/authContext';
-import Navbar from './navbar/Navbar'
+
+import { ToastContainer } from '@/app/toastContainer';
+import { AuthProvider } from '@/app/context/authContext';
+import StoreProvider from '@/app/StoreProvider';
+import Navbar from '@/app/navbar/Navbar'
 
 export default function RootLayout({
   children,
@@ -13,8 +15,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <Navbar />
-          {children}
+          <StoreProvider>
+            <Navbar />
+            {children}
+          </StoreProvider>
         </AuthProvider>
         <ToastContainer />
       </body>

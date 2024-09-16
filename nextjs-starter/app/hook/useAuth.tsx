@@ -15,29 +15,34 @@ const useAuth = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const apiCall: ApiCall = async (endpoint, data, method = 'POST',token = null) => {
+  const apiCall: ApiCall = async (endpoint, data, method = 'POST', token = null) => {
     setLoading(true);
     setError(null);
-
+  
+    const headers: HeadersInit = {
+      'Authorization': `Bearer ${token}`,
+    };
+  
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+  
     try {
       const response = await fetch(endpoint, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: method === 'POST' ? JSON.stringify(data) : undefined,
+        headers,
+        body: method === 'POST' ? (data instanceof FormData ? data : JSON.stringify(data)) : undefined,
       });
-
+  
       const responseData = await response.json();
       setLoading(false);
-
+  
       if (!response.ok) {
         const message = responseData?.message || 'An error occurred.';
         setError(message);
         return { data: null, error: message };
       }
-
+  
       return { data: responseData, error: undefined };
     } catch (err) {
       setLoading(false);
@@ -45,7 +50,7 @@ const useAuth = () => {
       setError(message);
       return { data: null, error: message };
     }
-  };
+  };  
 
   return { apiCall, loading, error };
 };

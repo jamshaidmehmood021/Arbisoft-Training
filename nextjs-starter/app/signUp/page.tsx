@@ -20,7 +20,7 @@ interface SignUpFormData {
   email: string;
   password: string;
   role: string;
-  profilePicture: string;
+  profilePicture: File | string;
 }
 
 export default function SignUp() {
@@ -46,34 +46,37 @@ export default function SignUp() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, profilePicture: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      setFormData({ ...formData, profilePicture: file });
     }
-  };
-
+  };  
+  
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!formData.name || !formData.email || !formData.password || !formData.role) {
+  
+    if (!formData.name || !formData.email || !formData.password || !formData.role || !formData.profilePicture) {
       setError('All fields are required');
       return;
     }
-
-    const response = await apiCall('http://localhost:5000/signUP', formData);
-
+  
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('password', formData.password);
+    formDataToSend.append('role', formData.role);
+    formDataToSend.append('profilePicture', formData.profilePicture);
+  
+    const response = await apiCall('http://localhost:5000/signUP', formDataToSend, 'POST');
+  
     if (response?.error) {
       setError(response.error || 'Sign Up failed');
       toast.error(`Sign Up Error: ${response.error}`);
       return;
     }
-
+  
     toast.success('Sign Up successful!');
     setFormData({ name: '', email: '', password: '', role: '', profilePicture: '' });
     setError('');
-    
+  
     router.push('/signIn');
   };
 
