@@ -1,5 +1,5 @@
 'use client';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
@@ -9,7 +9,7 @@ import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { FormControl , InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 
 import { FacebookIcon, GoogleIcon } from '@/app/muiCustomIcons/CustomIcons';
 
@@ -23,62 +23,66 @@ interface SignUpFormData {
   profilePicture: File | string;
 }
 
+const initialFormData: SignUpFormData = {
+  name: '',
+  email: '',
+  password: '',
+  role: '',
+  profilePicture: ''
+};
+
 export default function SignUp() {
-  const [formData, setFormData] = useState<SignUpFormData>({
-    name: '',
-    email: '',
-    password: '',
-    role: '',
-    profilePicture: ''
-  });
+  const [formData, setFormData] = useState<SignUpFormData>(initialFormData);
   const [error, setError] = useState<string>('');
   const { apiCall, loading } = useAuth();
   const router = useRouter();
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setFormData(prevData => ({ ...prevData, [e.target.name]: e.target.value }));
+  }, []);
 
-  const handleRoleChange = (e: SelectChangeEvent<string>) => {
-    setFormData({ ...formData, role: e.target.value });
-  };
+  const handleRoleChange = useCallback((e: SelectChangeEvent<string>) => {
+    setFormData(prevData => ({ ...prevData, role: e.target.value }));
+  }, []);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData({ ...formData, profilePicture: file });
+      setFormData(prevData => ({ ...prevData, profilePicture: file }));
     }
-  };  
-  
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  }, []);
+
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
-    if (!formData.name || !formData.email || !formData.password || !formData.role || !formData.profilePicture) {
+
+    const { name, email, password, role, profilePicture } = formData;
+
+    if (!name || !email || !password || !role || !profilePicture) {
       setError('All fields are required');
       return;
     }
-  
+
     const formDataToSend = new FormData();
-    formDataToSend.append('name', formData.name);
-    formDataToSend.append('email', formData.email);
-    formDataToSend.append('password', formData.password);
-    formDataToSend.append('role', formData.role);
-    formDataToSend.append('profilePicture', formData.profilePicture);
-  
-    const response = await apiCall('http://localhost:5000/signUP', formDataToSend, 'POST');
-  
-    if (response?.error) {
-      setError(response.error || 'Sign Up failed');
-      toast.error(`Sign Up Error: ${response.error}`);
-      return;
+    formDataToSend.append('name', name);
+    formDataToSend.append('email', email);
+    formDataToSend.append('password', password);
+    formDataToSend.append('role', role);
+    formDataToSend.append('profilePicture', profilePicture);
+
+    try {
+      const response = await apiCall('http://localhost:5000/signUP', formDataToSend, 'POST');
+      if (response?.error) {
+        throw new Error(response.error || 'Sign Up failed');
+      }
+      toast.success('Sign Up successful!');
+      setFormData(initialFormData);
+      setError('');
+      router.push('/signIn');
+    } catch (error: any) {
+      setError(error.message || 'Sign Up failed');
+      toast.error(`Sign Up Error: ${error.message}`);
     }
-  
-    toast.success('Sign Up successful!');
-    setFormData({ name: '', email: '', password: '', role: '', profilePicture: '' });
-    setError('');
-  
-    router.push('/signIn');
-  };
+  }, [formData, apiCall, router]);
 
   return (
     <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>

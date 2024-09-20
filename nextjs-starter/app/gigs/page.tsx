@@ -1,13 +1,13 @@
 'use client';
-import React, { useState } from 'react';
-import { TextField, Button, MenuItem, InputLabel, Select, FormControl } from '@mui/material';
-import Box from '@mui/material/Box';
+import React, { useState, useCallback } from 'react';
+import { TextField, Button, MenuItem, InputLabel, Select, FormControl, Box, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 import { useAppDispatch } from '@/app/redux/store';
 import { createGig } from '@/app/redux/slice/gigSlice';
-import { useRouter } from 'next/navigation';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -49,37 +49,54 @@ const VideoInput = styled('input')({
   display: 'none',
 });
 
+const categories = [
+  'Artificial Intelligence',
+  'Machine Learning',
+  'Data Science',
+  'Web Development',
+  'Mobile Development',
+  'Cloud Computing',
+  'DevOps',
+  'Cybersecurity',
+  'Blockchain',
+];
+
 const GigForm = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   const [gigTitle, setGigTitle] = useState('');
   const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const categories = ['AI', 'ML', 'Data Science', 'Web Development', 'Mobile Apps', 'Cloud', 'DevOps'];
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
     }
-  };
+  }, []);
 
-  const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setVideoFile(file);
+      setVideoPreview(URL.createObjectURL(file));
     }
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     const formData = new FormData();
     formData.append('title', gigTitle);
     formData.append('category', category);
+    formData.append('description', description);
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -90,11 +107,13 @@ const GigForm = () => {
     const response = await dispatch(createGig(formData));
     if (response.payload.message === 'Gig created successfully') {
       toast.success(response.payload.message);
-      router.push('/');
+      setLoading(false);
+      router.push('/home');
     } else {
       toast.error('Gig creation failed');
+      setLoading(false);
     }
-  };
+  }, [dispatch, gigTitle, category, description, imageFile, videoFile, router]);
 
   return (
     <PageContainer>
@@ -107,6 +126,17 @@ const GigForm = () => {
             value={gigTitle}
             onChange={(e) => setGigTitle(e.target.value)}
             margin="normal"
+            sx={{ backgroundColor: '#fff', borderRadius: '5px' }}
+          />
+
+          <TextField
+            fullWidth
+            label="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            margin="normal"
+            multiline
+            rows={4}
             sx={{ backgroundColor: '#fff', borderRadius: '5px' }}
           />
 
@@ -140,6 +170,17 @@ const GigForm = () => {
             />
           </label>
 
+          {imagePreview && (
+            <Box sx={{ mt: 2, mb: 3 }}>
+              <Image
+                src={imagePreview}
+                alt="Image Preview"
+                width={300}
+                height={300}
+              />
+            </Box>
+          )}
+
           <label htmlFor="video-upload">
             <StyledButton variant="contained" component="span" fullWidth>
               Upload Video (Optional)
@@ -152,14 +193,43 @@ const GigForm = () => {
             />
           </label>
 
+          {videoPreview && (
+            <Box sx={{ mt: 2, mb: 3 }}>
+              <video
+                controls
+                src={videoPreview}
+                style={{ width: '100%', maxHeight: '300px', objectFit: 'cover' }}
+              />
+            </Box>
+          )}
+
           <Button
             variant="contained"
             color="primary"
             type="submit"
             fullWidth
-            sx={{ backgroundColor: '#007bff', '&:hover': { backgroundColor: '#0069d9' } }}
+            sx={{
+              backgroundColor: '#007bff',
+              '&:hover': { backgroundColor: '#0069d9' },
+              position: 'relative',
+            }}
+            disabled={loading}
           >
-            Create Gig
+            {loading ? (
+              <CircularProgress
+                size={24}
+                sx={{
+                  color: '#fff',
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-12px',
+                  marginLeft: '-12px',
+                }}
+              />
+            ) : (
+              'Create Gig'
+            )}
           </Button>
         </form>
       </FormContainer>

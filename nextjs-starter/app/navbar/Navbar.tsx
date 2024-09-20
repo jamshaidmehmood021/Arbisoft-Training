@@ -1,5 +1,5 @@
 'use client';
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -15,68 +15,79 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
 import { AuthContext } from '@/app/context/authContext';
-import useAuth from  '@/app/hook/useAuth';
+import useAuth from '@/app/hook/useAuth';
 
 const pages = ['Sign In', 'Sign Up'];
-const settings = ['Profile', 'Dashboard', 'Logout'];
+const settings = ['Profile','Create Gig','Dashboard', 'Logout'];
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
-
   if (!authContext) {
     throw new Error("AuthContext is not available");
-  }
+  }  
+  const { user, userID, setUserRole, profilePicture, setProfilePicture, logout } = authContext || {};
 
-  const { token, user, userID, setUserRole, profilePicture, setProfilePicture, logout } = authContext;
-
-  const { apiCall} = useAuth();
   const router = useRouter();
-  
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const { apiCall } = useAuth();
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (userID) {
-        const response = await apiCall(`http://localhost:5000/user/${userID}`, undefined, 'GET', token);
-        if (response?.data?.profilePicture) {
+  const fetchUserData = useCallback(async () => {
+    if (userID) {
+      try {
+        const response = await apiCall(`http://localhost:5000/user/${userID}`, undefined, 'GET');
+        if (response?.data) {
           setProfilePicture(response.data.profilePicture);
-        }
-        if (response?.data?.role) {
           setUserRole(response.data.role);
         }
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
       }
-    };
+    }
+  }, [userID, apiCall, setProfilePicture, setUserRole]);
 
+  useEffect(() => {
     fetchUserData();
-  }, [userID]);
+  }, [fetchUserData]);
 
-  const pagesNavigation = (page: string) => {
-    if (page === 'Sign Up') {
-      router.push('/signUp');
-    } else if (page === 'Sign In') {
-      router.push('/signIn');
-    }else if (page === 'Profile') {
-      router.push('/profile');
-    }else if (page === 'Dashboard') {
-      router.push('/dashboard');
-    }else if (page === 'Logout') {
-      logout();
+  const handleOpenNavMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  }, []);
+
+  const handleOpenUserMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  }, []);
+
+  const handleCloseUserMenu = useCallback(() => {
+    setAnchorElUser(null);
+  }, []);
+
+  const pagesNavigation = useCallback((page: string) => {
+    switch (page) {
+      case 'Sign Up':
+        router.push('/signUp');
+        break;
+      case 'Sign In':
+        router.push('/signIn');
+        break;
+      case 'Create Gig':
+        router.push('/gigs');
+        break;
+      case 'Profile':
+        router.push(`/profile/${userID}`);
+        break;
+      case 'Dashboard':
+        router.push('/dashboard');
+        break;
+      case 'Logout':
+        logout();
+        break;
+      default:
+        break;
     }
     setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  }, [router, userID, logout]);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: 'white' }}>
@@ -155,57 +166,53 @@ const Navbar = () => {
             Fiver Lite
           </Typography>
 
-          {!user && 
-           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, marginLeft: 'auto' }}>
-             {pages.map((page) => (
+          {!user && (
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, marginLeft: 'auto' }}>
+              {pages.map((page) => (
                 <Button
                   key={page}
-                  onClick={() => pagesNavigation(page)} 
+                  onClick={() => pagesNavigation(page)}
                   sx={{ my: 2, color: 'black', display: 'block', marginLeft: '70px' }}
                 >
                   {page}
                 </Button>
               ))}
             </Box>
-          }
+          )}
 
-          {user && 
-           <Box sx={{ flexGrow: 0, ml: 'auto' }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar 
-                  alt="Missing Avtar" 
-                  src={profilePicture as string}
-                /> 
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center', color: 'black' }} 
-                   onClick={() => pagesNavigation(setting)} >
-                    {setting}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          }
+          {user && (
+            <Box sx={{ flexGrow: 0, ml: 'auto' }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Profile Picture" src={profilePicture as string} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={() => pagesNavigation(setting)}>
+                    <Typography sx={{ textAlign: 'center', color: 'black' }}>
+                      {setting}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

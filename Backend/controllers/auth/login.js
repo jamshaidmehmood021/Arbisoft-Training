@@ -44,7 +44,7 @@ const login = async (req, res) => {
             id: existingUser.id,
             email: existingUser.email,
             name: existingUser.name,
-            
+            role: existingUser.role,
         };
 
         const token = jwt.sign(user, secret);

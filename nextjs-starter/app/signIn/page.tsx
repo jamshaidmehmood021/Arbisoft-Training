@@ -1,7 +1,7 @@
 'use client';
-import { useState, ChangeEvent, FormEvent, useContext } from 'react';
+import { useState, ChangeEvent, FormEvent, useContext, useCallback } from 'react';
 import { toast } from 'react-toastify';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -28,27 +28,28 @@ interface DecodedToken {
   email: string;
   name: string;
   id: string;
+  role: string;
 }
 
 export default function SignIn() {
   const authContext = useContext(AuthContext);
 
   if (!authContext) {
-    throw new Error("AuthContext is not available"); 
+    throw new Error('AuthContext is not available');
   }
 
-  const { setUser, setName, setUserID,setToken } = authContext;
+  const { setUser, setName, setUserID, setToken, setRole } = authContext;
 
   const [formData, setFormData] = useState<SignInFormData>({ email: '', password: '' });
   const [error, setError] = useState<string>('');
   const { apiCall, loading } = useAuth();
   const router = useRouter();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setFormData(prevData => ({ ...prevData, [e.target.name]: e.target.value }));
+  }, []);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
@@ -56,24 +57,32 @@ export default function SignIn() {
       return;
     }
 
-    const response = await apiCall('http://localhost:5000/login', formData); 
+    try {
+      const response = await apiCall('http://localhost:5000/login', formData);
 
-    if (response?.error) {
-      setError(response.error);
-      toast.error(`Login Error: ${response.error}`);
-    } else if (response?.data?.token) {
-      localStorage.setItem('token', response.data.token);
-      setToken(response.data.token);
-      const decodedToken = jwtDecode<DecodedToken>(response.data.token);
-      setUser(decodedToken.email);
-      setName(decodedToken.name);
-      setUserID(decodedToken.id);
-      toast.success('Login successful!');
-      setFormData({ email: '', password: '' });
-      setError('');
-      router.push('/home');
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+
+      if (response?.data?.token) {
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        setToken(token);
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        setUser(decodedToken.email);
+        setName(decodedToken.name);
+        setUserID(decodedToken.id);
+        setRole(decodedToken.role);
+        toast.success('Login successful!');
+        setFormData({ email: '', password: '' });
+        setError('');
+        router.push('/home');
+      }
+    } catch (error: any) {
+      setError(error.message || 'Login failed');
+      toast.error(`Login Error: ${error.message}`);
     }
-  };
+  }, [formData, apiCall, router, setUser, setName, setUserID, setToken,setRole]);
 
   return (
     <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -125,7 +134,7 @@ export default function SignIn() {
           </Button>
         </form>
         <Typography variant="body2" sx={{ mb: 2 }}>
-          Don not have an account?
+          Don’t have an account?
           <Link href="/signUp" passHref>
             <Button variant="text" color="primary">
               Sign up

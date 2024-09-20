@@ -3,7 +3,7 @@ const path = require('path');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '/Users/jamshaid.mehmood/Desktop/Arbisoft-Training/nextjs-starter/public/uploads/');
+    cb(null, process.env.MULTER_PATH);
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
