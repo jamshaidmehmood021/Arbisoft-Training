@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Avatar, Typography, TextField, Button } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { io } from 'socket.io-client';
+//import { supabase } from '@/app/supabase/supabase';
 
 import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
 import { AuthContext } from '@/app/context/authContext';
@@ -68,7 +69,7 @@ const ChatContainer = styled.div`
 
 const MessageArea = styled.div`
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   padding: 16px;
   background-color: #f5f5f5;
 `;
@@ -115,12 +116,14 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
     const [showChatPannel, setShowChatPannel] = useState<boolean>(false);
     const [message, setMessage] = useState('');
     const [socket, setSocket] = useState<any>(null);
+    const [firstConversation, setFirstConversation] = useState<boolean>(false);
 
-    useEffect(() => {
+    const memoizedConversation = useMemo(() => {
         if (id) {
             dispatch(fetchConversation(id));
         }
-    }, [id, dispatch]);
+        return conversation;
+    }, [id, dispatch, firstConversation]);
 
     useEffect(() => {
         if (role === 'Buyer' && conversation.length === 0 && gig) {
@@ -134,7 +137,7 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
                 setShowChatPannel(true);
             }
         }
-    }, [conversation, gig, role, userID]);
+    }, [memoizedConversation, gig, role, userID]);
 
     useEffect(() => {
         return () => {
@@ -159,39 +162,45 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
             dispatch(addNewMessage(newMessage));
         });
     }, [dispatch, role]);
+    
+    //     useEffect(() => {
+    //        if (selectedConversation) {
+    //            const channel = supabase
+    //                .channel('Messages')
+    //                .on(
+    //                    'postgres_changes',
+    //                    {
+    //                        event: 'INSERT',
+    //                        schema: 'public',
+    //                        table: 'Messages',
+    //                        filter: `conversationId=eq.${selectedConversation}`,
+    //                    },
+    //                    (payload: any) => {
+    //                        dispatch(addNewMessage(payload.new));
+    //                    }
+    //                )
+    //                .subscribe();
 
-    // useEffect(() => {
-   //     if (selectedConversation) {
-   //         const channel = supabase
-   //             .channel('Messages')
-   //             .on(
-   //                 'postgres_changes',
-   //                 {
-   //                     event: 'INSERT',
-   //                     schema: 'public',
-   //                     table: 'Messages',
-   //                     filter: `conversationId=eq.${selectedConversation}`,
-   //                 },
-   //                 (payload: any) => {
-   //                     dispatch(addNewMessage(payload.new));
-   //                 }
-   //             )
-   //             .subscribe();
 
-
-   //         return () => channel.unsubscribe();
-   //     }
-   // }, [selectedConversation, dispatch]);
+    //            return () => channel.unsubscribe();
+    //        }
+    //    }, [selectedConversation, dispatch]);
 
     const handleSendMessage = useCallback(async () => {
         if (message.trim() && receiverId) {
             const resultAction = await dispatch(sendMessage({ receiverId, content: message, gigId: id, userID }));
             if (sendMessage.fulfilled.match(resultAction)) {
                 setMessage('');
-                dispatch(fetchConversation(id));
+                const { isNewConversation } = resultAction.payload;
+                if (isNewConversation) {
+                    setFirstConversation(true);
+                    dispatch(fetchConversation(id));
+                }
             }
         }
     }, [dispatch, message, receiverId, id, userID]);
+
+
 
     const formatTimestamp = (timestamp: string) => {
         const date = new Date(timestamp);

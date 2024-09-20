@@ -9,6 +9,9 @@ import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Paper from '@mui/material/Paper';
 import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 
 import { FacebookIcon, GoogleIcon } from '@/app/muiCustomIcons/CustomIcons';
@@ -23,74 +26,87 @@ interface SignUpFormData {
   profilePicture: File | string;
 }
 
-const initialFormData: SignUpFormData = {
-  name: '',
-  email: '',
-  password: '',
-  role: '',
-  profilePicture: ''
-};
-
 export default function SignUp() {
-  const [formData, setFormData] = useState<SignUpFormData>(initialFormData);
+  const [formData, setFormData] = useState<SignUpFormData>({
+    name: '',
+    email: '',
+    password: '',
+    role: '',
+    profilePicture: ''
+  });
   const [error, setError] = useState<string>('');
   const { apiCall, loading } = useAuth();
   const router = useRouter();
 
-  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setFormData(prevData => ({ ...prevData, [e.target.name]: e.target.value }));
-  }, []);
+  const currentTab = 1; 
 
-  const handleRoleChange = useCallback((e: SelectChangeEvent<string>) => {
-    setFormData(prevData => ({ ...prevData, role: e.target.value }));
-  }, []);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    router.push(newValue === 0 ? '/signIn' : '/signUp');
+  };
 
-  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRoleChange = (e: SelectChangeEvent<string>) => {
+    setFormData({ ...formData, role: e.target.value });
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData(prevData => ({ ...prevData, profilePicture: file }));
+      setFormData({ ...formData, profilePicture: file });
     }
-  }, []);
-
-  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+  };  
+  
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const { name, email, password, role, profilePicture } = formData;
-
-    if (!name || !email || !password || !role || !profilePicture) {
+  
+    if (!formData.name || !formData.email || !formData.password || !formData.role || !formData.profilePicture) {
       setError('All fields are required');
       return;
     }
-
+  
     const formDataToSend = new FormData();
-    formDataToSend.append('name', name);
-    formDataToSend.append('email', email);
-    formDataToSend.append('password', password);
-    formDataToSend.append('role', role);
-    formDataToSend.append('profilePicture', profilePicture);
-
-    try {
-      const response = await apiCall('http://localhost:5000/signUP', formDataToSend, 'POST');
-      if (response?.error) {
-        throw new Error(response.error || 'Sign Up failed');
-      }
-      toast.success('Sign Up successful!');
-      setFormData(initialFormData);
-      setError('');
-      router.push('/signIn');
-    } catch (error: any) {
-      setError(error.message || 'Sign Up failed');
-      toast.error(`Sign Up Error: ${error.message}`);
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('password', formData.password);
+    formDataToSend.append('role', formData.role);
+    formDataToSend.append('profilePicture', formData.profilePicture);
+  
+    const response = await apiCall('http://localhost:5000/signUP', formDataToSend, 'POST');
+  
+    if (response?.error) {
+      setError(response.error || 'Sign Up failed');
+      toast.error(`Sign Up Error: ${response.error}`);
+      return;
     }
-  }, [formData, apiCall, router]);
-
+  
+    toast.success('Sign Up successful!');
+    setFormData({ name: '', email: '', password: '', role: '', profilePicture: '' });
+    setError('');
+  
+    router.push('/signIn');
+  };
   return (
-    <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <Box sx={{ backgroundColor: 'white', padding: 4, borderRadius: 2, boxShadow: 3, width: '100%' }}>
-        <Typography variant="h4" align="center" gutterBottom>
+    <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh', padding: 2 }}>
+      <Paper elevation={6} sx={{ padding: 4, textAlign: 'center' }}>
+        <Box sx={{ mb: 2 }}>
+        <Tabs value={currentTab} onChange={handleTabChange} centered textColor="primary">
+            <Tab label="Sign In" sx={{
+              '&.Mui-selected': {color: 'black', fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'monospace'},
+              '&:hover': {backgroundColor: '#f7f9fc'}
+            }} />
+            <Tab label="Sign Up" sx={{
+              '&.Mui-selected': {color: 'black', fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'monospace'},
+              '&:hover': { backgroundColor: '#f7f9fc'}
+            }} />
+         </Tabs> 
+        </Box>
+        <Typography variant="h4" component="h1" gutterBottom>
           Sign Up
         </Typography>
-        {error && <Typography color="error" align="center" sx={{ mb: 2 }}>{error}</Typography>}
+        {error && <Typography variant="body2" color="error" sx={{ mb: 2 }}>{error}</Typography>}
         <form onSubmit={handleSubmit}>
           <Box sx={{ mb: 3 }}>
             <TextField
@@ -193,7 +209,7 @@ export default function SignUp() {
             Sign in with Facebook
           </Button>
         </Box>
-      </Box>
+      </Paper>
     </Container>
   );
 }
