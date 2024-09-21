@@ -26,22 +26,30 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use('/', authRoutes);
 
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
-
+    console.log('A user connected:', socket.id);
+    
     socket.on('joinRoom', (conversationId) => {
         socket.join(conversationId);
         console.log(`User joined room: ${conversationId}`);
     });
-    
-    socket.on('sendMessage', ({ conversationId, ...messageData }) => {
-        io.to(conversationId).emit('receiveMessage', messageData);
+    socket.on('sendMessage', (messageData) => {
+        const { conversationId, message } = messageData;
+        io.to(conversationId).emit('receiveMessage', message);
+    });
+
+    socket.on('joinGigRoom', (gigId) => {
+        socket.join(gigId);
+        console.log(`User joined Gig: ${gigId}`);
+    });
+
+    socket.on('sendGigMessage', ({ gigId, ...messageData }) => {
+        io.to(gigId).emit('receiveGigMessage', messageData);
     });
 
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
     });
 });
-
 
 server.listen(PORT, async () => {
     console.log(`Server started on http://localhost:${PORT}`);

@@ -27,7 +27,7 @@ async function sendMessage(req, res) {
     const { gigId, buyerId, sellerId, content, userID } = req.body;
 
     try {
-        const { conversation } = await getOrCreateConversation(gigId, buyerId, sellerId);
+        const { conversation, isNewConversation } = await getOrCreateConversation(gigId, buyerId, sellerId);
 
         const message = await Message.create({
             conversationId: conversation.id,
@@ -46,6 +46,15 @@ async function sendMessage(req, res) {
             createdAt: message.dataValues.createdAt,
             messageId: message.dataValues.id,
         });
+
+        if (isNewConversation) {
+            io.to(gigId).emit('newConversation', {
+                conversationId: conversation.id,
+                gigId,
+                buyerId,
+                sellerId,
+            });
+        }
 
         res.status(201).json({
             message: 'Message sent successfully',

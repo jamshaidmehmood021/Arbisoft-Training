@@ -109,22 +109,65 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
     const { id } = params;
 
     const gig = useAppSelector((state) => selectGigById(state, Number(id)));
-    const { messages, loading, error, conversation } = useAppSelector((state) => state.messages);
+    const { messages, conversation } = useAppSelector((state) => state.messages);
 
     const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
     const [receiverId, setReceiverId] = useState<string>('');
     const [showChatPannel, setShowChatPannel] = useState<boolean>(false);
     const [message, setMessage] = useState('');
     const [socket, setSocket] = useState<any>(null);
-    const [firstConversation, setFirstConversation] = useState<boolean>(false);
+
+    useEffect(() => {
+        const newSocket = io('http://localhost:5000');
+        setSocket(newSocket);
+
+        newSocket.emit('joinGigRoom', id);
+
+        newSocket.on('receiveMessage', (newMessage: any) => {
+            dispatch(addNewMessage(newMessage));
+        });
+
+        newSocket.on('newConversation', (newConversation: any) => {
+            if(newConversation.conversationId && id)
+            {
+                dispatch(fetchConversation(id));
+            }
+        });
+
+        return () => {
+            newSocket.disconnect();
+        };
+    }, [id, dispatch]);
 
     const memoizedConversation = useMemo(() => {
         if (id) {
             dispatch(fetchConversation(id));
         }
         return conversation;
-    }, [id, dispatch, firstConversation]);
+    }, [id, dispatch]);
 
+    //     useEffect(() => {
+//        if (selectedConversation) {
+//            const channel = supabase
+//                .channel('Messages')
+//                .on(
+//                    'postgres_changes',
+//                    {
+//                        event: 'INSERT',
+//                        schema: 'public',
+//                        table: 'Messages',
+//                        filter: conversationId=eq.${selectedConversation},
+//                    },
+//                    (payload: any) => {
+//                        dispatch(addNewMessage(payload.new));
+//                    }
+//                )
+//                .subscribe();
+
+
+//            return () => channel.unsubscribe();
+//        }
+//    }, [selectedConversation, dispatch]);
     useEffect(() => {
         if (role === 'Buyer' && conversation.length === 0 && gig) {
             setReceiverId(gig.userId.toString());
@@ -139,68 +182,25 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
         }
     }, [memoizedConversation, gig, role, userID]);
 
-    useEffect(() => {
-        return () => {
-            if (socket) {
-                socket.disconnect();
-            }
-        };
-    }, [socket]);
-
     const handleConversationClick = useCallback((conversation: Conversation) => {
         setSelectedConversation(conversation.id);
         setReceiverId(role === 'Seller' ? conversation.buyer?.id.toString() : conversation.seller?.id.toString());
         setShowChatPannel(true);
         dispatch(fetchMessages(conversation.id.toString()));
 
-        const newSocket = io('http://localhost:5000');
-        setSocket(newSocket);
-
-        newSocket.emit('joinRoom', conversation.id);
-
-        newSocket.on('receiveMessage', (newMessage: any) => {
-            dispatch(addNewMessage(newMessage));
-        });
-    }, [dispatch, role]);
-    
-    //     useEffect(() => {
-    //        if (selectedConversation) {
-    //            const channel = supabase
-    //                .channel('Messages')
-    //                .on(
-    //                    'postgres_changes',
-    //                    {
-    //                        event: 'INSERT',
-    //                        schema: 'public',
-    //                        table: 'Messages',
-    //                        filter: `conversationId=eq.${selectedConversation}`,
-    //                    },
-    //                    (payload: any) => {
-    //                        dispatch(addNewMessage(payload.new));
-    //                    }
-    //                )
-    //                .subscribe();
-
-
-    //            return () => channel.unsubscribe();
-    //        }
-    //    }, [selectedConversation, dispatch]);
+        if (socket) {
+            socket.emit('joinRoom', conversation.id);
+        }
+    }, [dispatch, role, socket]);
 
     const handleSendMessage = useCallback(async () => {
         if (message.trim() && receiverId) {
             const resultAction = await dispatch(sendMessage({ receiverId, content: message, gigId: id, userID }));
             if (sendMessage.fulfilled.match(resultAction)) {
                 setMessage('');
-                const { isNewConversation } = resultAction.payload;
-                if (isNewConversation) {
-                    setFirstConversation(true);
-                    dispatch(fetchConversation(id));
-                }
             }
         }
     }, [dispatch, message, receiverId, id, userID]);
-
-
 
     const formatTimestamp = (timestamp: string) => {
         const date = new Date(timestamp);
@@ -223,45 +223,35 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
                                 <Typography variant="subtitle1">{role === 'Seller' ? conv.buyer?.name : conv.seller?.name}</Typography>
                             </div>
                         </ConversationItem>
-                    ))}
+                ))}
             </Sidebar>
-            {((conversation.length > 0 && showChatPannel) ||
-                (role === 'Buyer' && conversation.length === 0 && gig)) && (
-                    <ChatContainer>
-                        <MessageArea>
-                            {loading ? (
-                                <p>Loading messages...</p>
-                            ) : error && conversation.length > 0 ? (
-                                <p>Error: {error}</p>
-                            ) : (
-                                messages?.map((msg) => (
-                                    <MessageBubble
-                                        key={msg.id}
-                                        $issender={msg.senderId?.toString() === userID?.toString()}
-                                    >
-                                        {msg.content}
-                                        <Timestamp $issender={msg.senderId?.toString() === userID?.toString()}>
-                                            {formatTimestamp(msg.createdAt)}
-                                        </Timestamp>
-                                    </MessageBubble>
-                                ))
-                            )}
-                        </MessageArea>
-                        <MessageInputArea>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Type your message..."
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                            />
-                            <Button onClick={handleSendMessage}>
-                                <Send />
-                            </Button>
-                        </MessageInputArea>
-                    </ChatContainer>
-                )}
+            {showChatPannel && (
+                <ChatContainer>
+                    <MessageArea>
+                        {messages.map((msg) => (
+                            <MessageBubble key={msg.id} $issender={msg.senderId?.toString() === userID?.toString()}>
+                                {msg.content}
+                                <Timestamp $issender={msg.senderId?.toString() === userID?.toString()}>
+                                     {formatTimestamp(msg.createdAt)}
+                                </Timestamp>
+                            </MessageBubble>
+                        ))}
+                    </MessageArea>
+                    <MessageInputArea>
+                        <TextField
+                            fullWidth
+                            variant="outlined"
+                            placeholder="Type your message..."
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                        />
+                        <Button onClick={handleSendMessage}>
+                            <Send />
+                        </Button>
+                    </MessageInputArea>
+                </ChatContainer>
+            )}
         </ChatPageContainer>
     );
 };
