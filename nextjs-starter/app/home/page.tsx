@@ -189,7 +189,9 @@ const Home = () => {
               </CardContent>
 
               {(role === 'Buyer' || user === gig?.user?.email) && <ActionButtons className="action-buttons">
-                <Button sx={{backgroundColor: '#004225'}} variant="contained" onClick={() => handleCreateOrderClick(gig.id)}>Create Order</Button>
+                {role == 'Buyer' &&
+                  <Button sx={{backgroundColor: '#004225'}} variant="contained" onClick={() => handleCreateOrderClick(gig.id)}>Create Order</Button>
+                }
                 <Button sx={{ backgroundColor: '#0bcee7', color:'white' }} onClick={() => handleChatClick(gig.id)}>Chat</Button>
               </ActionButtons>
               }

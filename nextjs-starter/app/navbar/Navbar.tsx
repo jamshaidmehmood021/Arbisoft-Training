@@ -18,14 +18,14 @@ import { AuthContext } from '@/app/context/authContext';
 import useAuth from '@/app/hook/useAuth';
 
 const pages = ['Sign In', 'Sign Up'];
-const settings = ['Profile','Create Gig','Dashboard', 'Logout'];
+const settings = ['Profile', 'Dashboard', 'Logout'];
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
   if (!authContext) {
     throw new Error("AuthContext is not available");
   }  
-  const { user, userID, setUserRole, profilePicture, setProfilePicture, logout } = authContext || {};
+  const { user, role, userID, setUserRole, profilePicture, setProfilePicture, logout } = authContext || {};
 
   const router = useRouter();
   const { apiCall } = useAuth();
@@ -71,9 +71,6 @@ const Navbar = () => {
       case 'Sign In':
         router.push('/signIn');
         break;
-      case 'Create Gig':
-        router.push('/gigs');
-        break;
       case 'Profile':
         router.push(`/profile/${userID}`);
         break;
@@ -88,6 +85,10 @@ const Navbar = () => {
     }
     setAnchorElNav(null);
   }, [router, userID, logout]);
+
+  const handleCreateGig = () => {
+    router.push('/gigs');
+  };
 
   return (
     <AppBar position="static" sx={{ backgroundColor: 'white' }}>
@@ -167,7 +168,7 @@ const Navbar = () => {
           </Typography>
 
           {!user && (
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, marginLeft: 'auto' }}>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
               {pages.map((page) => (
                 <Button
                   key={page}
@@ -181,7 +182,15 @@ const Navbar = () => {
           )}
 
           {user && (
-            <Box sx={{ flexGrow: 0, ml: 'auto' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+              {role === 'Seller' && (
+                <Button
+                  onClick={handleCreateGig}
+                  sx={{ my: 2, color: 'black', marginRight: '20px', backgroundColor: '#004225', color: 'white' }}
+                >
+                  Create Gig
+                </Button>
+              )}
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Profile Picture" src={profilePicture as string} />

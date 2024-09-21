@@ -17,6 +17,7 @@ import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@m
 import { FacebookIcon, GoogleIcon } from '@/app/muiCustomIcons/CustomIcons';
 
 import useAuth from '@/app/hook/useAuth';
+import Image from 'next/image';
 
 interface SignUpFormData {
   name: string;
@@ -35,6 +36,7 @@ export default function SignUp() {
     profilePicture: ''
   });
   const [error, setError] = useState<string>('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null); 
   const { apiCall, loading } = useAuth();
   const router = useRouter();
 
@@ -44,20 +46,22 @@ export default function SignUp() {
     router.push(newValue === 0 ? '/signIn' : '/signUp');
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setFormData(prevData => ({ ...prevData, [e.target.name]: e.target.value }));
+  }, []);
 
-  const handleRoleChange = (e: SelectChangeEvent<string>) => {
-    setFormData({ ...formData, role: e.target.value });
-  };
+  const handleRoleChange = useCallback((e: SelectChangeEvent<string>) => {
+    setFormData(prevData => ({ ...prevData, role: e.target.value }));
+  }, []);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData({ ...formData, profilePicture: file });
+      setFormData(prevData => ({ ...prevData, profilePicture: file }));
+      const previewUrl = URL.createObjectURL(file); 
+      setImagePreview(previewUrl); 
     }
-  };  
+  }, []);  
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,22 +88,24 @@ export default function SignUp() {
   
     toast.success('Sign Up successful!');
     setFormData({ name: '', email: '', password: '', role: '', profilePicture: '' });
+    setImagePreview(null); 
     setError('');
   
     router.push('/signIn');
   };
+
   return (
     <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh', padding: 2 }}>
       <Paper elevation={6} sx={{ padding: 4, textAlign: 'center' }}>
         <Box sx={{ mb: 2 }}>
-        <Tabs value={currentTab} onChange={handleTabChange} centered textColor="primary">
+          <Tabs value={currentTab} onChange={handleTabChange} centered textColor="primary">
             <Tab label="Sign In" sx={{
-              '&.Mui-selected': {color: 'black', fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'monospace'},
-              '&:hover': {backgroundColor: '#f7f9fc'}
+              '&.Mui-selected': { color: 'black', fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'monospace' },
+              '&:hover': { backgroundColor: '#f7f9fc' }
             }} />
             <Tab label="Sign Up" sx={{
-              '&.Mui-selected': {color: 'black', fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'monospace'},
-              '&:hover': { backgroundColor: '#f7f9fc'}
+              '&.Mui-selected': { color: 'black', fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'monospace' },
+              '&:hover': { backgroundColor: '#f7f9fc' }
             }} />
          </Tabs> 
         </Box>
@@ -175,6 +181,17 @@ export default function SignUp() {
                 Upload Profile Picture
               </Button>
             </label>
+            {imagePreview && ( 
+              <Box sx={{ mt: 2 }}>
+                <Image
+                  src={imagePreview}
+                  alt="Profile Preview"
+                  width={100} 
+                  height={100}
+                  style={{ borderRadius: '4px', objectFit: 'cover' }}
+                />
+              </Box>
+            )}
           </Box>
           <Button
             type="submit"

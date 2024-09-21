@@ -59,6 +59,7 @@ async function sendMessage(req, res) {
         res.status(201).json({
             message: 'Message sent successfully',
             data: message,
+            isNewConversation
         });
     } catch (error) {
         console.error('Error sending message:', error);
