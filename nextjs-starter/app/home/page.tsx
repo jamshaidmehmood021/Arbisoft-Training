@@ -1,12 +1,12 @@
-'use client';
-import React, { useEffect, useState, useCallback, useMemo,useContext } from 'react';
+'use client'
+
+import React, { useEffect, useState, useCallback, useMemo, useContext } from 'react';
 import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
 import { fetchAllGigs } from '@/app/redux/slice/gigSlice';
 import { Grid, Card, CardContent, Typography, Avatar, Select, MenuItem, InputLabel, FormControl, SelectChangeEvent, Button } from '@mui/material';
 import styled from 'styled-components';
 import { Image } from 'antd';
 import { useRouter } from 'next/navigation';
-
 import { AuthContext } from '@/app/context/authContext';
 
 const Container = styled.div`
@@ -20,7 +20,7 @@ const GigCard = styled(Card)`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   position: relative;
-  
+
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -101,10 +101,10 @@ const Home = () => {
     throw new Error('AuthContext is not available');
   }
 
-  const { role,user } = authContext;
+  const { role, user } = authContext;
   const dispatch = useAppDispatch();
   const { gigs, loading, error } = useAppSelector((state) => state.gigs);
-  const router = useRouter(); 
+  const router = useRouter();
   const [category, setCategory] = useState<string>('');
 
   useEffect(() => {
@@ -116,22 +116,22 @@ const Home = () => {
   }, []);
 
   const handleCardClick = useCallback((userId: string) => {
-    router.push(`/profile/${userId}`);  
+    router.push(`/profile/${userId}`);
   }, [router]);
 
   const handleChatClick = useCallback((gigId: string) => {
-    router.push(`/chat/${gigId}`);  
+    router.push(`/chat/${gigId}`);
   }, [router]);
 
   const handleCreateOrderClick = useCallback((gigId: string) => {
-    router.push(`/order/create/${gigId}`);  
+    router.push(`/createOrder/${gigId}`);
   }, [router]);
 
-  const filteredGigs = useMemo(() => 
+  const filteredGigs = useMemo(() =>
     category
       ? gigs.filter((gig) => gig.category === category)
       : gigs
-  , [category, gigs]);
+    , [category, gigs]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -184,18 +184,30 @@ const Home = () => {
                       <Typography variant="body2" color="textSecondary">Owner: {gig.user?.name}</Typography>
                     </div>
                   </UserDetails>
-                  <Description>{gig.description}</Description>
+                  <Description>
+                    {gig.description && gig.description.length > 30
+                      ? `${gig.description.substring(0, 20)}... `
+                      : gig.description || 'No description available.'
+                    }
+                    {gig.description && gig.description.length > 30 && (
+                      <Button
+                        sx={{ textTransform: 'none', padding: 0 }}
+                      >
+                        Show More
+                      </Button>
+                    )}
+                  </Description>
+
+
                 </CardContentWrapper>
               </CardContent>
 
               {(role === 'Buyer' || user === gig?.user?.email) && <ActionButtons className="action-buttons">
-                {role == 'Buyer' &&
-                  <Button sx={{backgroundColor: '#004225'}} variant="contained" onClick={() => handleCreateOrderClick(gig.id)}>Create Order</Button>
-                }
-                <Button sx={{ backgroundColor: '#0bcee7', color:'white' }} onClick={() => handleChatClick(gig.id)}>Chat</Button>
-              </ActionButtons>
-              }
-
+                {role === 'Buyer' && (
+                  <Button sx={{ backgroundColor: '#004225' }} variant="contained" onClick={() => handleCreateOrderClick(gig.id)}>Create Order</Button>
+                )}
+                <Button sx={{ backgroundColor: '#0bcee7', color: 'white' }} onClick={() => handleChatClick(gig.id)}>Chat</Button>
+              </ActionButtons>}
             </GigCard>
           </Grid>
         ))}

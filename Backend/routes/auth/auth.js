@@ -11,6 +11,9 @@ const updateGig = require('../../controllers/gig/updateGig');
 const sendMessage = require('../../controllers/message/sendMessage');
 const getMessages = require('../../controllers/message/getMessages');
 const getConversationsByGig = require('../../controllers/conversations/getConversations');
+const createOrder = require('../../controllers/Orders/createOrder');
+const getAiSuggestions = require('../../controllers/AI/getAiSuggessions');
+const getOrderById = require('../../controllers/Orders/getOrderById');
 
 const upload = require('../../middleWare/multer');
 
@@ -28,5 +31,9 @@ router.post('/updateGig/:id', upload.fields([{ name: 'image' }, { name: 'video' 
 router.post('/sendMessage', sendMessage);
 router.get('/messages/:conversationId', getMessages);
 router.get('/conversations/:gigId', getConversationsByGig);
+router.post('/createOrder', createOrder);
+router.get("/suggestions" , getAiSuggestions);
+router.get('/getOrderById/:id', getOrderById);
+
 
 module.exports = router;

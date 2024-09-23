@@ -18,7 +18,7 @@ import { AuthContext } from '@/app/context/authContext';
 import useAuth from '@/app/hook/useAuth';
 
 const pages = ['Sign In', 'Sign Up'];
-const settings = ['Profile', 'Dashboard', 'Logout'];
+const settings = ['Profile','your Orders', 'Dashboard', 'Logout'];
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
@@ -76,6 +76,9 @@ const Navbar = () => {
         break;
       case 'Dashboard':
         router.push('/dashboard');
+        break;
+      case 'your Orders':
+        router.push(`/orders/${userID}`);
         break;
       case 'Logout':
         logout();

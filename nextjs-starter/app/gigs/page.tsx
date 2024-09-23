@@ -1,13 +1,14 @@
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { TextField, Button, MenuItem, InputLabel, Select, FormControl, Box, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-
 import { useAppDispatch } from '@/app/redux/store';
 import { createGig } from '@/app/redux/slice/gigSlice';
+import { AuthContext } from '@/app/context/authContext';
+import TextEditor from '@/app/components/TextEditor';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -45,10 +46,6 @@ const Title = styled('h2')({
   marginBottom: '20px',
 });
 
-const VideoInput = styled('input')({
-  display: 'none',
-});
-
 const categories = [
   'Artificial Intelligence',
   'Machine Learning',
@@ -64,10 +61,16 @@ const categories = [
 const GigForm = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const authContext = useContext(AuthContext);
 
+  if (!authContext) {
+    throw new Error('AuthContext is not available');
+  }
+
+  const { token } = authContext;
   const [gigTitle, setGigTitle] = useState('');
   const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState(''); // State for description
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -96,7 +99,7 @@ const GigForm = () => {
     const formData = new FormData();
     formData.append('title', gigTitle);
     formData.append('category', category);
-    formData.append('description', description);
+    formData.append('description', description); // Add description to formData
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -129,17 +132,6 @@ const GigForm = () => {
             sx={{ backgroundColor: '#fff', borderRadius: '5px' }}
           />
 
-          <TextField
-            fullWidth
-            label="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            margin="normal"
-            multiline
-            rows={4}
-            sx={{ backgroundColor: '#fff', borderRadius: '5px' }}
-          />
-
           <Box sx={{ mb: 3 }}>
             <FormControl fullWidth margin="normal">
               <InputLabel>Category</InputLabel>
@@ -157,27 +149,31 @@ const GigForm = () => {
             </FormControl>
           </Box>
 
-          <label htmlFor="image-upload">
-            <StyledButton variant="contained" component="span" fullWidth>
-              Upload Image
-            </StyledButton>
-            <input
-              type="file"
-              id="image-upload"
-              accept="image/*"
-              hidden
-              onChange={handleImageUpload}
-            />
-          </label>
+          <TextEditor
+            value={description} 
+            setValue={setDescription} 
+            placeholder="Enter the gig description here..."
+            type="Gig"
+          />
+
+          <div style={{ marginTop: '20px' }}>
+            <label htmlFor="image-upload">
+              <StyledButton variant="contained" component="span" fullWidth>
+                Upload Image
+              </StyledButton>
+              <input
+                type="file"
+                id="image-upload"
+                accept="image/*"
+                hidden
+                onChange={handleImageUpload}
+              />
+            </label>
+          </div>
 
           {imagePreview && (
             <Box sx={{ mt: 2, mb: 3 }}>
-              <Image
-                src={imagePreview}
-                alt="Image Preview"
-                width={300}
-                height={300}
-              />
+              <Image src={imagePreview} alt="Image Preview" width={300} height={300} />
             </Box>
           )}
 
@@ -185,10 +181,11 @@ const GigForm = () => {
             <StyledButton variant="contained" component="span" fullWidth>
               Upload Video (Optional)
             </StyledButton>
-            <VideoInput
+            <input
               type="file"
               id="video-upload"
               accept="video/*"
+              hidden
               onChange={handleVideoUpload}
             />
           </label>
@@ -211,25 +208,11 @@ const GigForm = () => {
             sx={{
               backgroundColor: '#007bff',
               '&:hover': { backgroundColor: '#0069d9' },
-              position: 'relative',
+              fontWeight: 'bold',
             }}
             disabled={loading}
           >
-            {loading ? (
-              <CircularProgress
-                size={24}
-                sx={{
-                  color: '#fff',
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  marginTop: '-12px',
-                  marginLeft: '-12px',
-                }}
-              />
-            ) : (
-              'Create Gig'
-            )}
+            {loading ? <CircularProgress size={24} /> : 'Create Gig'}
           </Button>
         </form>
       </FormContainer>
