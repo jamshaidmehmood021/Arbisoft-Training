@@ -10,6 +10,8 @@ import { createGig } from '@/app/redux/slice/gigSlice';
 import { AuthContext } from '@/app/context/authContext';
 import TextEditor from '@/app/components/TextEditor';
 
+import withAuth from '@/app/components/ProtectedRoute';
+
 const PageContainer = styled('div')({
   display: 'flex',
   justifyContent: 'center',
@@ -220,4 +222,4 @@ const GigForm = () => {
   );
 };
 
-export default GigForm;
+export default withAuth(GigForm);

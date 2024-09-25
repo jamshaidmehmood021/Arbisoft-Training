@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
+import { Bars } from 'react-loading-icons'
 
 import convertToSubcurrency from "@/app/lib/convertToSubcurrency";
 
@@ -63,7 +64,7 @@ const CheckoutPage = ({ amount, order }: { amount: number, order: any }) => {
           role="status"
         >
           <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-            Loading...
+          <Bars stroke="#98ff98" />
           </span>
         </div>
       </div>

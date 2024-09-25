@@ -46,6 +46,16 @@ io.on('connection', (socket) => {
         io.to(gigId).emit('receiveGigMessage', messageData);
     });
 
+    socket.on('joinOrderRoom', (orderId) => {
+        socket.join(orderId);
+        console.log(`User joined room: ${orderId}`);
+    });
+
+    socket.on('sendOrderMessage', ({ orderId, ...messageData }) => {
+        io.to(orderId).emit('receiveGigMessage', messageData);
+    });
+
+
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
     });

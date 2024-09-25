@@ -8,6 +8,7 @@ import { selectGigById } from '@/app/redux/slice/gigSlice';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { updateGig } from '@/app/redux/slice/gigSlice';
+import withAuth from '@/app/components/ProtectedRoute';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -252,4 +253,4 @@ const EditGigForm = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default EditGigForm;
+export default withAuth(EditGigForm);

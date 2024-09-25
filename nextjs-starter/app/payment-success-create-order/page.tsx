@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { useAppDispatch } from '@/app/redux/hooks'; 
 import { createOrder } from '@/app/redux/slice/orderSlice';
+import { io } from 'socket.io-client';
 
 import { AuthContext } from '@/app/context/authContext';
 
@@ -12,6 +13,7 @@ const PaymentSuccessPage = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const ref = useRef<boolean>(false); 
+  const [socket, setSocket] = useState<any>(null);
 
   const authContext = useContext(AuthContext);
 
@@ -36,8 +38,10 @@ const PaymentSuccessPage = () => {
 
     if (orderData && !ref.current) { 
       ref.current = true;  
-      
       const parsedOrder = JSON.parse(decodeURIComponent(orderData));
+      const newSocket = io('http://localhost:5000');
+      setSocket(newSocket);
+      newSocket.emit('joinOrderRoom', parsedOrder.sellerId);
       createOrderAndNotify(parsedOrder);
     }
   }, []); 

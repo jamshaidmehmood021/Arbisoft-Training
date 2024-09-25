@@ -8,6 +8,7 @@ import {Image} from 'antd';
 import { useAppSelector } from '@/app/redux/hooks';
 import { selectGigById } from '@/app/redux/slice/gigSlice';
 import { AuthContext } from '@/app/context/authContext';
+import withAuth from '@/app/components/ProtectedRoute';
 
 const Container = styled.div`
   padding: 3rem 2rem;
@@ -160,4 +161,4 @@ const GigDetails = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default GigDetails;
+export default withAuth(GigDetails);

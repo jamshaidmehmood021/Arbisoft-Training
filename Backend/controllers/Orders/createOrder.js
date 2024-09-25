@@ -5,6 +5,12 @@ const { Op } = require('sequelize');
 
 const createOrder = async (req, res) => {
     try {
+        const io = req.app.get('socketio');
+
+        if (!io) {
+            return res.status(500).json({ error: 'Socket.io is not initialized' });
+        }
+
         const { gigId, buyerId, sellerId, deadline, amount } = req.body;
 
         const [buyer, seller] = await Promise.all([
@@ -30,6 +36,7 @@ const createOrder = async (req, res) => {
             }
         });
 
+        
         if (existingOrder) {
             return res.status(400).json({ message: 'You already have an active order on this gig.' });
         }
@@ -42,6 +49,12 @@ const createOrder = async (req, res) => {
             amount,
             orderStatus: 'Pending',
         });
+
+        if(newOrder) {
+            io.to(sellerId).emit('newOrder', {
+                newOrder
+            });
+        }
 
         return res.status(201).json(newOrder);
     } catch (error) {

@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import gigReducer from './slice/gigSlice';
 import messageReducer from './slice/messageSlice';
 import orderReducer from './slice/orderSlice';
+import ratingReducer from './slice/ratingSlice';
 
 export const makeStore = () => {
   return configureStore({
@@ -10,6 +11,7 @@ export const makeStore = () => {
       gigs: gigReducer,
       messages: messageReducer,
       orders: orderReducer,
+      ratings: ratingReducer,
     },
     
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({

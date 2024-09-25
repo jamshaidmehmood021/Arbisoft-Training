@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState, useContext, useCallback } from 'react';
-import { Typography, Container, Tabs, Tab, Divider, Grid, Card, CardContent, Avatar, IconButton } from '@mui/material';
+import { Typography, Container, Tabs, Tab, Divider, Grid, Card, CardContent, Avatar, IconButton, Button } from '@mui/material';
 import { makeStyles } from '@material-ui/core/styles';
 import { Flag, Edit, Delete } from '@mui/icons-material';
 import { Image } from 'antd';
@@ -8,10 +8,13 @@ import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
-import { useAppDispatch } from '@/app/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
 import useAuth from '@/app/hook/useAuth';
 import { AuthContext } from '@/app/context/authContext';
 import { fetchGigsByUserId, deleteGig } from '@/app/redux/slice/gigSlice';
+import { fetchAverageRating } from '@/app/redux/slice/ratingSlice';
+import Stars from '@/app/components/Stars';
+import withAuth from '@/app/components/ProtectedRoute';
 
 const GigCard = React.memo(styled(Card)`
   display: flex;
@@ -100,6 +103,7 @@ interface Gig {
   description: string;
 }
 
+
 const Profile = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const classes = useStyles();
@@ -110,11 +114,13 @@ const Profile = ({ params }: { params: { id: string } }) => {
     throw new Error("AuthContext is not available");
   }
 
-  const { token, userID } = authContext;
+  const averageRating = useAppSelector((state) => state.ratings.averageRating); 
+
+  const { token, userID, } = authContext;
   const { apiCall } = useAuth();
   const { id } = params;
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User|null>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [gigs, setGigs] = useState<Gig[]>([]);
 
@@ -122,9 +128,10 @@ const Profile = ({ params }: { params: { id: string } }) => {
 
 useEffect(() => {
   const fetchData = async () => {
+    let response: any;
     try {
       if (id) {
-        const response = await memoizedApiCall(`http://localhost:5000/user/${id}`, undefined, 'GET', token);
+        response = await memoizedApiCall(`http://localhost:5000/user/${id}`, undefined, 'GET', token);
         if (response && response.data) {
           setUser(response.data);
         }
@@ -134,7 +141,10 @@ useEffect(() => {
       if (fetchGigsByUserId.fulfilled.match(result)) {
         setGigs(result.payload);
       }
+
+      await dispatch(fetchAverageRating({ userId: Number(id), role: response.data.role }));
     } catch (error) {
+      console.log(error);
       toast.error('An unexpected error occurred');
     }
   };
@@ -164,7 +174,7 @@ useEffect(() => {
   return (
     <Container className={classes.profileContainer} maxWidth="md">
       <div className={classes.profileHeader}>
-        {user && (
+      {user && (
           <>
             <Image
               className={classes.avatar}
@@ -179,6 +189,10 @@ useEffect(() => {
               </Typography>
               <Typography variant="body1">{user.email}</Typography>
               <Typography variant="body1">Role: {user.role}</Typography>
+
+              <Typography variant="body1" style={{ marginTop: '1rem' }}>
+                <Stars averageRating={averageRating} /> 
+              </Typography>
             </div>
           </>
         )}
@@ -218,7 +232,20 @@ useEffect(() => {
                           <Typography variant="body2" color="textSecondary">Owner: {gig.user.name}</Typography>
                         </div>
                       </UserDetails>
-                      <Description>{gig.description}</Description>
+                      <Description>
+                          {gig.description && gig.description.length > 30
+                            ? `${gig.description.substring(0, 20)}... `
+                            : gig.description || 'No description available.'
+                          }
+                          {gig.description && gig.description.length > 30 && (
+                            <Button
+                              onClick={() => router.push(`/gigDetail/${gig.id}`)}
+                              sx={{ textTransform: 'none', padding: 0 }}
+                            >
+                              Show More
+                            </Button>
+                          )}
+                      </Description>
                     </CardContentWrapper>
                   </CardContent>
                   <div className={classes.cardActions}>
@@ -247,4 +274,4 @@ useEffect(() => {
   );
 };
 
-export default Profile;
+export default withAuth(Profile);

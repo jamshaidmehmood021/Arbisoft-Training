@@ -15,7 +15,7 @@ const initialState: OrderState = {
 };
 
 export interface Order {
-  id: number;
+  orderId: number;
   deadline: string;
   gigId: number;
   buyerId: number;
@@ -81,12 +81,103 @@ export const fetchOrdersByUserId = createAsyncThunk(
       }
     }
   );
+
+  export const updateOrderStatus = createAsyncThunk(
+    'orders/updateOrderStatus',
+    async ({ orderId, orderStatus }: { orderId: number; orderStatus: string }, { rejectWithValue }) => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          return rejectWithValue('Token is missing');
+        }
   
+        const response = await fetch(`http://localhost:5000/updateOrderStatus/${orderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ orderStatus }),
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to update order status');
+        }
+  
+        return await response.json(); 
+      } catch (error: any) {
+        return rejectWithValue(error.message || 'Failed to update order status');
+      }
+    }
+  );
+
+  export const fetchOrdersByGigAndUserId = createAsyncThunk(
+    'orders/fetchOrdersByGigAndUserId',
+    async ({ gigId, userId }: { gigId: number; userId: number }, { rejectWithValue }) => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          return rejectWithValue('Token is missing');
+        }
+  
+        const response = await fetch(`http://localhost:5000/orders/${userId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ gigId }), 
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to fetch orders by gig and user');
+        }
+  
+        return await response.json();
+      } catch (error: any) {
+        return rejectWithValue(error.message || 'Failed to fetch orders by gig and user');
+      }
+    }
+  );
+
+  export const fetchAllOrders = createAsyncThunk(
+    'orders/fetchAllOrders',
+    async (_, { rejectWithValue }) => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          return rejectWithValue('Token is missing');
+        }
+
+        const response = await fetch(`http://localhost:5000/orders`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to fetch orders');
+        }
+
+        return await response.json();
+      } catch (error: any) {
+        return rejectWithValue(error.message || 'Failed to fetch orders');
+      }
+    }
+  );
 
 const orderSlice = createSlice({
   name: 'orders',
   initialState,
-  reducers: {},
+  reducers: {
+    addNewOrder: (state, action) => {
+        state.orders.push(action.payload); 
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createOrder.pending, (state) => {
@@ -113,8 +204,49 @@ const orderSlice = createSlice({
       .addCase(fetchOrdersByUserId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(updateOrderStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        const index = state.orders.findIndex(order => order.orderId === action.payload.id);
+        if (index !== -1) {
+          state.orders[index] = action.payload.order;
+        }
+      })
+      .addCase(updateOrderStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchOrdersByGigAndUserId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrdersByGigAndUserId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload; 
+      })
+      .addCase(fetchOrdersByGigAndUserId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchAllOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload; 
+      })
+      .addCase(fetchAllOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string; 
       });
   },
 });
 
+export const { addNewOrder} = orderSlice.actions;
 export default orderSlice.reducer;

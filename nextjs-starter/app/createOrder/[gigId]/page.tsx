@@ -1,18 +1,27 @@
 'use client';
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
+import { useAppDispatch } from '@/app/redux/hooks'; 
 import { useAppSelector } from '@/app/redux/hooks';
 import { selectGigById } from '@/app/redux/slice/gigSlice';
+import {fetchOrdersByGigAndUserId} from '@/app/redux/slice/orderSlice';
 import {Gig} from '@/app/redux/slice/gigSlice';
 
+import {toast} from 'react-toastify';
+
 import { AuthContext } from '@/app/context/authContext';
+import withAuth from '@/app/components/ProtectedRoute';
 
 
 const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   const [amount, setAmount] = useState(0);
   const [deadline, setDeadline] = useState('');
+  const [orderFound, setOrderFound] = useState(false);
   const router = useRouter();
+
+  const dispatch = useAppDispatch();
 
   const {gigId} = params;
   const gig: Gig | undefined = useAppSelector((state) => selectGigById(state, Number(gigId)));
@@ -27,6 +36,17 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
 
   const buyerId = userID; 
   const sellerId = gig?.userId; 
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      const result = await dispatch(fetchOrdersByGigAndUserId({ gigId: Number(gig?.id), userId: Number(userID) }));
+      if (result.payload !== 'No orders found for this buyer and gig combination.') {
+        toast.error('You already have an active order on this gig.');
+        setOrderFound(true);
+      }
+    };
+    fetchOrder();
+  }, [gig]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +96,8 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+          disabled={orderFound}
+          className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 disabled:opacity-50 disabled:animate-pulse"
         >
           Place Order
         </button>
@@ -85,4 +106,4 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   );
 };
 
-export default CreateOrder;
+export default withAuth(CreateOrder);

@@ -2,6 +2,7 @@ const { Router, Request, Response } = require('express');
 const signup = require('../../controllers/auth/signup');
 const login = require('../../controllers/auth/login');
 const getUser = require('../../controllers/auth/getUser');
+const getAllUsers = require('../../controllers/auth/getAllUsers');
 const authenticate = require('../../middleWare/authMiddleware');
 const createGig = require('../../controllers/gig/createGig');
 const getAllGigs = require('../../controllers/gig/getAllGigs');
@@ -14,6 +15,12 @@ const getConversationsByGig = require('../../controllers/conversations/getConver
 const createOrder = require('../../controllers/Orders/createOrder');
 const getAiSuggestions = require('../../controllers/AI/getAiSuggessions');
 const getOrderById = require('../../controllers/Orders/getOrderById');
+const updateOrderStatus = require('../../controllers/Orders/updateOrderStatus');
+const getOrderByIdAndGig = require('../../controllers/Orders/getOrderByIdAndGig');
+const createRating = require('../../controllers/rating/createRating');
+const checkUserRatingByOrder = require('../../controllers/rating/checkUserRatingByOrder');
+const checkUserRating = require('../../controllers/rating/checkUserRating');
+const getAllOrder = require('../../controllers/Orders/getAllOrders');
 
 const upload = require('../../middleWare/multer');
 
@@ -23,6 +30,7 @@ router.post('/signup', upload.single('profilePicture'), signup);
 router.post('/login', login);
 router.use(authenticate);
 router.get('/user/:id', getUser);
+router.get('/getAllUsers', getAllUsers);
 router.post('/createGig', upload.fields([{ name: 'image' }, { name: 'video' }]), createGig);
 router.get('/getAllGigs', getAllGigs);
 router.get('/getUserGigs/:userId', getGigsByUserId);
@@ -34,6 +42,12 @@ router.get('/conversations/:gigId', getConversationsByGig);
 router.post('/createOrder', createOrder);
 router.get("/suggestions" , getAiSuggestions);
 router.get('/getOrderById/:id', getOrderById);
+router.put('/updateOrderStatus/:orderId', updateOrderStatus);
+router.post('/orders/:id', getOrderByIdAndGig);
+router.get('/orders', getAllOrder);
+router.post('/createRating', createRating);
+router.get('/ratings/:orderId', checkUserRatingByOrder);
+router.get('/rating/:userId', checkUserRating);
 
 
 module.exports = router;

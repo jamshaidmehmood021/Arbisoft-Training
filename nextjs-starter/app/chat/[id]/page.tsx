@@ -201,8 +201,9 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
         setReceiverId(role === 'Seller' ? conversation.buyer?.id.toString() : conversation.seller?.id.toString());
         setShowChatPannel(true);
         dispatch(fetchMessages(conversation.id.toString()));
-
+        
         if (socket) {
+            console.log('here');
             socket.emit('joinRoom', conversation.id);
         }
     }, [dispatch, role]);

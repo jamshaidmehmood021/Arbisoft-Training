@@ -18,13 +18,13 @@ import { AuthContext } from '@/app/context/authContext';
 import useAuth from '@/app/hook/useAuth';
 
 const pages = ['Sign In', 'Sign Up'];
-const settings = ['Profile','your Orders', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'your Orders', 'Dashboard', 'Logout'];
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
   if (!authContext) {
     throw new Error("AuthContext is not available");
-  }  
+  }
   const { user, role, userID, setUserRole, profilePicture, setProfilePicture, logout } = authContext || {};
 
   const router = useRouter();
@@ -138,7 +138,7 @@ const Navbar = () => {
                 horizontal: 'left',
               }}
               open={Boolean(anchorElNav)}
-              onClose={() => pagesNavigation('')}
+              onClose={() => setAnchorElNav(null)}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
@@ -202,8 +202,8 @@ const Navbar = () => {
               <Menu
                 sx={{ mt: '45px' }}
                 id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
+                anchorEl={anchorElUser} 
+                  anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'right',
                 }}
@@ -212,7 +212,7 @@ const Navbar = () => {
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-                open={Boolean(anchorElUser)}
+                open={Boolean(anchorElUser)}  
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (

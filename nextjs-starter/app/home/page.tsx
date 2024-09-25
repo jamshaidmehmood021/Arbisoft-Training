@@ -7,7 +7,10 @@ import { Grid, Card, CardContent, Typography, Avatar, Select, MenuItem, InputLab
 import styled from 'styled-components';
 import { Image } from 'antd';
 import { useRouter } from 'next/navigation';
+import { Bars } from 'react-loading-icons';
+
 import { AuthContext } from '@/app/context/authContext';
+import withAuth from '@/app/components/ProtectedRoute';
 
 const Container = styled.div`
   padding: 4rem;
@@ -134,7 +137,7 @@ const Home = () => {
     , [category, gigs]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Bars stroke="#98ff98" /></div>;
   }
 
   if (error) {
@@ -216,4 +219,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default withAuth(Home);

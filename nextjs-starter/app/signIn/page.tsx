@@ -35,7 +35,7 @@ interface DecodedToken {
 
 export default function SignIn() {
   const authContext = useContext(AuthContext);
-  const { setUser, setName, setUserID, setToken, setRole } = authContext!;
+  const { setUser, setName, setUserID, setToken, setRole, role } = authContext!;
   const [formData, setFormData] = useState<SignInFormData>({ email: '', password: '' });
   const [error, setError] = useState<string>('');
   const { apiCall, loading } = useAuth();
@@ -71,7 +71,11 @@ export default function SignIn() {
         toast.success('Login successful!');
         setFormData({ email: '', password: '' });
         setError('');
-        router.push('/home');
+        if(decodedToken.role === 'Admin') {
+          router.push('/dashboard');
+        } else {
+          router.push('/home');
+        }
       }
     } catch (error: any) {
       setError(error.message || 'Login failed');
