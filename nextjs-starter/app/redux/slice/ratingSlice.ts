@@ -85,7 +85,6 @@ export const fetchAverageRating = createAsyncThunk(
     'userRatings/fetchAverageRating',
     async ({ userId, role }: { userId: number; role: string | null }, { rejectWithValue }) => {
         try {
-            console.log(userId, role);
             const token = localStorage.getItem('token');
             if (!token) {
                 return rejectWithValue('Token is missing');

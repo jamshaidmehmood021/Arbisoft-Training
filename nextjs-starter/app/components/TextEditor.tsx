@@ -3,14 +3,6 @@ import Quill from "quill";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-type ProjectInput = {
-    name: string;
-    budget: string;
-    deadline: string;
-    description: string;
-    files: FileList | null;
-};
-
 type EditorType = "Gig";
 type SuggestionPosition = { start: number; end: number };
 
@@ -169,6 +161,7 @@ const TextEditor = ({
                 value={value}
                 onChange={handleChange}
                 className="w-full h-64 pb-11 bg-white"
+                style={{ color: 'black' }}
                 {...props}
             />
         </div>

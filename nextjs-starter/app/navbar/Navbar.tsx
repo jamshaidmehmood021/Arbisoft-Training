@@ -7,7 +7,6 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -16,9 +15,6 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { AuthContext } from '@/app/context/authContext';
 import useAuth from '@/app/hook/useAuth';
-
-const pages = ['Sign In', 'Sign Up'];
-const settings = ['Profile', 'your Orders', 'Dashboard', 'Logout'];
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
@@ -30,7 +26,6 @@ const Navbar = () => {
   const router = useRouter();
   const { apiCall } = useAuth();
 
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const fetchUserData = useCallback(async () => {
@@ -51,10 +46,6 @@ const Navbar = () => {
     fetchUserData();
   }, [fetchUserData]);
 
-  const handleOpenNavMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  }, []);
-
   const handleOpenUserMenu = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   }, []);
@@ -65,12 +56,6 @@ const Navbar = () => {
 
   const pagesNavigation = useCallback((page: string) => {
     switch (page) {
-      case 'Sign Up':
-        router.push('/signUp');
-        break;
-      case 'Sign In':
-        router.push('/signIn');
-        break;
       case 'Profile':
         router.push(`/profile/${userID}`);
         break;
@@ -86,12 +71,18 @@ const Navbar = () => {
       default:
         break;
     }
-    setAnchorElNav(null);
   }, [router, userID, logout]);
 
   const handleCreateGig = () => {
     router.push('/gigs');
   };
+
+  const settings = useCallback(() => {
+    if (role === 'Admin') {
+      return ['Dashboard', 'Logout'];
+    }
+    return ['Profile', 'your Orders', 'Logout'];
+  }, [role]);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: 'white' }}>
@@ -114,43 +105,6 @@ const Navbar = () => {
           >
             Fiver Lite
           </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="open navigation menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={() => setAnchorElNav(null)}
-              sx={{ display: { xs: 'block', md: 'none' } }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={() => pagesNavigation(page)}>
-                  <Typography sx={{ textAlign: 'center', color: 'black', fontFamily: 'monospace' }}>
-                    {page}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-
           <Typography
             variant="h6"
             noWrap
@@ -169,27 +123,12 @@ const Navbar = () => {
           >
             Fiver Lite
           </Typography>
-
-          {!user && (
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={() => pagesNavigation(page)}
-                  sx={{ my: 2, color: 'black', display: 'block', marginLeft: '70px' }}
-                >
-                  {page}
-                </Button>
-              ))}
-            </Box>
-          )}
-
           {user && (
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
               {role === 'Seller' && (
                 <Button
                   onClick={handleCreateGig}
-                  sx={{ my: 2, color: 'black', marginRight: '20px', backgroundColor: '#004225', color: 'white' }}
+                  sx={{ my: 2, marginRight: '20px', backgroundColor: '#004225', color: 'white' }}
                 >
                   Create Gig
                 </Button>
@@ -202,8 +141,8 @@ const Navbar = () => {
               <Menu
                 sx={{ mt: '45px' }}
                 id="menu-appbar"
-                anchorEl={anchorElUser} 
-                  anchorOrigin={{
+                anchorEl={anchorElUser}
+                anchorOrigin={{
                   vertical: 'top',
                   horizontal: 'right',
                 }}
@@ -212,10 +151,10 @@ const Navbar = () => {
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-                open={Boolean(anchorElUser)}  
+                open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
+                {settings().map((setting) => (
                   <MenuItem key={setting} onClick={() => pagesNavigation(setting)}>
                     <Typography sx={{ textAlign: 'center', color: 'black' }}>
                       {setting}

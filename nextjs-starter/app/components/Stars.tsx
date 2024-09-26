@@ -29,4 +29,6 @@ const Stars: React.FC<StarsProps> = memo(({ averageRating }) => {
   );
 });
 
+Stars.displayName = 'Stars';
+
 export default Stars;

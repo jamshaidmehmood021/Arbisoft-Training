@@ -163,7 +163,7 @@ const messageSlice = createSlice({
         state.error = null;
         state.success = false;
       })
-      .addCase(sendMessage.fulfilled, (state, action) => {
+      .addCase(sendMessage.fulfilled, (state) => {
         state.success = true;
       })
       .addCase(sendMessage.rejected, (state, action) => {

@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { Container, Typography, Card, CardContent, Button, Rating } from '@mui/material';
+import {Typography, Card, CardContent, Button } from '@mui/material';
 import styled from 'styled-components';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 
 import { useAppDispatch } from '@/app/redux/hooks';
-import { fetchRatingsByOrderId,createRating } from '@/app/redux/slice/ratingSlice';
+import { fetchRatingsByOrderId, createRating } from '@/app/redux/slice/ratingSlice';
 import { AuthContext } from '../context/authContext';
+
+import RatingModal from '@/app/components/RatingModal';
 
 const StyledCard = styled(Card)`
   margin: 1.5rem;
@@ -86,16 +88,6 @@ const DeclineButton = styled(Button)`
   transition: background-color 0.3s ease;
 `;
 
-const RateButton = styled(Button)`
-  margin-top: 1rem;
-  background-color: #f59e0b;
-  color: white;
-  &:hover {
-    background-color: #d97706;
-  }
-  transition: background-color 0.3s ease;
-`;
-
 const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: any) => {
   const dispatch = useAppDispatch();
   const authContext = useContext(AuthContext);
@@ -104,18 +96,46 @@ const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: 
   }
   const { userID } = authContext;
   const [timer, setTimer] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
-  const [rating, setRating] = useState<number | null>(null);
   const [isRated, setIsRated] = useState(false);
   const [existingRating, setExistingRating] = useState<any>(null);
 
-  const fetchExistingRating = async () => {
-    const response = await dispatch(fetchRatingsByOrderId({orderId:order.orderId,userId:Number(userID), role}));
-    if (response.meta.requestStatus === 'fulfilled') {
-      const ratings = response.payload.rating; 
-      if (ratings.length > 0) {
-        setExistingRating(ratings); 
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleRatingSubmit = async (rating: number | null) => {
+    if (rating !== null) {
+      const ratingData = {
+        ratingValue: rating,
+        buyerId: order.buyerId,
+        sellerId: order.sellerId,
+        orderId: order.orderId,
+        raterId: Number(userID),
+      };
+
+      const response = await dispatch(createRating(ratingData));
+      if (response.meta.requestStatus === 'fulfilled') {
         setIsRated(true);
-        setRating(ratings);
+        console.log(`Rating submitted: ${rating} stars for Order ID: ${order.orderId}`);
+        toast.success('Thanks for your Time!');
+      }
+    }
+  };
+
+
+  const fetchExistingRating = async () => {
+    const response = await dispatch(fetchRatingsByOrderId({ orderId: order.orderId, userId: Number(userID), role }));
+    if (response.meta.requestStatus === 'fulfilled') {
+      const ratings = response.payload.rating;
+      if (ratings.length > 0) {
+        setExistingRating(ratings);
+        setIsRated(true);
       }
     }
   };
@@ -150,29 +170,6 @@ const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: 
 
     return () => clearInterval(intervalId);
   }, [calculateTimeLeft, onComplete, order]);
-
-  const handleRatingChange = (event: React.SyntheticEvent, newValue: number | null) => {
-    setRating(newValue);
-  };
-
-  const submitRating = async () => {
-    if (rating !== null) {
-      const ratingData = {
-        ratingValue: rating,
-        buyerId: order.buyerId, 
-        sellerId: order.sellerId,
-        orderId: order.orderId,
-        raterId: Number(userID),
-      };
-      
-      const response = await dispatch(createRating(ratingData));
-      if (response.meta.requestStatus === 'fulfilled') {
-        setIsRated(true);
-        console.log(`Rating submitted: ${rating} stars for Order ID: ${order.orderId}`);
-        toast.success('Thanks for your Time!');
-      }
-    }
-  };
 
   return (
     <StyledCard key={order.id}>
@@ -211,29 +208,23 @@ const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: 
           </div>
         )}
 
-        {order.orderStatus === 'Completed' && !isRated && (
+        {order.orderStatus === 'Completed' && !isRated && !existingRating && (
           <>
-            <Typography component="legend">Rate your experience:</Typography>
-            <Rating
-              name={`rating-${order.orderId}`}
-              value={rating}
-              onChange={handleRatingChange}
-              precision={0.5}
+            <StyledButton onClick={handleOpenModal}>
+              Rate Us
+            </StyledButton>
+            <RatingModal
+              open={isModalOpen}
+              handleClose={handleCloseModal}
+              handleRatingSubmit={handleRatingSubmit}
             />
-            <br/>
-            <RateButton onClick={submitRating} disabled={rating === null}>
-              Submit Rating
-            </RateButton>
           </>
         )}
-
-        {order.orderStatus === 'Completed' && isRated && existingRating && (
-        <Typography>Thank you for your rating of {rating} stars!</Typography>
-        )}
-
       </CardContent>
     </StyledCard>
   );
 });
+
+OrderCard.displayName = 'OrderCard';
 
 export default OrderCard;

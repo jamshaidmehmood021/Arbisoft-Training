@@ -1,11 +1,13 @@
+import SignIn from "./signIn/SignIn";
 
-
-export default function Home() {
+const Home =() => {
   return (
     <div >
       <main>
-            
+       <SignIn />
       </main>
     </div>
   );
 }
+
+export default Home;

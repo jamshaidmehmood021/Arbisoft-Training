@@ -1,6 +1,6 @@
 import React from 'react';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { Paper, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import styled from 'styled-components';
 
 const ChartContainer = styled.div`
