@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import {Typography, Card, CardContent, Button } from '@mui/material';
 import styled from 'styled-components';
@@ -88,7 +89,7 @@ const DeclineButton = styled(Button)`
   transition: background-color 0.3s ease;
 `;
 
-const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: any) => {
+const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role}: any) => {
   const dispatch = useAppDispatch();
   const authContext = useContext(AuthContext);
   if (!authContext) {
@@ -129,7 +130,7 @@ const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: 
   };
 
 
-  const fetchExistingRating = async () => {
+  const fetchExistingRating = useCallback(async () => {
     const response = await dispatch(fetchRatingsByOrderId({ orderId: order.orderId, userId: Number(userID), role }));
     if (response.meta.requestStatus === 'fulfilled') {
       const ratings = response.payload.rating;
@@ -138,11 +139,11 @@ const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: 
         setIsRated(true);
       }
     }
-  };
+  }, [dispatch, order.orderId, role, userID]);
 
   useEffect(() => {
     fetchExistingRating();
-  }, [dispatch, order.orderId]);
+  }, [dispatch, order.orderId,fetchExistingRating]);
 
   const calculateTimeLeft = useCallback(() => {
     const deadlineDate = new Date(order.deadline);
@@ -161,10 +162,12 @@ const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: 
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const timeLeft = calculateTimeLeft();
-      setTimer(timeLeft);
-      if (timeLeft === null && order.orderStatus !== 'Completed') {
-        onComplete(order.orderId);
+      if (order.orderStatus === 'In Progress') {
+        const timeLeft = calculateTimeLeft();
+        setTimer(timeLeft);
+        if (timeLeft === null && order.orderStatus !== 'Completed') {
+          onComplete(order.orderId);
+        }
       }
     }, 1000);
 
@@ -176,15 +179,18 @@ const OrderCard = React.memo(({ order, onAccept, onDecline, onComplete, role }: 
       <TimerContainer>
         {order.orderStatus === 'Completed' ? (
           <Typography>Order is completed.</Typography>
-        ) : timer ? (
-          <Typography>
-            {timer.days}d {timer.hours}h {timer.minutes}m {timer.seconds}s
-          </Typography>
+        ) : order.orderStatus === 'In Progress' ? (
+          timer ? (
+            <Typography>
+              {timer.days}d {timer.hours}h {timer.minutes}m {timer.seconds}s
+            </Typography>
+          ) : (
+            <Typography>Order deadline passed.</Typography>
+          )
         ) : (
-          <Typography>Order deadline passed.</Typography>
+          <Typography>Not Started Yet</Typography>
         )}
       </TimerContainer>
-
       <CardContent>
         <OrderInfo>
           <BoldTypography><strong>Buyer ID:</strong> {order.buyerId}</BoldTypography>

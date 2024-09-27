@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { TextField, Button, MenuItem, InputLabel, Select, FormControl, CircularProgress, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { toast } from 'react-toastify';
@@ -9,7 +9,6 @@ import { useAppDispatch } from '@/app/redux/store';
 import { createGig } from '@/app/redux/slice/gigSlice';
 
 import withAuth from '@/app/components/ProtectedRoute';
-
 import TextEditor from '@/app/components/TextEditor';
 
 const PageContainer = styled('div')({
@@ -72,6 +71,9 @@ const GigForm = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  
+  const imageUploadRef = useRef<HTMLInputElement | null>(null);
+  const videoUploadRef = useRef<HTMLInputElement | null>(null);
 
   const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -95,7 +97,7 @@ const GigForm = () => {
       }
       setVideoFile(file);
     }
-  }, []);  
+  }, []);
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -129,12 +131,12 @@ const GigForm = () => {
             value={gigTitle}
             onChange={(e) => setGigTitle(e.target.value)}
             margin="normal"
-            variant="outlined"
+            variant="filled"
             required
             sx={{ backgroundColor: '#fff', borderRadius: '10px', marginBottom: '20px' }}
           />
           <FormControl fullWidth margin="normal" sx={{ marginBottom: '20px' }}>
-            <InputLabel>Category</InputLabel>
+            <InputLabel variant="filled">Category</InputLabel>
             <Select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -154,14 +156,16 @@ const GigForm = () => {
             type="Gig"
           />
           <div style={{ marginTop: '20px' }}>
-            <StyledButton variant="contained"
-             fullWidth onClick={() => document.getElementById('image-upload')?.click()}
-             >
+            <StyledButton
+              variant="contained"
+              fullWidth
+              onClick={() => imageUploadRef.current?.click()}
+            >
               Upload Image
             </StyledButton>
             <input
               type="file"
-              id="image-upload"
+              ref={imageUploadRef}
               accept="image/*"
               hidden
               onChange={handleImageUpload}
@@ -176,13 +180,13 @@ const GigForm = () => {
             <StyledButton
               variant="contained"
               fullWidth
-              onClick={() => document.getElementById('video-upload')?.click()}
+              onClick={() => videoUploadRef.current?.click()}
             >
               Upload Video (Optional)
             </StyledButton>
             <input
               type="file"
-              id="video-upload"
+              ref={videoUploadRef}
               accept="video/*"
               hidden
               onChange={handleVideoUpload}

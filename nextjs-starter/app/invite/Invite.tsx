@@ -13,12 +13,13 @@ import emailjs from '@emailjs/browser';
 import { toast } from 'react-toastify';
 
 const StyledPaper = styled(Paper)`
-    padding: 30px;
+    padding: 40px;
     max-width: 500px;
     margin: 50px auto;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, rgba(30, 30, 30, 1) 0%, rgba(70, 70, 70, 1) 50%, rgba(30, 30, 30, 0.8) 100%);
+    color: white;
 `;
 
 const Container = styled(Box)`
@@ -26,7 +27,7 @@ const Container = styled(Box)`
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 50%, #ff6a00 100%);
+    background: linear-gradient(135deg, rgba(7, 18, 31, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
     background-size: 300% 300%;
     animation: gradient-animation 5s ease infinite;
 
@@ -46,10 +47,26 @@ const Container = styled(Box)`
 const StyledButton = styled(Button)`
     && {
         margin-top: 20px;
-        background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+        background: linear-gradient(45deg, #ff416c 0%, #ff4b2b 100%);
         color: white;
         &:hover {
-            background: linear-gradient(45deg, #2575fc 0%, #6a11cb 100%);
+            background: linear-gradient(45deg, #ff4b2b 0%, #ff416c 100%);
+        }
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+`;
+
+const StyledTextField = styled(TextField)`
+    && {
+        margin-bottom: 20px;
+        .MuiInputBase-root {
+            background-color: white;
+            border-radius: 8px;
+        }
+        .MuiInputLabel-root {
+            color: #ccc;
         }
     }
 `;
@@ -95,22 +112,20 @@ const Invite = () => {
     return (
         <Container>
             <StyledPaper>
-                <Typography variant="h5" gutterBottom align="center">
+                <Typography variant="h4" gutterBottom align="center">
                     Invite User
                 </Typography>
-                <TextField
+                <StyledTextField
                     label="Email"
-                    variant="outlined"
+                    variant="filled"    
                     fullWidth
-                    margin="normal"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <TextField
+                <StyledTextField
                     label="Message"
-                    variant="outlined"
+                    variant="filled"    
                     fullWidth
-                    margin="normal"
                     multiline
                     rows={4}
                     value={message}

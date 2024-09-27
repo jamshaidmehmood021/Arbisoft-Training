@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
 interface RatingState {
     loading: boolean;
     error: string | null;
@@ -121,7 +120,7 @@ const ratingSlice = createSlice({
             .addCase(createRating.fulfilled, (state, action) => {
                 state.loading = false;
                 state.success = true;
-                state.ratings.push(action.payload);
+                state.ratings = action.payload.ratingValue;
             })
             .addCase(createRating.rejected, (state, action) => {
                 state.loading = false;

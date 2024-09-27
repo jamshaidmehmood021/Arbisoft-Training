@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
-import { io } from 'socket.io-client';
+//import { io } from 'socket.io-client';
 
 import { useAppDispatch } from '@/app/redux/hooks'; 
 import { createOrder } from '@/app/redux/slice/orderSlice';
@@ -23,14 +23,14 @@ const PaymentSuccess = () => {
 
   const { userID } = authContext;
  
-  const createOrderAndNotify = async (order: any) => {
+  const createOrderAndNotify = useCallback(async (order: any) => {
     const resultAction = await dispatch(createOrder(order));
     if (createOrder.fulfilled.match(resultAction)) {
       toast.success("Order placed successfully!");
     } else {
       toast.error("Failed to place the order.");
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -39,14 +39,15 @@ const PaymentSuccess = () => {
     if (orderData && !ref.current) { 
       ref.current = true;  
       const parsedOrder = JSON.parse(decodeURIComponent(orderData));
-      const newSocket = io('http://localhost:5000');
-      newSocket.emit('joinOrderRoom', parsedOrder.sellerId);
+      //const newSocket = io('http://localhost:5000');
+      //newSocket.emit('joinOrderRoom', parsedOrder.sellerId);
       createOrderAndNotify(parsedOrder);
     }
-  }, []); 
+  }, [createOrderAndNotify]); 
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6"
+    style={{background: 'linear-gradient(135deg, rgba(30, 30, 30, 1) 0%, rgba(70, 70, 70, 1) 50%, rgba(30, 30, 30, 0.8) 100%)', minHeight: '100vh'}}>
       <div className="bg-white shadow-md rounded-lg p-8 max-w-lg text-center">
         <h1 className="text-2xl font-bold text-green-600 mb-4">Payment Successful!</h1>
         <p className="text-lg text-gray-700 mb-6">

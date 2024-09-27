@@ -1,4 +1,5 @@
 import SignIn from "./signIn/SignIn";
+import '@/app/globals.css';
 
 const Home =() => {
   return (

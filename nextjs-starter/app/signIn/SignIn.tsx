@@ -135,7 +135,7 @@ const SignIn = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            variant="outlined"
+            variant="filled"
             fullWidth
             required
             sx={{ mb: 3, background: 'white', borderRadius: '10px' }}
@@ -146,7 +146,7 @@ const SignIn = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            variant="outlined"
+            variant="filled"
             fullWidth
             required
             sx={{ mb: 3, background: 'white', borderRadius: '10px' }}

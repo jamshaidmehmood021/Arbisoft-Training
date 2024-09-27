@@ -145,7 +145,6 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
         if (id) {
             dispatch(fetchConversation(id));
         }
-        return conversation;
     }, [id, dispatch]);
 
     useEffect(() => {
@@ -196,7 +195,7 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
                 setShowChatPannel(true);
             }
         }
-    }, [memoizedConversation, gig, role, userID]);
+    }, [memoizedConversation, gig, role, userID,conversation]);
 
     const handleConversationClick = useCallback((conversation: Conversation) => {
         setSelectedConversation(conversation.id);

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import Quill from "quill";
-import ReactQuill from "react-quill";
+'use client';
+import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import ReactQuill, { Quill } from "react-quill";
 
 type EditorType = "Gig";
 type SuggestionPosition = { start: number; end: number };
@@ -19,11 +20,9 @@ const TextEditor = ({
     type: EditorType;
 }) => {
     const quillRef = useRef<ReactQuill>(null);
-
-    const suggestionTimeOutRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const suggestionTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isSuggesting = useRef(false);
     const suggestionPosition = useRef<SuggestionPosition>({ start: 0, end: 0 });
-
     const [suggestion, setSuggestion] = useState("");
 
     const handleChange = (value: string) => {
@@ -35,13 +34,10 @@ const TextEditor = ({
     };
 
     const getQuillEditor = () => {
-        if (quillRef.current) {
-            return quillRef.current.getEditor();
-        }
-        return null;
+        return quillRef.current?.getEditor() || null;
     };
 
-    const isCursorAtEnd = () => {
+    const isCursorAtEnd = useCallback(() => {
         const quill = getQuillEditor();
         if (!quill) return false;
 
@@ -52,17 +48,18 @@ const TextEditor = ({
             return cursorPosition >= textLength;
         }
         return false;
-    };
+    }, []);
 
-    const clearSuggestionText = () => {
+    const clearSuggestionText = useCallback(() => {
         const quill = getQuillEditor();
         if (isSuggesting.current && quill) {
             quill.deleteText(suggestionPosition.current.start, suggestionPosition.current.end);
         }
-    };
+    }, []);
 
-    const handleTab = (event: KeyboardEvent, quill: Quill) => {
-        if (event.key !== "Tab") return;
+    const handleTab = useCallback((event: KeyboardEvent) => {
+        const quill = getQuillEditor();
+        if (event.key !== "Tab" || !quill) return;
         event.preventDefault();
 
         const selection = quill.getSelection();
@@ -72,9 +69,9 @@ const TextEditor = ({
         quill.setSelection(quill.getLength(), 0);
 
         resetSuggestionPosition();
-    };
+    }, [suggestion]);
 
-    const getAiSuggestion = async (currentDescription: string) => {
+    const getAiSuggestion = useCallback(async (currentDescription: string) => {
         try {
             const token = localStorage.getItem("token");
             if (!token) return;
@@ -94,17 +91,20 @@ const TextEditor = ({
         } catch (e: any) {
             console.log("Failed to get suggestion", e);
         }
-    };
+    }, []);
 
-    const updateSuggestion = (quill: Quill, source: string) => {
-        if (source === "api") return;
-        clearSuggestionText();
+    const updateSuggestion = useCallback(
+        (quill: any, source: string) => {
+            if (source === "api") return;
+            clearSuggestionText();
 
-        if (suggestionTimeOutRef.current) clearTimeout(suggestionTimeOutRef.current);
-        suggestionTimeOutRef.current = setTimeout(async () => {
-            await getAiSuggestion(quill.getText(0, quill.getLength()));
-        }, 3000);
-    };
+            if (suggestionTimeOutRef.current) clearTimeout(suggestionTimeOutRef.current);
+            suggestionTimeOutRef.current = setTimeout(async () => {
+                await getAiSuggestion(quill.getText(0, quill.getLength()));
+            }, 3000);
+        },
+        [clearSuggestionText, getAiSuggestion]
+    );
 
     useEffect(() => {
         const quill = getQuillEditor();
@@ -129,28 +129,33 @@ const TextEditor = ({
 
             quill.setSelection(cursorPosition, 0);
         }
-    }, [suggestion]);
+    }, [clearSuggestionText, isCursorAtEnd, suggestion]);
 
     useEffect(() => {
         const quill = getQuillEditor();
         if (!quill || type !== "Gig") return;
 
-        quill.on("text-change", (_, __, source) => updateSuggestion(quill, source));
-        quill.on("selection-change", (_, __, source) => {
+        const handleTextChange = (_: any, __: any, source: any) => updateSuggestion(quill, source);
+        const handleSelectionChange = (_: any, __: any, source: any) => {
             if (source === "user") {
                 clearSuggestionText();
                 isSuggesting.current = false;
                 resetSuggestionPosition();
             }
-        });
+        };
 
-        const tabListener = (e: KeyboardEvent) => handleTab(e, quill);
-        document.addEventListener("keydown", tabListener);
+        quill.on("text-change", handleTextChange);
+        quill.on("selection-change", handleSelectionChange);
+
+        const tabListener = (e: KeyboardEvent) => handleTab(e);
+        window.addEventListener("keydown", tabListener);
 
         return () => {
-            document.removeEventListener("keydown", tabListener);
+            quill.off("text-change", handleTextChange);
+            quill.off("selection-change", handleSelectionChange);
+            window.removeEventListener("keydown", tabListener);
         };
-    }, [suggestion]);
+    }, [clearSuggestionText, handleTab, suggestion, type, updateSuggestion]);
 
     return (
         <div className="w-full">

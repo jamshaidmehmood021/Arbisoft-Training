@@ -174,7 +174,7 @@ const Dashboard = () => {
     }), [labels, weeklyRegistrations]);
 
     const gigsCountData = useMemo(() => {
-        const categories = gigs.reduce((acc, gig) => {
+        const categories = gigs.reduce((acc:any , gig:any) => {
             acc[gig.category] = (acc[gig.category] || 0) + 1;
             return acc;
         }, {});
@@ -246,7 +246,7 @@ const Dashboard = () => {
             toast.success('User blocked successfully');
             setUsers((prevUsers) => prevUsers.filter(user => user.id !== userId));
         }
-    }, [setUsers]);
+    }, [setUsers,apiCall]);
     
     const handleInviteClick = () => {
         router.push('/invite');  

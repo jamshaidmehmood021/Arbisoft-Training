@@ -135,7 +135,7 @@ const SignUp = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                variant="outlined"
+                variant="filled"
                 required
                 sx={{ background: 'white', borderRadius: '10px' }}
               />
@@ -160,7 +160,7 @@ const SignUp = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                variant="outlined"
+                variant="filled"
                 type="password"
                 required
                 sx={{ background: 'white', borderRadius: '10px' }}

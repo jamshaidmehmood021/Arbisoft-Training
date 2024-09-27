@@ -1,17 +1,17 @@
 'use client';
-import React, { useEffect, useContext,  useMemo } from 'react';
+import React, { useEffect, useContext,  useMemo, useCallback } from 'react';
 import { Container, Typography} from '@mui/material';
 //import { io } from 'socket.io-client';
 import { supabase } from '@/app/supabase/supabase';
 import { Bars } from 'react-loading-icons'
 
 import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
-import { fetchOrdersByUserId, addNewOrder, updateOrderStatus} from '@/app/redux/slice/orderSlice'; 
+import { fetchOrdersByUserId,updateOrderStatus} from '@/app/redux/slice/orderSlice'; 
 
 import { AuthContext } from '@/app/context/authContext';
 import withAuth from '@/app/components/ProtectedRoute';
 
-const OrderCard = React.lazy(() => import('@/app/components/OrderCard'));
+import OrderCard from '@/app/components/OrderCard';
 
 const Orders = React.memo (() => {
   const dispatch = useAppDispatch();
@@ -24,13 +24,6 @@ const Orders = React.memo (() => {
 
   const { userID, role } = authContext;
   const { orders, loading, error } = useAppSelector((state) => state.orders);
-
-  useEffect(() => {
-    if (userID) {
-      dispatch(fetchOrdersByUserId(Number(userID)));
-    }
-  }, [dispatch, userID]);
-
 
   // useEffect(() => {
   //   const newSocket = io('http://localhost:5000');
@@ -65,66 +58,53 @@ const Orders = React.memo (() => {
   //   };
   // }, [userID, dispatch,orders]);
 
+  useEffect(() => {
+    if (userID) {
+      dispatch(fetchOrdersByUserId(Number(userID)));
+    }
+  }, [dispatch, userID]);
 
   useEffect(() => {
-        const orderChannel = supabase
-            .channel('Orders')
-            .on('postgres_changes', {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'Orders',
-            }, (payload: any) => {
-                dispatch(addNewOrder(payload.new));
-            })
-            .subscribe();
-        return () => {
-            orderChannel.unsubscribe();
-        };
+    const orderChannel = supabase.channel('Orders');
+    orderChannel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'Orders' }, (payload: any) => {
+      console.log('INSERT event:', payload);
+      dispatch(fetchOrdersByUserId(payload.new.buyerId));
+    });
+    orderChannel.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'Orders' }, (payload: any) => {
+      console.log('UPDATE event:', payload);
+      if (payload && role === 'Buyer') {
+        dispatch(fetchOrdersByUserId(payload.new.buyerId));
+      } else {
+        dispatch(fetchOrdersByUserId(payload.new.sellerId));
+      }
+    });
+    orderChannel.subscribe();
+    return () => {
+      orderChannel.unsubscribe();
+    };
+  }, [dispatch, role]);
+  
 
-    }, [dispatch]);
-
-   useEffect(() => {
-    const orderUpdate = supabase
-            .channel('Orders')
-            .on('postgres_changes', {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'Orders',
-            }, (payload: any) => {
-                if(payload && role === 'Buyer')
-                {
-                    dispatch(fetchOrdersByUserId(payload.new.buyerId));
-                }
-                else{
-                    dispatch(fetchOrdersByUserId(payload.new.sellerId));
-                }
-            })
-            .subscribe();
-        return () => {
-            orderUpdate.unsubscribe();
-        };
-    }, [dispatch]);
-
-  const handleAccept = async (orderId: number) => {
+  const handleAccept = useCallback(async (orderId: number) => {
     const response = await dispatch(updateOrderStatus({ orderId, orderStatus: 'In Progress' }));
-    if (response.payload.message === "Order status updated successfully") {
-        dispatch(fetchOrdersByUserId(Number(userID)));
+    if (response.payload.message === 'Order status updated successfully') {
+      dispatch(fetchOrdersByUserId(Number(userID)));
     }
-  };
+  }, [dispatch, userID]);
 
-  const handleDecline = async (orderId: number) => {
+  const handleDecline = useCallback(async (orderId: number) => {
     const response = await dispatch(updateOrderStatus({ orderId, orderStatus: 'Declined' }));
-    if (response.payload.message === "Order status updated successfully") {
-        dispatch(fetchOrdersByUserId(Number(userID)));
+    if (response.payload.message === 'Order status updated successfully') {
+      dispatch(fetchOrdersByUserId(Number(userID)));
     }
-  };
+  }, [dispatch, userID]);
 
-  const handleComplete = async (orderId: number) => {
+  const handleComplete = useCallback(async (orderId: number) => {
     const response = await dispatch(updateOrderStatus({ orderId, orderStatus: 'Completed' }));
-    if (response.payload.message === "Order status updated successfully") {
-        dispatch(fetchOrdersByUserId(Number(userID)));
+    if (response.payload.message === 'Order status updated successfully') {
+      dispatch(fetchOrdersByUserId(Number(userID)));
     }
-  };
+  }, [dispatch, userID]);
 
   const memoizedOrders = useMemo(() => (
     orders.map((order: any) => (
@@ -137,7 +117,8 @@ const Orders = React.memo (() => {
         onComplete={handleComplete}
       />
     ))
-  ), [orders]);
+  ), [orders, handleAccept, handleDecline, handleComplete, role]);
+
 
   if (loading) {
     return <Typography variant="h6"><Bars stroke="#98ff98" /></Typography>;

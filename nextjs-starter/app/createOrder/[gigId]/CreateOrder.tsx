@@ -2,17 +2,21 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {toast} from 'react-toastify';
-
-import { useAppDispatch } from '@/app/redux/hooks'; 
-import { useAppSelector } from '@/app/redux/hooks';
+import { toast } from 'react-toastify';
+import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
 import { selectGigById } from '@/app/redux/slice/gigSlice';
-import {fetchOrdersByGigAndUserId} from '@/app/redux/slice/orderSlice';
-import {Gig} from '@/app/redux/slice/gigSlice';
-
+import { fetchOrdersByGigAndUserId } from '@/app/redux/slice/orderSlice';
+import { Gig } from '@/app/redux/slice/gigSlice';
 import { AuthContext } from '@/app/context/authContext';
 import withAuth from '@/app/components/ProtectedRoute';
 
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   const [amount, setAmount] = useState(0);
@@ -21,10 +25,8 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   const router = useRouter();
 
   const dispatch = useAppDispatch();
-
-  const {gigId} = params;
+  const { gigId } = params;
   const gig: Gig | undefined = useAppSelector((state) => selectGigById(state, Number(gigId)));
-
   const authContext = useContext(AuthContext);
 
   if (!authContext) {
@@ -32,9 +34,8 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   }
 
   const { userID } = authContext;
-
-  const buyerId = userID; 
-  const sellerId = gig?.userId; 
+  const buyerId = userID;
+  const sellerId = gig?.userId;
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -45,11 +46,11 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
       }
     };
     fetchOrder();
-  }, [gig]);
+  }, [gig, dispatch, userID]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const orderData = {
       gigId,
       buyerId,
@@ -62,45 +63,90 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-semibold text-center mb-6">Create an Order</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-            Amount
-          </label>
-          <input
-            type="number"
-            id="amount"
-            value={amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="deadline" className="block text-sm font-medium text-gray-700">
-            Deadline
-          </label>
-          <input
-            type="date"
-            id="deadline"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={orderFound}
-          className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 disabled:opacity-50 disabled:animate-pulse"
+    <div style={{
+      background: 'linear-gradient(135deg, rgba(7, 18, 31, 1) 0%, rgba(0, 0, 0, 0.8) 100%)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh'
+    }}>
+      <Container
+        maxWidth="sm"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 2,
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            padding: 4,
+            minHeight: '400px',
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, rgba(30, 30, 30, 1) 0%, rgba(70, 70, 70, 1) 50%, rgba(30, 30, 30, 0.8) 100%)',
+            color: 'white',
+            borderRadius: '16px',
+            width: '100%', 
+            maxWidth: '500px', 
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 3,
+            transition: 'transform 0.3s',
+            '&:hover': {
+              transform: 'scale(1.02)',
+            },
+          }}
         >
-          Place Order
-        </button>
-      </form>
+
+          <Typography variant="h4" gutterBottom>
+            Create an Order
+          </Typography>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
+              <TextField
+                label="Amount"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(parseFloat(e.target.value))}
+                variant="filled"
+                fullWidth
+                required
+                sx={{ background: 'white', borderRadius: '10px', maxWidth: '400px' }}
+              />
+            </Box>
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
+              <TextField
+                label="Deadline"
+                type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                variant="filled"
+                fullWidth
+                required
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                sx={{ background: 'white', borderRadius: '10px', maxWidth: '400px' }}
+              />
+            </Box>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              disabled={orderFound}
+              sx={{ mb: 2, borderRadius: '10px', maxWidth: '400px' }}
+            >
+              {orderFound ? <CircularProgress size={24} color="inherit" /> : 'Place Order'}
+            </Button>
+          </form>
+        </Paper>
+      </Container>
     </div>
   );
 };

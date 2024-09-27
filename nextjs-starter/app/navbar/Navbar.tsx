@@ -56,6 +56,9 @@ const Navbar = () => {
 
   const pagesNavigation = useCallback((page: string) => {
     switch (page) {
+      case 'Home':
+        router.push('/home');
+        break;
       case 'Profile':
         router.push(`/profile/${userID}`);
         break;
@@ -81,7 +84,7 @@ const Navbar = () => {
     if (role === 'Admin') {
       return ['Dashboard', 'Logout'];
     }
-    return ['Profile', 'your Orders', 'Logout'];
+    return ['Home', 'Profile', 'Your Orders', 'Logout'];
   }, [role]);
 
   return (

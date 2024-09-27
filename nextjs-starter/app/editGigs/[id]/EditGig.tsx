@@ -1,6 +1,6 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
-import { TextField, Button, MenuItem, InputLabel, Select, FormControl, Box, CircularProgress, Paper, Typography } from '@mui/material';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { TextField, Button, MenuItem, InputLabel, Select, FormControl, CircularProgress, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -58,10 +58,6 @@ const Title = styled(Typography)({
   marginBottom: '30px',
 });
 
-const VideoInput = styled('input')({
-  display: 'none',
-});
-
 const categories = [
   'Artificial Intelligence',
   'Machine Learning',
@@ -77,18 +73,21 @@ const categories = [
 const EditGig = ({ params }: { params: { id: string } }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [gigTitle, setGigTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
+  const [gigTitle, setGigTitle] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [imageFileName, setImageFileName] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
 
   const { id } = params;
   const gig: any = useAppSelector((state) => selectGigById(state, Number(id)));
+
 
   const bufferToString = (buffer: { data: number[] }): string => {
     return String.fromCharCode(...buffer.data);
@@ -106,12 +105,11 @@ const EditGig = ({ params }: { params: { id: string } }) => {
     }
   }, [gig]);
 
-
   const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      setImageFileName(file.name);
     }
   }, []);
 
@@ -148,7 +146,7 @@ const EditGig = ({ params }: { params: { id: string } }) => {
     }
 
     setLoading(false);
-  }, [dispatch, gigTitle, category, description, imageFile, videoFile, router]);
+  }, [dispatch, gigTitle, category, description, imageFile, videoFile, router, id]);
 
   return (
     <PageContainer>
@@ -161,13 +159,13 @@ const EditGig = ({ params }: { params: { id: string } }) => {
             value={gigTitle}
             onChange={(e) => setGigTitle(e.target.value)}
             margin="normal"
-            variant="outlined"
+            variant="filled"
             required
             sx={{ backgroundColor: '#fff', borderRadius: '10px', marginBottom: '20px' }}
           />
 
           <FormControl fullWidth margin="normal" sx={{ marginBottom: '20px' }}>
-            <InputLabel>Category</InputLabel>
+            <InputLabel variant="filled">Category</InputLabel>
             <Select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -189,7 +187,7 @@ const EditGig = ({ params }: { params: { id: string } }) => {
           />
 
           <label htmlFor="image-upload">
-            <StyledButton variant="contained" fullWidth sx={{ mb: 2, mt: 2 }} onClick={() => document.getElementById('image-upload')?.click()}>
+            <StyledButton variant="contained" fullWidth sx={{ mb: 2, mt: 2 }} onClick={() => imageInputRef.current?.click()}>
               Upload Image
             </StyledButton>
             <input
@@ -197,6 +195,7 @@ const EditGig = ({ params }: { params: { id: string } }) => {
               id="image-upload"
               accept="image/*"
               hidden
+              ref={imageInputRef}
               onChange={handleImageUpload}
             />
           </label>
@@ -204,11 +203,11 @@ const EditGig = ({ params }: { params: { id: string } }) => {
           {imageFileName && (
             <Typography variant="body1">
               Image : {imageFileName}
-              </Typography>
+            </Typography>
           )}
 
           <label htmlFor="video-upload">
-            <StyledButton variant="contained" fullWidth sx={{ mb: 2, mt: 2 }} onClick={() => document.getElementById('video-upload')?.click()}>
+            <StyledButton variant="contained" fullWidth sx={{ mb: 2, mt: 2 }} onClick={() => videoInputRef.current?.click()}>
               Upload Video
             </StyledButton>
             <input
@@ -216,15 +215,15 @@ const EditGig = ({ params }: { params: { id: string } }) => {
               id="video-upload"
               accept="video/*"
               hidden
+              ref={videoInputRef}
               onChange={handleVideoUpload}
             />
           </label>
 
           {videoPreview && (
-
-              <Video controls>
-                  <source src={videoPreview} type="video/mp4" />
-              </Video>
+            <Video controls>
+              <source src={videoPreview} type="video/mp4" />
+            </Video>
           )}
 
           <StyledButton type="submit" fullWidth sx={{ mt: 3 }}>

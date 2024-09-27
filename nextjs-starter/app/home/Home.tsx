@@ -133,7 +133,6 @@ const Home = () => {
   }
 
   return (
-    <div>
       <Container>
         <FilterContainer>
           <Typography variant="h4" sx={{ flexGrow: 1, color: 'white' }}>Gigs</Typography>
@@ -193,7 +192,6 @@ const Home = () => {
           )}
         </Grid>
       </Container>
-    </div>
   );
 };
 
