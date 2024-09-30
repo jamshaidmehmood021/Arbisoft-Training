@@ -28,6 +28,11 @@ const User = sequelize.define('User', {
         type: DataTypes.TEXT, 
         allowNull: false, 
     },
+    blocked: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: true,
+    },
 });
 
 

@@ -125,8 +125,18 @@ const Home = () => {
   );
 
   if (loading) {
-    return <div><Bars stroke="#98ff98" /></div>;
-  }
+    return (
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            width: '100vw',
+        }}>
+            <Bars stroke="#98ff98" />
+        </div>
+    );
+}
 
   if (error) {
     return <div>Error: {error}</div>;

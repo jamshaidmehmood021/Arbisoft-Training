@@ -86,7 +86,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await apiCall('http://localhost:5000/getAllUsers', {}, 'GET');
+                const response = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND}/getAllUsers`, {}, 'GET');
                 if (response && response.data) {
                     const sellersCount = response.data.filter((user: { role: string; }) => user.role === 'Seller').length;
                     const buyersCount = response.data.filter((user: { role: string; }) => user.role === 'Buyer').length;
@@ -237,7 +237,7 @@ const Dashboard = () => {
     };
 
     const blockUser = useCallback(async (userId: string) => {
-        const endpoint = `http://localhost:5000/blockuser/${userId}`;
+        const endpoint = `${process.env.NEXT_PUBLIC_BACKEND}/blockuser/${userId}`;
         const response:any = await apiCall(endpoint, {}, 'POST');
     
         if (response && response.error) {

@@ -41,6 +41,10 @@ const Order = sequelize.define('Order', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
+    filePath: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     orderStatus: {
         type: DataTypes.STRING,
         allowNull: false,

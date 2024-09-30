@@ -31,7 +31,7 @@ const Navbar = () => {
   const fetchUserData = useCallback(async () => {
     if (userID) {
       try {
-        const response = await apiCall(`http://localhost:5000/user/${userID}`, undefined, 'GET');
+        const response = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND}/user/${userID}`, undefined, 'GET');
         if (response?.data) {
           setProfilePicture(response.data.profilePicture);
           setUserRole(response.data.role);
@@ -65,7 +65,7 @@ const Navbar = () => {
       case 'Dashboard':
         router.push('/dashboard');
         break;
-      case 'your Orders':
+      case 'Your Orders':
         router.push(`/orders/${userID}`);
         break;
       case 'Logout':

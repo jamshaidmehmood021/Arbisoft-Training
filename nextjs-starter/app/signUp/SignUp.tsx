@@ -78,7 +78,7 @@ const SignUp = () => {
     formDataToSend.append('role', formData.role);
     formDataToSend.append('profilePicture', formData.profilePicture);
 
-    const response = await apiCall('http://localhost:5000/signUP', formDataToSend, 'POST');
+    const response = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND}/signUP`, formDataToSend, 'POST');
 
     if (response?.error) {
       setError(response.error || 'Sign Up failed');

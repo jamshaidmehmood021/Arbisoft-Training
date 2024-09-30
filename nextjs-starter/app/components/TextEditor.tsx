@@ -77,7 +77,7 @@ const TextEditor = ({
             if (!token) return;
 
             const response: any = await fetch(
-                `http://localhost:5000/suggestions?description=${currentDescription}`,
+                `${process.env.NEXT_PUBLIC_BACKEND}/suggestions?description=${currentDescription}`,
                 {
                     method: "GET",
                     headers: {

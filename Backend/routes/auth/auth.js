@@ -21,6 +21,7 @@ const createRating = require('../../controllers/rating/createRating');
 const checkUserRatingByOrder = require('../../controllers/rating/checkUserRatingByOrder');
 const checkUserRating = require('../../controllers/rating/checkUserRating');
 const getAllOrder = require('../../controllers/Orders/getAllOrders');
+const blockUser = require('../../controllers/auth/blockUser');
 
 const upload = require('../../middleWare/multer');
 
@@ -31,6 +32,7 @@ router.post('/login', login);
 router.use(authenticate);
 router.get('/user/:id', getUser);
 router.get('/getAllUsers', getAllUsers);
+router.post('/blockUser/:id', blockUser);
 router.post('/createGig', upload.fields([{ name: 'image' }, { name: 'video' }]), createGig);
 router.get('/getAllGigs', getAllGigs);
 router.get('/getUserGigs/:userId', getGigsByUserId);
@@ -48,6 +50,13 @@ router.get('/orders', getAllOrder);
 router.post('/createRating', createRating);
 router.get('/ratings/:orderId', checkUserRatingByOrder);
 router.get('/rating/:userId', checkUserRating);
-
+router.post('/uploadFile', upload.single('file'), (req, res) => {
+    if (req.file) {
+      res.status(200).json({ fileName: req.file.filename });
+    } else {
+      res.status(400).json({ message: 'File upload failed.' });
+    }
+});
+  
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const Conversation  = require('../../models/Conversation');
+const Conversation = require('../../models/Conversation');
 const User = require('../../models/User');
 const Gig = require('../../models/Gig');
 
@@ -15,12 +15,12 @@ const getConversationsByGig = async (req, res) => {
             include: [
                 { model: User, as: 'buyer', attributes: ['id', 'name', 'profilePicture'] },
                 { model: User, as: 'seller', attributes: ['id', 'name', 'profilePicture'] },
-                { model: Gig, as: 'gig', attributes: ['id', 'title'] }  
+                { model: Gig, as: 'gig', attributes: ['id', 'title'] }
             ],
         });
 
         if (!conversations.length) {
-            return res.status(404).json({ message: 'No conversations found for this gig' });
+            return res.status(200).json({ message: 'No conversations found for this gig' });
         }
 
         res.status(200).json(conversations);

@@ -14,19 +14,8 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
 }
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
-export default function Payment({ params }: { params: { amount: string } }) {
+const Payment = ({ params }: { params: { amount: string } }) => {
   const { amount } = params;
-  const [order, setOrder] = useState<any>(null);
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const orderData = searchParams.get('orderData');
-
-    if (orderData) {
-      setOrder(JSON.parse(decodeURIComponent(orderData)));
-    }
-  }, []);
-
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-tr" style={{background: 'linear-gradient(135deg, rgba(30, 30, 30, 1) 0%, rgba(70, 70, 70, 1) 50%, rgba(30, 30, 30, 0.8) 100%)', minHeight: '100vh'}}>
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
@@ -40,9 +29,11 @@ export default function Payment({ params }: { params: { amount: string } }) {
             currency: "usd",
           }}
         >
-          <CheckoutPage amount={Number(amount)} order={order} />
+          <CheckoutPage amount={Number(amount)}/>
         </Elements>
       </div>
     </main>
   );
 }
+
+export default Payment;

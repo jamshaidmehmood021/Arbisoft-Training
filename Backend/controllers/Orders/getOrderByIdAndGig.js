@@ -8,7 +8,10 @@ const getOrderByIdAndGig = async (req, res) => {
         const orders = await Order.findAll({
             where: {
                 buyerId: id, 
-                gigId: gigId 
+                gigId: gigId, 
+                orderStatus: {
+                    [Op.ne]: 'Completed', 
+                }
             }
         });
         

@@ -22,7 +22,6 @@ const login = async (req, res) => {
         }
 
         let existingRecord = await User.findOne({ where: { email: userData.email } });
-
         if (!existingRecord) {
             return res.status(400).json({ message: 'Email or password is incorrect!', error: true });
         }
@@ -53,6 +52,7 @@ const login = async (req, res) => {
             message: 'Logged in successfully',
             error: false,
             token,
+            blocked: existingUser.blocked,
         });
     } catch (e) {
         console.log('Login Error', e);

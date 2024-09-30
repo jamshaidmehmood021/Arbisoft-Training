@@ -17,11 +17,15 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import UploadIcon from '@mui/icons-material/Upload'; 
 
 const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   const [amount, setAmount] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [orderFound, setOrderFound] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [encodedFile, setEncodedFile] = useState<string | null>(null);
+  const [fileName, setFileName] = useState(''); 
   const router = useRouter();
 
   const dispatch = useAppDispatch();
@@ -33,7 +37,7 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
     throw new Error('AuthContext is not available');
   }
 
-  const { userID } = authContext;
+  const { userID, token } = authContext;
   const buyerId = userID;
   const sellerId = gig?.userId;
 
@@ -48,19 +52,61 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
     fetchOrder();
   }, [gig, dispatch, userID]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setFileName(selectedFile.name); 
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEncodedFile(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const orderData = {
-      gigId,
-      buyerId,
-      sellerId,
-      amount,
-      deadline,
-    };
-
-    router.push(`/payment/${amount}?orderData=${encodeURIComponent(JSON.stringify(orderData))}`);
+    const formData = new FormData();
+    if (file) {
+      formData.append('file', file);
+    }
+  
+    try {
+      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/uploadFile`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      const uploadData = await uploadResponse.json();
+      if (!uploadResponse.ok) {
+        throw new Error(uploadData.message || 'File upload failed');
+      }
+  
+      const uploadedFileName = uploadData.fileName; 
+  
+     
+      const orderData = {
+        gigId,
+        buyerId,
+        sellerId,
+        amount,
+        deadline,
+        file: uploadedFileName, 
+      };
+  
+      localStorage.setItem('orderData', JSON.stringify(orderData));
+      router.push(`/payment/${amount}`);
+  
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`);
+    }
   };
+  
 
   return (
     <div style={{
@@ -134,6 +180,41 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
                 sx={{ background: 'white', borderRadius: '10px', maxWidth: '400px' }}
               />
             </Box>
+
+            <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <input
+                id="file-upload"
+                type="file"
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.zip,.mp4" 
+                style={{ display: 'none' }}
+              />
+              <label htmlFor="file-upload">
+                <Button
+                  variant="contained"
+                  component="span"
+                  startIcon={<UploadIcon />}
+                  sx={{
+                    background: 'linear-gradient(135deg, #ff4081 30%, #ff80ab 90%)',
+                    color: 'white',
+                    borderRadius: '10px',
+                    padding: '10px 20px',
+                    textTransform: 'none',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #ff4081 20%, #f50057 80%)',
+                    },
+                  }}
+                >
+                  {fileName ? `Change File (${fileName})` : 'Upload File'}
+                </Button>
+              </label>
+              {fileName && (
+                <Typography variant="caption" sx={{ color: 'white', mt: 1 }}>
+                  {fileName}
+                </Typography>
+              )}
+            </Box>
+
             <Button
               type="submit"
               fullWidth

@@ -26,7 +26,7 @@ export interface Order {
 
 export const createOrder = createAsyncThunk(
     'orders/createOrder',
-    async (orderData: { gigId: number; buyerId: number; sellerId: number; deadline: string; amount: number }, { rejectWithValue }) => {
+    async (orderData: { gigId: number; buyerId: number; sellerId: number; deadline: string; amount: number, file: any}, { rejectWithValue }) => {
       try {
        
         const token = localStorage.getItem('token');
@@ -34,7 +34,7 @@ export const createOrder = createAsyncThunk(
           return rejectWithValue('Token is missing');
         }
 
-        const response = await fetch('http://localhost:5000/createOrder', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/createOrder`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export const fetchOrdersByUserId = createAsyncThunk(
           return rejectWithValue('Token is missing');
         }
   
-        const response = await fetch(`http://localhost:5000/getOrderById/${userId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/getOrderById/${userId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -91,7 +91,7 @@ export const fetchOrdersByUserId = createAsyncThunk(
           return rejectWithValue('Token is missing');
         }
   
-        const response = await fetch(`http://localhost:5000/updateOrderStatus/${orderId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/updateOrderStatus/${orderId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export const fetchOrdersByUserId = createAsyncThunk(
           return rejectWithValue('Token is missing');
         }
   
-        const response = await fetch(`http://localhost:5000/orders/${userId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/orders/${userId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ export const fetchOrdersByUserId = createAsyncThunk(
           return rejectWithValue('Token is missing');
         }
 
-        const response = await fetch(`http://localhost:5000/orders`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/orders`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

@@ -120,7 +120,7 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
     //const [socket, setSocket] = useState<any>(null);
 
     // useEffect(() => {
-    //     const newSocket = io('http://localhost:5000');
+    //     const newSocket = io(`${process.env.NEXT_PUBLIC_BACKEND}`);
     //     setSocket(newSocket);
 
     //     newSocket.emit('joinGigRoom', id);
@@ -184,8 +184,8 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
     }, [id, dispatch]);
 
     useEffect(() => {
-        if (role === 'Buyer' && conversation.length === 0 && gig) {
-            setReceiverId(gig.userId.toString());
+        if (role === 'Buyer' && (conversation.length === 0 || gig)) {
+            setReceiverId(gig?.userId.toString() || '');
             setShowChatPannel(true);
         } else if (role === 'Buyer' && conversation.length > 0) {
             const buyerConversation = conversation.find((conv: Conversation) => conv.buyer.id.toString() === userID?.toString());
@@ -223,14 +223,18 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
     };
 
     const filteredConversations = useMemo(() => {
-        return conversation.filter((conv: Conversation) => (role === 'Seller' || conv.buyer?.id?.toString() === userID?.toString()));
+        return conversation?.filter((conv: Conversation) => (role === 'Seller' || conv.buyer?.id?.toString() === userID?.toString()));
     }, [conversation, role, userID]);
 
     return (
         <ChatPageContainer>
             <Sidebar>
-                <Typography variant="h6" gutterBottom>{role === 'Seller' ? 'Conversations' : 'Messages'}</Typography>
-                {Array.isArray(filteredConversations) &&
+                <Typography variant="h6" gutterBottom sx={{color: 'white'}}>{role === 'Seller' ? 'Conversations' : 'Messages'}</Typography>
+                {Array.isArray(filteredConversations) && filteredConversations.length === 0 ? (
+                    <Typography variant="body1" sx={{ color: 'gray' }}>
+                        No conversations yet
+                    </Typography>
+                ) : (
                     filteredConversations.map((conv: Conversation) => (
                         <ConversationItem key={conv.id} onClick={() => handleConversationClick(conv)}>
                             <Avatar src={role === 'Seller' ? conv.buyer?.profilePicture : conv.seller?.profilePicture} />
@@ -238,7 +242,8 @@ const ChatPage = ({ params }: { params: { id: string } }) => {
                                 <Typography variant="subtitle1">{role === 'Seller' ? conv.buyer?.name : conv.seller?.name}</Typography>
                             </div>
                         </ConversationItem>
-                ))}
+                    ))
+                )}
             </Sidebar>
             {showChatPannel && (
                 <ChatContainer>

@@ -62,7 +62,7 @@ export const sendMessage = createAsyncThunk(
         }
   
         const senderId = jwtDecode<DecodedToken>(token).id;
-        const response = await fetch('http://localhost:5000/sendMessage', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/sendMessage`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export const fetchMessages = createAsyncThunk(
       if (!token) {
         return thunkAPI.rejectWithValue('Token is missing');
       }
-      const response = await fetch(`http://localhost:5000/messages/${conversationId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/messages/${conversationId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export const fetchConversation = createAsyncThunk(
       if (!token) {
         return thunkAPI.rejectWithValue('Token is missing');
       }
-      const response = await fetch(`http://localhost:5000/conversations/${gigId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/conversations/${gigId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -142,12 +142,17 @@ export const fetchConversation = createAsyncThunk(
       }
 
       const data = await response.json();
+      if (data.message) {
+        return thunkAPI.rejectWithValue(data.message);
+      }
+
       return data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
+
 
 const messageSlice = createSlice({
   name: 'messages',
@@ -192,8 +197,9 @@ const messageSlice = createSlice({
       })
       .addCase(fetchConversation.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload as string; 
       });
+      
   },
 });
 

@@ -33,15 +33,14 @@ const PaymentSuccess = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const orderData = searchParams.get('orderData');
-
+    const orderData = localStorage.getItem('orderData');
     if (orderData && !ref.current) { 
       ref.current = true;  
-      const parsedOrder = JSON.parse(decodeURIComponent(orderData));
-      //const newSocket = io('http://localhost:5000');
+      const parsedOrder = JSON.parse(orderData);
+      //const newSocket = io(`${process.env.NEXT_PUBLIC_BACKEND}`);
       //newSocket.emit('joinOrderRoom', parsedOrder.sellerId);
       createOrderAndNotify(parsedOrder);
+      localStorage.removeItem('orderData');
     }
   }, [createOrderAndNotify]); 
 

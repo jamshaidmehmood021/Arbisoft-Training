@@ -45,7 +45,7 @@ export const createGig = createAsyncThunk(
       const id = jwtDecode<DecodedToken>(token).id;
       formData.append('userId', id);
 
-      const response = await fetch('http://localhost:5000/createGig', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/createGig`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -75,7 +75,7 @@ export const fetchAllGigs = createAsyncThunk(
         return thunkAPI.rejectWithValue('Token is missing');
       }
 
-      const response = await fetch('http://localhost:5000/getAllGigs', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/getAllGigs`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -104,7 +104,7 @@ export const fetchGigsByUserId = createAsyncThunk(
         return thunkAPI.rejectWithValue('Token is missing');
       }
 
-      const response = await fetch(`http://localhost:5000/getUserGigs/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/getUserGigs/${userId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -133,7 +133,7 @@ export const deleteGig = createAsyncThunk(
         return thunkAPI.rejectWithValue('Token is missing');
       }
 
-      const response = await fetch(`http://localhost:5000/deleteGig/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/deleteGig/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -161,7 +161,7 @@ export const updateGig = createAsyncThunk(
         return thunkAPI.rejectWithValue('Token is missing');
       }
 
-      const response = await fetch(`http://localhost:5000/updateGig/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/updateGig/${id}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

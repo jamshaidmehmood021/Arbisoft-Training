@@ -33,7 +33,7 @@ export const createRating = createAsyncThunk(
                 return rejectWithValue('Token is missing');
             }
 
-            const response = await fetch('http://localhost:5000/createRating', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/createRating`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export const fetchRatingsByOrderId = createAsyncThunk(
                 return rejectWithValue('Token is missing');
             }
 
-            const response = await fetch(`http://localhost:5000/ratings/${orderId}?userId=${userId}&role=${role}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/ratings/${orderId}?userId=${userId}&role=${role}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -89,7 +89,7 @@ export const fetchAverageRating = createAsyncThunk(
                 return rejectWithValue('Token is missing');
             }
 
-            const response = await fetch(`http://localhost:5000/rating/${userId}?role=${role}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/rating/${userId}?role=${role}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

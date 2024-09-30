@@ -144,7 +144,7 @@ const Profile = ({ params }: { params: { id: string } }) => {
       let response: any;
       try {
         if (id) {
-          response = await memoizedApiCall(`http://localhost:5000/user/${id}`, undefined, 'GET', token);
+          response = await memoizedApiCall(`${process.env.NEXT_PUBLIC_BACKEND}/user/${id}`, undefined, 'GET', token);
           if (response && response.data) {
             setUser(response.data);
           }

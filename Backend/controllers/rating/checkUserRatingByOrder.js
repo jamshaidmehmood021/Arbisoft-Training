@@ -20,14 +20,14 @@ const checkUserRatingByOrder = async (req, res) => {
         }
 
         if (rating) {
-            return res.status(200).json({
+            return res.json({
                 message: 'Rating exists for this user on this order',
                 role: role,
                 rating: rating.ratingValue
             });
         }
 
-        return res.status(404).json({
+        return res.json({
             message: 'No rating found for this user on this order',
         });
     } catch (error) {

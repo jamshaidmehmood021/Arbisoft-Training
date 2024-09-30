@@ -6,7 +6,7 @@ import { Bars } from 'react-loading-icons'
 
 import convertToSubcurrency from "@/app/lib/convertToSubcurrency";
 
-const CheckoutPage = ({ amount, order }: { amount: number, order: any }) => {
+const CheckoutPage = ({ amount}: { amount: number}) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -45,7 +45,7 @@ const CheckoutPage = ({ amount, order }: { amount: number, order: any }) => {
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `http://localhost:3000/payment-success-create-order?orderData=${encodeURIComponent(JSON.stringify(order))}`,
+        return_url: `http://localhost:3000/payment-success-create-order?amount=${amount}`,
       },
     });
 
