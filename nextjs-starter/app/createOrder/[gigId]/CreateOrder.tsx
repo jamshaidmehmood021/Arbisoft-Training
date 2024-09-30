@@ -17,14 +17,13 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import UploadIcon from '@mui/icons-material/Upload'; 
+import UploadIcon from '@mui/icons-material/Upload';
 
 const CreateOrder = ({ params }: { params: { gigId: string } }) => {
   const [amount, setAmount] = useState(0);
   const [deadline, setDeadline] = useState('');
   const [orderFound, setOrderFound] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [encodedFile, setEncodedFile] = useState<string | null>(null);
   const [fileName, setFileName] = useState(''); 
   const router = useRouter();
 
@@ -57,11 +56,6 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
     if (selectedFile) {
       setFile(selectedFile);
       setFileName(selectedFile.name); 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEncodedFile(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
     }
   };
 
@@ -72,7 +66,7 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
     if (file) {
       formData.append('file', file);
     }
-  
+
     try {
       const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/uploadFile`, {
         method: 'POST',
@@ -81,15 +75,14 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
         },
         body: formData,
       });
-  
+
       const uploadData = await uploadResponse.json();
       if (!uploadResponse.ok) {
         throw new Error(uploadData.message || 'File upload failed');
       }
-  
+
       const uploadedFileName = uploadData.fileName; 
-  
-     
+
       const orderData = {
         gigId,
         buyerId,
@@ -98,15 +91,14 @@ const CreateOrder = ({ params }: { params: { gigId: string } }) => {
         deadline,
         file: uploadedFileName, 
       };
-  
+
       localStorage.setItem('orderData', JSON.stringify(orderData));
       router.push(`/payment/${amount}`);
-  
+
     } catch (error: any) {
       toast.error(`Error: ${error.message}`);
     }
   };
-  
 
   return (
     <div style={{

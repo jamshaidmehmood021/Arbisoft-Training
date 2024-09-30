@@ -1,8 +1,25 @@
 'use client';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, RefObject } from "react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
-import ReactQuill, { Quill } from "react-quill";
+import { ReactQuillProps } from "react-quill";
+import type ReactQuill from "react-quill";
+
+const ReactQuillComponent = dynamic(
+    async () => {
+        const { default: RQ } = await import('react-quill');
+
+        const Component = ({ forwardedRef, ...props }: { forwardedRef: RefObject<ReactQuill> } & ReactQuillProps) => (
+            <RQ ref={forwardedRef} {...props} />
+        );
+
+        Component.displayName = 'ReactQuillComponent';
+        return Component;
+    },
+    {
+        ssr: false,
+    }
+);
 
 type EditorType = "Gig";
 type SuggestionPosition = { start: number; end: number };
@@ -19,7 +36,7 @@ const TextEditor = ({
     placeholder: string;
     type: EditorType;
 }) => {
-    const quillRef = useRef<ReactQuill>(null);
+    const quillRef = useRef<ReactQuill | null>(null);
     const suggestionTimeOutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isSuggesting = useRef(false);
     const suggestionPosition = useRef<SuggestionPosition>({ start: 0, end: 0 });
@@ -75,7 +92,7 @@ const TextEditor = ({
         try {
             const token = localStorage.getItem("token");
             if (!token) return;
-
+    
             const response: any = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND}/suggestions?description=${currentDescription}`,
                 {
@@ -92,12 +109,13 @@ const TextEditor = ({
             console.log("Failed to get suggestion", e);
         }
     }, []);
+    
 
     const updateSuggestion = useCallback(
         (quill: any, source: string) => {
             if (source === "api") return;
             clearSuggestionText();
-
+    
             if (suggestionTimeOutRef.current) clearTimeout(suggestionTimeOutRef.current);
             suggestionTimeOutRef.current = setTimeout(async () => {
                 await getAiSuggestion(quill.getText(0, quill.getLength()));
@@ -105,6 +123,7 @@ const TextEditor = ({
         },
         [clearSuggestionText, getAiSuggestion]
     );
+    
 
     useEffect(() => {
         const quill = getQuillEditor();
@@ -135,7 +154,10 @@ const TextEditor = ({
         const quill = getQuillEditor();
         if (!quill || type !== "Gig") return;
 
-        const handleTextChange = (_: any, __: any, source: any) => updateSuggestion(quill, source);
+        const handleTextChange = (_: any, __: any, source: any) => {
+            updateSuggestion(quill, source);
+        };
+
         const handleSelectionChange = (_: any, __: any, source: any) => {
             if (source === "user") {
                 clearSuggestionText();
@@ -144,7 +166,7 @@ const TextEditor = ({
             }
         };
 
-        quill.on("text-change", handleTextChange);
+        quill.on("text-change", handleTextChange); 
         quill.on("selection-change", handleSelectionChange);
 
         const tabListener = (e: KeyboardEvent) => handleTab(e);
@@ -159,8 +181,8 @@ const TextEditor = ({
 
     return (
         <div className="w-full">
-            <ReactQuill
-                ref={quillRef}
+            <ReactQuillComponent
+                forwardedRef={quillRef}
                 theme="snow"
                 placeholder={placeholder}
                 value={value}
@@ -172,5 +194,7 @@ const TextEditor = ({
         </div>
     );
 };
+
+ReactQuillComponent.displayName = 'ReactQuillComponent';
 
 export default TextEditor;

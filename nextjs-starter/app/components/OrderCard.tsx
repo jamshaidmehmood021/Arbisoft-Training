@@ -261,4 +261,5 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onAccept, onDec
   );
 });
 
+OrderCard.displayName = 'OrderCard';
 export default OrderCard;
