@@ -4,7 +4,7 @@ import { Bars } from 'react-loading-icons';
 const Home = lazy(() => import('./Pages/Home'));
 const SignUp = lazy(() => import('./Pages/SignUp'));
 const LogIn = lazy(() => import('./Pages/LogIn'));
-const AddItemCustomHookVersion = lazy(() => import('./Pages/AddItemCustomHookVersion'));
+const AddItemCustomHookVersion = lazy(() => import('./Pages/AddItem'));
 const AdminDashboardCustomHookVersion = lazy(() => import('./Pages/AdminDashboardCustomHookVersion'));
 const AdminReport = lazy(() => import('./Pages/AdminReport'));
 const EditItemCustomHookVersion = lazy(() => import('./Pages/EditItemCustomHookVersion'));

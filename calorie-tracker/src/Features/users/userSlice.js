@@ -34,15 +34,21 @@ export const login = createAsyncThunk('user/login', async (credentials, { reject
   try {
     const response = await axios.get(`${url}?email=${credentials.email}`);
     const users = response.data;
-    
-    if (users.length === 0) {
+
+    if (credentials.isGoogleSignIn) {
+      if (users.length === 0) {
         return rejectWithValue('User not found');
+      }
+      return users[0];
+    }
+
+    if (users.length === 0) {
+      return rejectWithValue('User not found');
     }
 
     const user = users[0];
-
     if (user.password !== credentials.password) {
-        return rejectWithValue('Incorrect password');
+      return rejectWithValue('Incorrect password');
     }
 
     return user;
@@ -50,6 +56,7 @@ export const login = createAsyncThunk('user/login', async (credentials, { reject
     return rejectWithValue(error.message);
   }
 });
+
 
 const userSlice = createSlice({
   name: 'users',
